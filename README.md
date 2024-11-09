@@ -4,7 +4,7 @@ CloakRAT is a Remote Access Trojan (RAT) that will have the following features (
 2. Anti-Debugging Techniques
 3. Process Injection (DLL Injection)
 4. Persistence Mechanisms
-5. C&C communication 
+5. C2 communication 
 
 ## Disclaimer
 **CloakRAT is for educational and research purposes only.** Misuse of this software is strictly prohibited. I'm not responsible for any harm or legal consequences resulting from unauthorized or malicious use.
