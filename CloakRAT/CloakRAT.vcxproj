@@ -127,7 +127,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CloakRAT.cpp" />
+    <ClCompile Include="CloakRAT\src\CloakRAT.cpp" />
+    <ClCompile Include="CloakRAT\src\TCPClient.cpp" />
+    <ClCompile Include="Server\src\TCPServer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CloakRAT\include\TCPClient.h" />
+    <ClInclude Include="Server\include\TCPServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

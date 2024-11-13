@@ -13,10 +13,36 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Server">
+      <UniqueIdentifier>{3586c019-8e19-48a7-a150-42e8aaecdd68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CloakRAT">
+      <UniqueIdentifier>{f20ad764-35c8-4ea2-9492-d46bd537e99b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CloakRAT">
+      <UniqueIdentifier>{977d5934-28f6-4c72-aca7-62ebb7b1d905}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Server">
+      <UniqueIdentifier>{a36a589d-5760-4ba8-822b-71b44e83b032}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CloakRAT.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="CloakRAT\src\CloakRAT.cpp">
+      <Filter>Source Files\CloakRAT</Filter>
     </ClCompile>
+    <ClCompile Include="CloakRAT\src\TCPClient.cpp">
+      <Filter>Source Files\CloakRAT</Filter>
+    </ClCompile>
+    <ClCompile Include="Server\src\TCPServer.cpp">
+      <Filter>Source Files\Server</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CloakRAT\include\TCPClient.h">
+      <Filter>Header Files\CloakRAT</Filter>
+    </ClInclude>
+    <ClInclude Include="Server\include\TCPServer.h">
+      <Filter>Header Files\Server</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
