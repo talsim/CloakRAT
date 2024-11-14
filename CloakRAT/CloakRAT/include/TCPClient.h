@@ -5,6 +5,7 @@ class TCPClient
 public:
 	TCPClient();
 	~TCPClient();
+	/*std::string exec();*/
 
 private:
 

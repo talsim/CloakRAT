@@ -1,8 +1,8 @@
 #include <iostream>
 
 
-int main()
-{
-	std::cout << "Hello World!\n";
-	return EXIT_FAILURE;
-}
+//int main()
+//{
+//	std::cout << "hello world!\n";
+//	return exit_failure;
+//}
