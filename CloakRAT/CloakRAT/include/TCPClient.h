@@ -1,20 +1,19 @@
 #pragma once
+#include <WS2tcpip.h>
+#include <iostream>
+#include <string>
+
+#pragma comment(lib, "ws2_32.lib")
 
 class TCPClient
 {
 public:
-	TCPClient();
+	TCPClient(std::string ipAddr, int port);
 	~TCPClient();
-	/*std::string exec();*/
+	std::string ipAddr;
+	int port;
+	
 
 private:
 
 };
-
-TCPClient::TCPClient()
-{
-}
-
-TCPClient::~TCPClient()
-{
-}

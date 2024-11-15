@@ -1,9 +1,13 @@
-#include <iostream>
-#include <WS2tcpip.h>
-#include <string>
 #include "TCPClient.h"
 
-#pragma comment(lib, "ws2_32.lib")
+TCPClient::TCPClient(std::string ipAddr, int port)
+{
+	this->ipAddr = ipAddr;
+	this->port = port;
+}
+
+TCPClient::~TCPClient() {}
+
 int main()
 {
 	std::string ipAddr = "127.0.0.1";
@@ -40,11 +44,34 @@ int main()
 		WSACleanup();
 		return 1;
 	}
-		
+
 	char buf[4096] = "";
 	std::string userInput = "";
 
+	do {
+		std::cout << "> ";
+		std::getline(std::cin, userInput);
+		unsigned int len = userInput.length();
 
+		if (len > 0)
+		{
+			// Send the input to the server
+			int sendResult = send(sock, userInput.c_str(), len + 1, 0);
+			if (sendResult != SOCKET_ERROR)
+			{
+				memset(buf, 0, sizeof(buf));
+				int bytesReceived = recv(sock, buf, sizeof(buf), 0);
+				if (bytesReceived > 0)
+				{
+					std::cout << "SERVER> " << std::string(buf, bytesReceived);
+				}
+			}
+		}
+
+	} while (userInput.length() > 0);
+
+	closesocket(sock);
+	WSACleanup();
 
 	return 0;
 }
