@@ -2,17 +2,19 @@
 
 TCPClient::TCPClient(std::string ipAddr, int port)
 {
+	this->sock = 0;
 	this->ipAddr = ipAddr;
 	this->port = port;
 }
 
-TCPClient::~TCPClient() {}
-
-int main()
+TCPClient::~TCPClient()
 {
-	std::string ipAddr = "127.0.0.1";
-	int port = 54000;
+	closesocket(sock);
+	WSACleanup();
+}
 
+void TCPClient::start_connection()
+{
 	// Init Winsock
 	WSAData data;
 	WORD ver = MAKEWORD(2, 2);
@@ -20,58 +22,52 @@ int main()
 	if (wsResult != 0)
 	{
 		std::cerr << "Error initializing Winsock, Err #" << wsResult << std::endl;
-		return 1;
+		return;
 	}
 
-	SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+	// Create Socket
+	this->sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET)
 	{
-
 		std::cerr << "Error creating socket, Err #" << WSAGetLastError() << std::endl;
-		return 1;
+		return;
 	}
 
-	sockaddr_in hint;
-	hint.sin_family = AF_INET;
-	hint.sin_port = htons(port); // convert to big endian (the network byte order)
-	inet_pton(AF_INET, ipAddr.c_str(), &hint.sin_addr);
+	sockaddr_in serverAddr;
+	serverAddr.sin_family = AF_INET;
+	serverAddr.sin_port = htons(port); // convert to big endian (the network byte order)
+	inet_pton(AF_INET, ipAddr.c_str(), &serverAddr.sin_addr);
 
-	int connectionResult = connect(sock, (sockaddr*)&hint, sizeof(hint));
+	int connectionResult = connect(sock, (sockaddr*)&serverAddr, sizeof(serverAddr));
 	if (connectionResult == SOCKET_ERROR)
 	{
 		std::cerr << "Error connecting to server, Err #" << WSAGetLastError() << std::endl;
-		closesocket(sock);
-		WSACleanup();
-		return 1;
+		return;
 	}
+}
 
-	char buf[4096] = "";
-	std::string userInput = "";
+void TCPClient::send_data(const char* data)
+{
+	int sendResult = send(this->sock, data, (int)strlen(data), 0);
+	if (sendResult == SOCKET_ERROR)
+	{
+		std::cerr << "Error sending data to server, Err #" << WSAGetLastError() << std::endl;
+		return;
+	}
+}
 
-	do {
-		std::cout << "> ";
-		std::getline(std::cin, userInput);
-		unsigned int len = userInput.length();
+char* TCPClient::recv_data(int bytes) {
+	char* buf = new char[bytes];
+	
+	int bytesReceived = recv(this->sock, buf, bytes, 0);
+	if (bytesReceived > 0)
+	{
+		std::cout << "SERVER> " << std::string(buf, bytesReceived);
+	}
+	return buf;
+}
 
-		if (len > 0)
-		{
-			// Send the input to the server
-			int sendResult = send(sock, userInput.c_str(), len + 1, 0);
-			if (sendResult != SOCKET_ERROR)
-			{
-				memset(buf, 0, sizeof(buf));
-				int bytesReceived = recv(sock, buf, sizeof(buf), 0);
-				if (bytesReceived > 0)
-				{
-					std::cout << "SERVER> " << std::string(buf, bytesReceived);
-				}
-			}
-		}
-
-	} while (userInput.length() > 0);
-
-	closesocket(sock);
+void TCPClient::close() {
+	closesocket(this->sock);
 	WSACleanup();
-
-	return 0;
 }

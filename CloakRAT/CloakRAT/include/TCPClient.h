@@ -10,10 +10,13 @@ class TCPClient
 public:
 	TCPClient(std::string ipAddr, int port);
 	~TCPClient();
-	std::string ipAddr;
-	int port;
-	
+	void start_connection();
+	void send_data(const char* data);
+	char* recv_data(int bytes);
+	void close();
 
 private:
-
+	SOCKET sock;
+	std::string ipAddr;
+	int port;
 };
