@@ -1,15 +1,16 @@
 #include <iostream>
-#include <TCPServer.h>
+#include "TCPServer.h"
 
 TCPServer::TCPServer(int port)
 {
 	this->listeningSock = 0;
 	this->listeningPort = port;
+	this->clientSock = 0;
 }
 
 TCPServer::~TCPServer()
 {
-
+	this->close();
 }
 
 void TCPServer::start()
@@ -62,7 +63,32 @@ void TCPServer::accept_conn()
 	this->clientSock = accept(this->listeningSock, (sockaddr*)&clientAddr, &clientSize);
 	if (this->clientSock == INVALID_SOCKET)
 	{
-		std::cerr << "Error: Could not create client socket" << std::endl;
+		std::cerr << "Error: Could not accept a new connection from client, Err #" << WSAGetLastError() << std::endl;
 		return;
 	}
+}
+
+char* TCPServer::recv_data(int bytes)
+{
+	char* buf = new char[bytes];
+
+	int bytesReceived = recv(this->clientSock, buf, bytes, 0);
+
+	if (bytesReceived == SOCKET_ERROR)
+		std::cerr << "Error in recv(), Err #" << WSAGetLastError() << std::endl;
+
+	else if (bytesReceived > 0)
+		std::cout << "CLIENT> " << std::string(buf, bytesReceived);
+
+	else
+		std::cout << "Error! Client disconnected maybe?" << std::endl;
+	return buf;
+
+}
+
+void TCPServer::close()
+{
+	closesocket(this->listeningSock);
+	closesocket(this->clientSock);
+	WSACleanup();
 }

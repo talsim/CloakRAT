@@ -12,6 +12,8 @@ public:
 	~TCPServer();
 	void start(); // binds and listens
 	void accept_conn();
+	void close();
+	char* recv_data(int bytes);
 
 private:
 	SOCKET listeningSock;

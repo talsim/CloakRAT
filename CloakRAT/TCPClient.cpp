@@ -9,8 +9,7 @@ TCPClient::TCPClient(std::string ipAddr, int port)
 
 TCPClient::~TCPClient()
 {
-	closesocket(sock);
-	WSACleanup();
+	this->close();
 }
 
 void TCPClient::start_connection()
