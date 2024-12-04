@@ -66,6 +66,11 @@ char* TCPClient::recv_data(int bytes) {
 	return buf;
 }
 
+int TCPClient::exec(const char* command)
+{
+	return 0;
+}
+
 void TCPClient::close() {
 	closesocket(this->sock);
 	WSACleanup();

@@ -86,6 +86,12 @@ char* TCPServer::recv_data(int bytes)
 
 }
 
+int TCPServer::exec(const char* command)
+{
+	return 0;
+}
+
+
 void TCPServer::close()
 {
 	closesocket(this->listeningSock);

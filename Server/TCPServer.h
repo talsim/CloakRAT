@@ -13,6 +13,7 @@ public:
 	void start(); // binds and listens
 	void accept_conn();
 	void close();
+	int exec(const char* command);
 	char* recv_data(int bytes);
 
 private:
