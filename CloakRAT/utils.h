@@ -1,3 +1,5 @@
+#include <iostream>
+
 #pragma once
 
-char* exec(const char* command);
+std::string exec(const char* command);
