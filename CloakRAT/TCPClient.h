@@ -13,6 +13,7 @@ public:
 	void start_connection();
 	void send_data(const char* data);
 	char* recv_data(int bytes);
+	char* recv_data();
 	void close();
 
 private:

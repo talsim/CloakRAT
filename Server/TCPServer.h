@@ -14,6 +14,8 @@ public:
 	void accept_conn();
 	void close();
 	char* recv_data(int bytes);
+	void send_data(const char* data);
+	int getListeningPort();
 
 private:
 	SOCKET listeningSock;
