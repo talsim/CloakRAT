@@ -3,8 +3,24 @@
 #include <string>
 
 namespace {
-	// On success returns 0, otherwise -1.
-	int createChildProc(HANDLE stdOutRead, HANDLE stdOutWrite, const char* commandLine)
+	std::string GetLastErrorAsString()
+	{
+		LPSTR messageBuffer = nullptr;
+		DWORD errorMsgID = GetLastError();
+
+		// Ask Win32 to give us the string version of that message ID.
+		size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL, errorMsgID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+
+		// Copy the error message into a std::string.
+		std::string message(messageBuffer, size);
+
+		LocalFree(messageBuffer);
+
+		return message;
+	}
+
+	void createChildProc(HANDLE stdOutRead, HANDLE stdOutWrite, std::string command)
 	{
 		PROCESS_INFORMATION procInfo;
 		STARTUPINFOA startInfo;
@@ -19,21 +35,17 @@ namespace {
 		startInfo.dwFlags |= STARTF_USESTDHANDLES;
 
 		// Create the child process and run the command line
-		if (!CreateProcessA(NULL, (char*)commandLine, NULL, NULL, true, CREATE_NO_WINDOW, NULL, NULL, &startInfo, &procInfo)) {
-			std::cerr << "Error: CreateProcessA() failed, Err #" << GetLastError() << std::endl;
-			return -1;
-		}
+		if (!CreateProcessA(NULL, (char*)command.c_str(), NULL, NULL, true, CREATE_NO_WINDOW, NULL, NULL, &startInfo, &procInfo))
+			throw std::runtime_error(GetLastErrorAsString());
 
 		CloseHandle(procInfo.hProcess);
 		CloseHandle(procInfo.hThread);
 		CloseHandle(stdOutWrite);
-		return 0;
 	}
 }
 
-std::string exec(const char* commandLine)
+std::string exec(std::string command)
 {
-	// TODO: CONSTRUCT THE COMMAND LINE! CURRENTLY IT IS JUST PLAIN FROM THE USER, E.g entering "notepad++" opens notepad++.exe lol (so it kinda works hahah)
 	SECURITY_ATTRIBUTES securityAttr;
 
 	HANDLE stdOutWrite = nullptr;
@@ -46,20 +58,21 @@ std::string exec(const char* commandLine)
 
 	// Create an STDOUT Pipe for the child process
 	if (!CreatePipe(&stdOutRead, &stdOutWrite, &securityAttr, 0)) {
-		std::cerr << "Error: CreatePipe() failed, Err #" << GetLastError() << std::endl;
-		return "";
+		return "Error - CreatePipe() failed: " + GetLastErrorAsString();
 	}
 
 	if (!SetHandleInformation(stdOutRead, HANDLE_FLAG_INHERIT, 0)) {
-		std::cerr << "Error: SetHandleInformation() failed, Err #" << GetLastError() << std::endl;
-		return "";
+		return "Error - SetHandleInformation() failed: " + GetLastErrorAsString();
 	}
 
 	// Create the child process
-	int createChildProcResult = createChildProc(stdOutRead, stdOutWrite, commandLine);
-	if (createChildProcResult == -1)
-		return "";
-
+	try {
+		createChildProc(stdOutRead, stdOutWrite, command);
+	}
+	catch (const std::runtime_error& e) {
+		return e.what();
+	}
+	
 	// Read from the child process STDOUT Pipe
 	DWORD bytesRead = 0;
 	char buf[4096];
@@ -74,4 +87,3 @@ std::string exec(const char* commandLine)
 	// Return the result from STDOUT
 	return commandResult;
 }
-
