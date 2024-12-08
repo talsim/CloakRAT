@@ -1,4 +1,5 @@
 #include <iostream>
+#include <bitset>
 #include <string>
 #include "TCPServer.h"
 
@@ -89,22 +90,18 @@ char* TCPServer::recv_data(int bytes)
 
 void TCPServer::send_data(const char* buf)
 {
-	std::cout << strlen(buf) << std::endl << std::endl << std::endl << std::endl;
-	std::cout << htonl(strlen(buf)) << std::endl << std::endl << std::endl << std::endl;
-	uint32_t bufLength = htonl(strlen(buf)); // BUG: Convertion is not correct!!
-	std::string bufLengthStr = std::to_string(bufLength);
-
-	std::cout << "bufLength: " << bufLengthStr << std::endl;
+	uint32_t len = (uint32_t)strlen(buf);
+	uint32_t bufLength = htonl(len);
 
 	// Send the length header of the buffer
-	int sendResult = send(this->clientSock, bufLengthStr.c_str(), sizeof(bufLength), 0);
+	int sendResult = send(this->clientSock, reinterpret_cast<const char*>(&bufLength), sizeof(bufLength), 0);
 	if (sendResult == SOCKET_ERROR) {
 		std::cerr << "Error sending length header to client, Err #" << WSAGetLastError() << std::endl;
 		return;
 	}
 
 	// Send the actual buffer now
-	sendResult = send(this->clientSock, buf, (int)strlen(buf), 0);
+	sendResult = send(this->clientSock, buf, len, 0);
 	if (sendResult == SOCKET_ERROR)
 	{
 		std::cerr << "Error sending data to client, Err #" << WSAGetLastError() << std::endl;

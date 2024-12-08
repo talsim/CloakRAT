@@ -1,7 +1,5 @@
 #include "TCPClient.h"
 
-constexpr auto BUFFER_LENGTH = 4;
-
 TCPClient::TCPClient(std::string ipAddr, int port)
 {
 	this->sock = 0;
@@ -69,19 +67,15 @@ char* TCPClient::recv_data(int bytes) {
 }
 
 char* TCPClient::recv_data() {
-	// Receiving the buffer length first as a header
-	char bufferLengthStr[BUFFER_LENGTH] = "";
-	recv(this->sock, bufferLengthStr, BUFFER_LENGTH, 0);
-	std::cout << "got size: " << bufferLengthStr << std::endl;
-
-	// Converting to uint32
+	// Receiving the buffer length header first
 	uint32_t bufLength = 0;
-	std::memcpy(&bufLength, bufferLengthStr, BUFFER_LENGTH);
+	recv(this->sock, reinterpret_cast<char*>(&bufLength), 4, 0);
 	bufLength = ntohl(bufLength); // Convert to host byte order
-	std::cout << "got size AFTER: " << bufferLengthStr << std::endl;
+	std::cout << "got size AFTER: " << bufLength << std::endl;
 
 	// Receiving the actual buffer sent
 	char* buf = new char[bufLength];
+	memset(buf, 0, bufLength);
 	int bytesReceived = recv(this->sock, buf, bufLength, 0);
 	if (bytesReceived > 0)
 	{
