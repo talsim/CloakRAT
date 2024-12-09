@@ -74,13 +74,9 @@ char* TCPClient::recv_data() {
 	std::cout << "got size AFTER: " << bufLength << std::endl;
 
 	// Receiving the actual buffer sent
-	char* buf = new char[bufLength];
-	memset(buf, 0, bufLength);
+	char* buf = new char[bufLength+1];
+	memset(buf, 0, bufLength+1);
 	int bytesReceived = recv(this->sock, buf, bufLength, 0);
-	if (bytesReceived > 0)
-	{
-		std::cout << "SERVER> " << std::string(buf, bytesReceived) << std::endl;
-	}
 	return buf;
 }
 
