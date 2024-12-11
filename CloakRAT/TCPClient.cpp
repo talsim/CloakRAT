@@ -57,7 +57,7 @@ void TCPClient::send_data(const char* data)
 
 char* TCPClient::recv_data(int bytes) {
 	char* buf = new char[bytes];
-	
+
 	int bytesReceived = recv(this->sock, buf, bytes, 0);
 	if (bytesReceived > 0)
 	{
@@ -67,16 +67,17 @@ char* TCPClient::recv_data(int bytes) {
 }
 
 char* TCPClient::recv_data() {
-	// Receiving the buffer length header first
+	// Receiving the buffer length header
 	uint32_t bufLength = 0;
 	recv(this->sock, reinterpret_cast<char*>(&bufLength), 4, 0);
 	bufLength = ntohl(bufLength); // Convert to host byte order
-	std::cout << "got size AFTER: " << bufLength << std::endl;
 
-	// Receiving the actual buffer sent
-	char* buf = new char[bufLength+1];
-	memset(buf, 0, bufLength+1);
-	int bytesReceived = recv(this->sock, buf, bufLength, 0);
+	// Receiving the actual buffer sent (and adding a null terminator)
+	char* buf = new char[bufLength + 1];
+	buf[bufLength] = '\0';
+
+	recv(this->sock, buf, bufLength, 0);
+
 	return buf;
 }
 

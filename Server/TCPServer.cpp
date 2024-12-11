@@ -90,6 +90,7 @@ char* TCPServer::recv_data(int bytes)
 
 void TCPServer::send_data(const char* buf)
 {
+	// Sending the 4 bytes length header (not in ascii representation but in raw bytes)
 	uint32_t len = (uint32_t)strlen(buf);
 	uint32_t bufLength = htonl(len);
 

