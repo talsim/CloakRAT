@@ -18,7 +18,14 @@ int main()
 	{
 		std::string commandLine = "";
 		std::getline(std::cin, commandLine);
-		server->send_data(commandLine.c_str());
+		if (server->send_data(commandLine) == -1)
+		{
+			std::cout << "Couldn't send data to slave, he might have disconnected. Waiting for a new connection.\n";
+			server->accept_conn();
+			std::cout << "Slave has reconnected!" << std::endl;
+		}
+		else
+			std::cout << server->recv_data() << std::endl;
 	}
 
 	return 0;

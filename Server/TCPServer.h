@@ -13,8 +13,8 @@ public:
 	void start(); // binds and listens
 	void accept_conn();
 	void close();
-	char* recv_data(int bytes);
-	void send_data(const char* data);
+	std::string recv_data();
+	int send_data(std::string& buf);
 	int getListeningPort();
 
 private:

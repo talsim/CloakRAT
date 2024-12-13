@@ -70,44 +70,44 @@ void TCPServer::accept_conn()
 	}
 }
 
-char* TCPServer::recv_data(int bytes)
+std::string TCPServer::recv_data()
 {
-	char* buf = new char[bytes];
+	// Receive the length first
+	uint32_t bufLength = 0;
+	recv(this->clientSock, reinterpret_cast<char*>(&bufLength), sizeof(bufLength), 0);
+	bufLength = ntohl(bufLength); // Convert back to host endianness
 
-	int bytesReceived = recv(this->clientSock, buf, bytes, 0);
+	// Receive the data itself
+	std::string buf(bufLength, '\0');
+	int bytesReceived = recv(this->clientSock, &buf[0], bufLength, 0);
 
 	if (bytesReceived == SOCKET_ERROR)
 		std::cerr << "Error in recv(), Err #" << WSAGetLastError() << std::endl;
-
-	else if (bytesReceived > 0)
-		std::cout << "CLIENT> " << std::string(buf, bytesReceived);
-
-	else
-		std::cout << "Error! Client disconnected maybe?" << std::endl;
 	return buf;
 
 }
 
-void TCPServer::send_data(const char* buf)
+int TCPServer::send_data(std::string& buf)
 {
 	// Sending the 4 bytes length header (not in ascii representation but in raw bytes)
-	uint32_t len = (uint32_t)strlen(buf);
-	uint32_t bufLength = htonl(len);
+	uint32_t len = (uint32_t)buf.length();
+	uint32_t bufLenInNetworkOrder = htonl(len);
 
 	// Send the length header of the buffer
-	int sendResult = send(this->clientSock, reinterpret_cast<const char*>(&bufLength), sizeof(bufLength), 0);
+	int sendResult = send(this->clientSock, reinterpret_cast<const char*>(&bufLenInNetworkOrder), sizeof(bufLenInNetworkOrder), 0);
 	if (sendResult == SOCKET_ERROR) {
 		std::cerr << "Error sending length header to client, Err #" << WSAGetLastError() << std::endl;
-		return;
+		return -1;
 	}
 
 	// Send the actual buffer now
-	sendResult = send(this->clientSock, buf, len, 0);
+	sendResult = send(this->clientSock, buf.c_str(), len, 0);
 	if (sendResult == SOCKET_ERROR)
 	{
 		std::cerr << "Error sending data to client, Err #" << WSAGetLastError() << std::endl;
-		return;
+		return -1;
 	}
+	return 0;
 }
 
 void TCPServer::close()
