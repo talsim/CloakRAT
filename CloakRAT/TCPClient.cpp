@@ -86,12 +86,18 @@ std::string TCPClient::recv_data() {
 	recv(this->sock, reinterpret_cast<char*>(&bufLength), 4, 0);
 	bufLength = ntohl(bufLength); // Convert to host byte order
 
-	// Receiving the actual buffer sent
-	std::string buf(bufLength, '\0');
+	if (bufLength != 0)
+	{
+		std::string buf(bufLength, '\0');
 
-	recv(this->sock, &buf[0], bufLength, 0);
+		// Receiving the actual buffer sent
+		int bytesReceived = recv(this->sock, &buf[0], bufLength, 0);
+		if (bytesReceived == SOCKET_ERROR || bytesReceived != bufLength)
+			std::cerr << "Error in recv(), Err #" << WSAGetLastError() << std::endl;
 
-	return buf;
+		return buf;
+	}
+	return std::string("");
 }
 
 void TCPClient::close() {

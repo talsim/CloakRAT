@@ -77,14 +77,18 @@ std::string TCPServer::recv_data()
 	recv(this->clientSock, reinterpret_cast<char*>(&bufLength), sizeof(bufLength), 0);
 	bufLength = ntohl(bufLength); // Convert back to host endianness
 
-	// Receive the data itself
-	std::string buf(bufLength, '\0');
-	int bytesReceived = recv(this->clientSock, &buf[0], bufLength, 0);
+	if (bufLength != 0)
+	{
+		std::string buf(bufLength, '\0');
 
-	if (bytesReceived == SOCKET_ERROR)
-		std::cerr << "Error in recv(), Err #" << WSAGetLastError() << std::endl;
-	return buf;
+		// Receive the data itself
+		int bytesReceived = recv(this->clientSock, &buf[0], bufLength, 0);
+		if (bytesReceived == SOCKET_ERROR || bytesReceived != bufLength)
+			std::cerr << "Error in recv(), Err #" << WSAGetLastError() << std::endl;
 
+		return buf;
+	}
+	return std::string("");
 }
 
 int TCPServer::send_data(std::string& buf)
