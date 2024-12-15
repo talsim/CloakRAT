@@ -131,9 +131,11 @@
   <ItemGroup>
     <ClCompile Include="CloakRAT.cpp" />
     <ClCompile Include="TCPClient.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TCPClient.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
