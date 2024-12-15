@@ -11,7 +11,7 @@ public:
 	TCPClient(std::string ipAddr, int port);
 	~TCPClient();
 	int start_connection();
-	void send_data(std::string& data);
+	void send_data(std::string data);
 	char* recv_data(int bytes);
 	std::string recv_data();
 	void close();

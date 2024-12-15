@@ -47,7 +47,7 @@ int TCPClient::start_connection()
 	return 0;
 }
 
-void TCPClient::send_data(std::string &data)
+void TCPClient::send_data(std::string data)
 {
 	// Send length header first
 	uint32_t len = (uint32_t)data.length();

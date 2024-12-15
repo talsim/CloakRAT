@@ -91,7 +91,7 @@ std::string TCPServer::recv_data()
 	return std::string("");
 }
 
-int TCPServer::send_data(std::string& buf)
+int TCPServer::send_data(std::string buf)
 {
 	// Sending the 4 bytes length header (not in ascii representation but in raw bytes)
 	uint32_t len = (uint32_t)buf.length();
