@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <TlHelp32.h>
 
-DWORD GetProcessIdByName(const char* procName)
+DWORD getProcessIdByName(const char* procName)
 {
 	PROCESSENTRY32 entry;
 	entry.dwSize = sizeof(PROCESSENTRY32);
@@ -26,6 +26,27 @@ DWORD GetProcessIdByName(const char* procName)
 
 int main()
 {
-	std::cout << GetProcessIdByName("explorer.exe");
+	// TODO
+	const char* dllPath = "";
+	const char* procName = "";
+
+	DWORD procID = 0;
+	while (!procID) // while the process was not found
+	{
+		procID = getProcessIdByName(procName);
+		Sleep(100);
+	}
+
+	HANDLE procHandle = OpenProcess(PROCESS_ALL_ACCESS, 0, procID);
+	
+	if (procHandle && procHandle != INVALID_HANDLE_VALUE) // if we got a handle successfuly
+	{
+		void* addr = VirtualAllocEx(procHandle, NULL, MAX_PATH, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+
+		// WriteProcessMemory()
+		// CreateRemoteThread(..., LoadLibrary())
+	}
+
 	return 0;
+
 }
