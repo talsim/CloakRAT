@@ -20,7 +20,7 @@ DWORD getProcessIdByName(const char* procName)
 			}
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -38,13 +38,23 @@ int main()
 	}
 
 	HANDLE procHandle = OpenProcess(PROCESS_ALL_ACCESS, 0, procID);
-	
+
 	if (procHandle && procHandle != INVALID_HANDLE_VALUE) // if we got a handle successfuly
 	{
-		void* addr = VirtualAllocEx(procHandle, NULL, MAX_PATH, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		LPVOID dllAddrInRemoteProcess = VirtualAllocEx(procHandle, NULL, strlen(dllPath) + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
-		// WriteProcessMemory()
-		// CreateRemoteThread(..., LoadLibrary())
+		if (dllAddrInRemoteProcess) {
+			WriteProcessMemory(procHandle, dllAddrInRemoteProcess, dllPath, strlen(dllPath) + 1, 0);
+		}
+		else
+		{
+			std::cout << "Error: VirtualAllocEx() returned NULL: Err #" << GetLastError() << std::endl;
+			return 1;
+		}
+		
+		HANDLE threadHandle = CreateRemoteThread(procHandle, 0, 0, (LPTHREAD_START_ROUTINE)LoadLibraryA, dllAddrInRemoteProcess, 0, 0);
+
+		CloseHandle(threadHandle);
 	}
 
 	return 0;
