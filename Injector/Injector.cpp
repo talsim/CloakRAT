@@ -26,9 +26,8 @@ DWORD getProcessIdByName(const char* procName)
 
 int main()
 {
-	// TODO
-	const char* dllPath = "";
-	const char* procName = "";
+	const char* dllPath = "ADD HERE";
+	const char* procName = "explorer.exe";
 
 	DWORD procID = 0;
 	while (!procID) // while the process was not found
@@ -39,7 +38,7 @@ int main()
 
 	HANDLE procHandle = OpenProcess(PROCESS_ALL_ACCESS, 0, procID);
 
-	if (procHandle && procHandle != INVALID_HANDLE_VALUE) // if we got a handle successfuly
+	if (procHandle && procHandle != INVALID_HANDLE_VALUE) // if we got a handle successfully
 	{
 		LPVOID dllAddrInRemoteProcess = VirtualAllocEx(procHandle, NULL, strlen(dllPath) + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
