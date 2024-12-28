@@ -26,7 +26,7 @@ DWORD getProcessIdByName(const char* procName)
 
 int main()
 {
-	const char* dllPath = "ADD HERE";
+	const char* dllPath = "FOO";
 	const char* procName = "explorer.exe";
 
 	DWORD procID = 0;
