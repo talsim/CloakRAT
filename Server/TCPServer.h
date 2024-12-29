@@ -14,7 +14,7 @@ public:
 	void accept_conn();
 	void close();
 	std::string recv_data();
-	int send_data(std::string& buf);
+	int send_data(std::string buf);
 	int getListeningPort();
 
 private:
