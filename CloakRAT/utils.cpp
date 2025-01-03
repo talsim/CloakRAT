@@ -88,11 +88,11 @@ std::string exec(std::string command)
 	return commandResult;
 }
 
-bool IsRATDebugged()
+bool isDebuggerAttached()
 {
 	__try
 	{
-		__asm {int 3};  // Trigger breakpoint exception
+		__debugbreak();  // Trigger breakpoint exception
 		return true;  // If this line runs, a debugger caught the exception
 	}
 	__except (EXCEPTION_EXECUTE_HANDLER)

