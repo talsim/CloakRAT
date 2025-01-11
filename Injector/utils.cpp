@@ -70,6 +70,7 @@ int EscalatePrivilege()
 	return 0;
 }
 
+
 DWORD GetProcessIdByName(const char* procName)
 {
 	PROCESSENTRY32 entry;

@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Injector", "Injector\Injector.vcxproj", "{84A47462-7022-46B8-A042-818C0A31610D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Shared", "Shared\Shared.vcxitems", "{E04AA78F-F69D-4EBD-8975-2781BCDFEA3C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -17,8 +19,8 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4A519561-3179-43D1-AD22-A0A44F978CAD}.Debug|x64.ActiveCfg = Release|Win32
-		{4A519561-3179-43D1-AD22-A0A44F978CAD}.Debug|x64.Build.0 = Release|Win32
+		{4A519561-3179-43D1-AD22-A0A44F978CAD}.Debug|x64.ActiveCfg = Release|x64
+		{4A519561-3179-43D1-AD22-A0A44F978CAD}.Debug|x64.Build.0 = Release|x64
 		{4A519561-3179-43D1-AD22-A0A44F978CAD}.Debug|x86.ActiveCfg = Release|Win32
 		{4A519561-3179-43D1-AD22-A0A44F978CAD}.Debug|x86.Build.0 = Release|Win32
 		{4A519561-3179-43D1-AD22-A0A44F978CAD}.Release|x64.ActiveCfg = Release|x64
@@ -33,8 +35,8 @@ Global
 		{B0CA882E-E4CE-4CC7-8BDA-B78EA0AD45DB}.Release|x64.Build.0 = Release|x64
 		{B0CA882E-E4CE-4CC7-8BDA-B78EA0AD45DB}.Release|x86.ActiveCfg = Release|Win32
 		{B0CA882E-E4CE-4CC7-8BDA-B78EA0AD45DB}.Release|x86.Build.0 = Release|Win32
-		{84A47462-7022-46B8-A042-818C0A31610D}.Debug|x64.ActiveCfg = Release|Win32
-		{84A47462-7022-46B8-A042-818C0A31610D}.Debug|x64.Build.0 = Release|Win32
+		{84A47462-7022-46B8-A042-818C0A31610D}.Debug|x64.ActiveCfg = Release|x64
+		{84A47462-7022-46B8-A042-818C0A31610D}.Debug|x64.Build.0 = Release|x64
 		{84A47462-7022-46B8-A042-818C0A31610D}.Debug|x86.ActiveCfg = Release|Win32
 		{84A47462-7022-46B8-A042-818C0A31610D}.Debug|x86.Build.0 = Release|Win32
 		{84A47462-7022-46B8-A042-818C0A31610D}.Release|x64.ActiveCfg = Release|x64
@@ -47,5 +49,11 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3086E815-06E0-46DD-94BA-7C630ED40035}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Shared\Shared.vcxitems*{4a519561-3179-43d1-ad22-a0a44f978cad}*SharedItemsImports = 4
+		Shared\Shared.vcxitems*{84a47462-7022-46b8-a042-818c0a31610d}*SharedItemsImports = 4
+		Shared\Shared.vcxitems*{b0ca882e-e4ce-4cc7-8bda-b78ea0ad45db}*SharedItemsImports = 4
+		Shared\Shared.vcxitems*{e04aa78f-f69d-4ebd-8975-2781bcdfea3c}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal
