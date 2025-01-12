@@ -87,3 +87,16 @@ std::string exec(std::string command)
 	// Return the result from STDOUT
 	return commandResult;
 }
+
+bool isDebuggerAttached()
+{
+	__try
+	{
+		__debugbreak();  // Trigger breakpoint exception
+		return true;  // If this line runs, a debugger caught the exception
+	}
+	__except (EXCEPTION_EXECUTE_HANDLER)
+	{
+		return false;  // Exception caught by SEH - no debugger
+	}
+}
