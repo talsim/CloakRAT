@@ -9,11 +9,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)winapi_obfuscation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)winapi_signatures.h">
       <Filter>Header Files</Filter>
     </ClInclude>

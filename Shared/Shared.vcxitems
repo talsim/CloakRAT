@@ -18,7 +18,4 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)windows_peb_structures.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)winapi_signatures.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)winapi_obfuscation.cpp" />
-  </ItemGroup>
 </Project>

