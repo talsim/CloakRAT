@@ -34,14 +34,20 @@ void* get_loaded_module_base_addr(const wchar_t* moduleName)
 FARPROC get_proc_address(HMODULE hModule, const char* procedureName)
 {
 	BYTE* base_address = (BYTE*)hModule;
+	FARPROC address = nullptr;
 	// How to find the Image Export Directory:
 	// Image NT Headers (a pointer to this NT headers can be found at offset 0x3C in the DOS header, which is at the start of the PE after the signature)
 	// -> Optional Header -> Image Export Directory RVA is found here
-	IMAGE_DOS_HEADER* image_dos_header = (IMAGE_DOS_HEADER*) base_address;
-	IMAGE_NT_HEADERS* image_nt_headers = (IMAGE_NT_HEADERS*) base_address + image_dos_header->e_lfanew; // Offset to PE header
-	IMAGE_OPTIONAL_HEADER image_optional_header = (IMAGE_OPTIONAL_HEADER) image_nt_headers->OptionalHeader;
-	IMAGE_EXPORT_DIRECTORY* image_export_directory = (IMAGE_EXPORT_DIRECTORY*) base_address + image_optional_header.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress; // RVA to the export directory
-	char** name_table = (char **) base_address + image_export_directory->AddressOfNames; // Table of Export Name Pointers (points to strings)
+	IMAGE_DOS_HEADER* dos_header = (IMAGE_DOS_HEADER*) base_address;
+	IMAGE_NT_HEADERS* nt_headers = (IMAGE_NT_HEADERS*) (base_address + dos_header->e_lfanew); // Offset to PE header
+	IMAGE_OPTIONAL_HEADER optional_header = (IMAGE_OPTIONAL_HEADER) nt_headers->OptionalHeader;
+	IMAGE_EXPORT_DIRECTORY* export_directory = (IMAGE_EXPORT_DIRECTORY*) (base_address + optional_header.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress); // RVA to the export directory
+
+	DWORD* name_table = (DWORD*) (base_address + export_directory->AddressOfNames); // Table of Export Name Pointers (points to strings)
+	DWORD* address_table = (DWORD*) (base_address + export_directory->AddressOfFunctions); // Export Address Table (points to function addresses)
+	WORD* ordinal_table = (WORD*) (base_address + export_directory->AddressOfNameOrdinals); // Export Ordinal Table
+
+
 	
 
 	// Find the Image Export Directory, which contains 3 useful pointers: to the Export Address Table (EAT), to the Export Name Pointer Table and to the Export Address table which holds the actual RVAs
