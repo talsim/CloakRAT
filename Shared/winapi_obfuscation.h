@@ -33,39 +33,44 @@ void* get_loaded_module_base_addr(const wchar_t* moduleName)
 
 FARPROC get_proc_address(HMODULE hModule, const char* procedureName)
 {
-	BYTE* base_address = (BYTE*)hModule;
-	FARPROC address = nullptr;
 	// How to find the Image Export Directory:
-	// Image NT Headers (a pointer to this NT headers can be found at offset 0x3C in the DOS header, which is at the start of the PE after the signature)
+	// Image NT Headers (a offset to the NT headers can be found at offset 0x3C in the DOS header, which is at the start of the PE after the signature)
 	// -> Optional Header -> Image Export Directory RVA is found here
+	// Find the Image Export Directory, which contains 3 useful pointers: to the Export Address Table (EAT), to the Export Name Pointer Table and to the Export Address table which holds the actual RVAs
+	// Find the ordinal (index) of the entry to the Export Address Table of the function:
+	// 1. loop through each entry in the Export Name Pointers Table with
+	// the procedureName argument and save the index of the entry in this table
+	// 2. use the previous index found at (1.) to find the ordinal at the Export Ordinal Table with: ordinals_table[name_table_index]
+	// Extract the RVA at the corresponding ordinal in the EAT
+	// Add the base address (base_addr) to the RVA from the last step
+	// return the procedure adress
+
+
+
+	BYTE* base_address = (BYTE*) hModule;
+	FARPROC address = nullptr;
+	
 	IMAGE_DOS_HEADER* dos_header = (IMAGE_DOS_HEADER*) base_address;
-	IMAGE_NT_HEADERS* nt_headers = (IMAGE_NT_HEADERS*) (base_address + dos_header->e_lfanew); // Offset to PE header
-	IMAGE_OPTIONAL_HEADER optional_header = (IMAGE_OPTIONAL_HEADER) nt_headers->OptionalHeader;
+	IMAGE_NT_HEADERS* nt_headers = (IMAGE_NT_HEADERS*) (base_address + dos_header->e_lfanew); // Offset to PE/NT header
+	IMAGE_OPTIONAL_HEADER optional_header = nt_headers->OptionalHeader;
 	IMAGE_EXPORT_DIRECTORY* export_directory = (IMAGE_EXPORT_DIRECTORY*) (base_address + optional_header.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress); // RVA to the export directory
 
 	DWORD* name_table = (DWORD*) (base_address + export_directory->AddressOfNames); // Table of Export Name Pointers (points to strings)
 	DWORD* address_table = (DWORD*) (base_address + export_directory->AddressOfFunctions); // Export Address Table (points to function addresses)
 	WORD* ordinal_table = (WORD*) (base_address + export_directory->AddressOfNameOrdinals); // Export Ordinal Table
 
+	for (DWORD i = 0; i < export_directory->NumberOfNames; i++)
+	{
+		char* name = (char*)(base_address + name_table[i]); // dereference to a string 
 
-	
+		if (_stricmp(procedureName, name) == 0) // Perfrom a case-insensitive string compare between the procedure names
+		{
+			address = (FARPROC)(base_address + (DWORD)address_table[ordinal_table[i]]); // base_address + the RVA of the procedure
+			break;
+		}
+	}
 
-	// Find the Image Export Directory, which contains 3 useful pointers: to the Export Address Table (EAT), to the Export Name Pointer Table and to the Export Address table which holds the actual RVAs
-	// Find the ordinal (index) of the entry to the Export Address Table of the function:
-	// 1. loop through each entry in the Export Name Pointer Table with
-	// the procedureName argument and save the index of the entry in this table
-	// 2. use the previous index found at (1.) to find the ordinal at the Export Ordinal Table with: ordinals_table[name_table_index]
-	// Get to the Export Address Table 
-	// Extract the RVA at the corresponding ordinal in the EAT
-	// Add the base address (base_addr) to the RVA from the last step
-	// return the procedure adress
-
-	
-
-
-
-	return nullptr;
-
+	return address;
 }
 
 template <typename T>
@@ -75,7 +80,7 @@ T resolve_func(const char* funcName, const wchar_t* dllName = WKERNEL32_STR)
 	if (hModule == NULL)
 		std::wcerr << L"Failed to get module handle for " + std::wstring(dllName) << std::endl;
 
-	FARPROC procAddr = get_proc_address(hModule, funcName); // TODO: Replace with get_proc_address()
+	FARPROC procAddr = get_proc_address(hModule, funcName);
 	if (procAddr == NULL)
 		std::wcerr << L"Failed to resolve function: " + std::wstring(dllName) << std::endl;
 
