@@ -1,7 +1,8 @@
 #include <windows.h>
 #include <iostream>
-#include <TlHelp32.h>
 #include "utils.h"
+#include "winapi_obfuscation.h"
+#include "winapi_function_signatures.h"
 
 bool SetPrivilege(
 	HANDLE hToken,          // Access token handle
@@ -12,7 +13,7 @@ bool SetPrivilege(
 	LUID luid;
 
 	// Retrieve the LUID for the specified privilege
-	if (!LookupPrivilegeValue(
+	if (!resolve_dynamically<LookupPrivilegeValueA_t>("LookupPrivilegeValueA", ADVAPI32_STR)(
 		NULL,            // Lookup privilege on the local system
 		lpszPrivilege,   // Privilege to lookup
 		&luid))			 // Receives the LUID of the privilege
@@ -26,7 +27,7 @@ bool SetPrivilege(
 	tp.Privileges[0].Attributes = bEnablePrivilege ? SE_PRIVILEGE_ENABLED : 0;
 
 	// Enable or disable the privilege in the access token
-	if (!AdjustTokenPrivileges(
+	if (!resolve_dynamically<AdjustTokenPrivileges_t>("AdjustTokenPrivileges", ADVAPI32_STR)(
 		hToken,
 		FALSE,
 		&tp,
@@ -52,8 +53,11 @@ int EscalatePrivilege()
 {
 	HANDLE hToken;
 
+	auto OpenProcessTokenFunc = resolve_dynamically<OpenProcessToken_t>("OpenProcessToken", ADVAPI32_STR);
+	auto GetCurrentProcessFunc = resolve_dynamically<GetCurrentProcess_t>("GetCurrentProcess");
+
 	// Open the access token associated with the current process
-	if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
+	if (!OpenProcessTokenFunc(GetCurrentProcessFunc(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
 	{
 		std::cerr << "OpenProcessToken error: " << GetLastError() << std::endl;
 		return -1;
@@ -66,25 +70,29 @@ int EscalatePrivilege()
 		return -1;
 	}
 
-	CloseHandle(hToken);
+	resolve_dynamically<CloseHandle_t>("CloseHandle")(hToken);
 	return 0;
 }
 
 
 DWORD GetProcessIdByName(const char* procName)
 {
+	typedef decltype(CreateToolhelp32Snapshot)* CreateToolhelp32Snapshot_t;
+	typedef decltype(Process32First)* Process32First_t;
+	typedef decltype(Process32Next)* Process32Next_t;
+
 	PROCESSENTRY32 entry;
 	entry.dwSize = sizeof(PROCESSENTRY32);
 
-	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	HANDLE snapshot = resolve_dynamically<CreateToolhelp32Snapshot_t>("CreateToolhelp32Snapshot")(TH32CS_SNAPPROCESS, 0);
 
-	if (Process32First(snapshot, &entry) == TRUE)
+	if (resolve_dynamically<Process32First_t>("Process32First")(snapshot, &entry) == TRUE)
 	{
-		while (Process32Next(snapshot, &entry) == TRUE)
+		while (resolve_dynamically<Process32Next_t>("Process32Next")(snapshot, &entry) == TRUE)
 		{
 			if (_stricmp(entry.szExeFile, procName) == 0)
 			{
-				CloseHandle(snapshot);
+				resolve_dynamically<CloseHandle_t>("CloseHandle")(snapshot);
 				return entry.th32ProcessID;
 			}
 		}

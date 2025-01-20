@@ -36,7 +36,7 @@ typedef struct _PEB {
 	PPEB_LDR_DATA Ldr;
 } PEB, * PPEB;
 
-PPEB GetPEB() {
+static PPEB GetPEB() {
 #ifdef _WIN64
 	return (PPEB)__readgsqword(0x60);
 #else
