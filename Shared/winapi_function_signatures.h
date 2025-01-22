@@ -20,3 +20,10 @@ typedef decltype(AdjustTokenPrivileges)* AdjustTokenPrivileges_t;
 typedef decltype(OpenProcessToken)* OpenProcessToken_t;
 typedef decltype(GetCurrentProcess)* GetCurrentProcess_t;
 typedef decltype(Sleep)* Sleep_t;
+
+typedef NTSTATUS NtSetInformationThread(
+	HANDLE					  ThreadHandle,
+	THREAD_INFORMATION_CLASS ThreadInformationClass,
+	PVOID           ThreadInformation,
+	ULONG           ThreadInformationLength
+);

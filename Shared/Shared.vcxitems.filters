@@ -20,6 +20,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)winapi_obfuscation.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)winapi_obfuscation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
