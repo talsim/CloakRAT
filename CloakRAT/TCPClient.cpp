@@ -1,5 +1,7 @@
-#include "TCPClient.h"
 #include <string>
+#include "TCPClient.h"
+#include "winapi_function_signatures.h"
+#include "winapi_obfuscation.h"
 
 TCPClient::TCPClient(std::string ipAddr, int port)
 {
@@ -18,7 +20,7 @@ int TCPClient::start_connection()
 	// Init Winsock
 	WSAData data;
 	WORD ver = MAKEWORD(2, 2);
-	int wsResult = WSAStartup(ver, &data);
+	int wsResult = resolve_dynamically<WSAStartup_t>("WSAStartup", WS2_32_STR)(ver, &data);
 	if (wsResult != 0)
 	{
 		std::cerr << "Error initializing Winsock, Err #" << wsResult << std::endl;
@@ -93,7 +95,7 @@ std::string TCPClient::recv_data() {
 		// Receiving the actual buffer sent
 		int bytesReceived = recv(this->sock, &buf[0], bufLength, 0);
 		if (bytesReceived == SOCKET_ERROR || bytesReceived != bufLength)
-			std::cerr << "Error in recv(), Err #" << WSAGetLastError() << std::endl;
+			std::cerr << "Error in recv(), Err #" << resolve_dynamically<WSAGetLastError_t>("WSAGetLastError", WS2_32_STR)() << std::endl;
 
 		return buf;
 	}
@@ -102,5 +104,5 @@ std::string TCPClient::recv_data() {
 
 void TCPClient::close() {
 	closesocket(this->sock);
-	WSACleanup();
+	resolve_dynamically<WSACleanup_t>("WSACleanup", WS2_32_STR)();
 }

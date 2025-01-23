@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "ws2_32.lib") // TODO: REMOVE!
 
 class TCPClient
 {

@@ -20,6 +20,9 @@ typedef decltype(AdjustTokenPrivileges)* AdjustTokenPrivileges_t;
 typedef decltype(OpenProcessToken)* OpenProcessToken_t;
 typedef decltype(GetCurrentProcess)* GetCurrentProcess_t;
 typedef decltype(Sleep)* Sleep_t;
+typedef decltype(WSAStartup)* WSAStartup_t;
+typedef decltype(WSACleanup)* WSACleanup_t;
+typedef decltype(WSAGetLastError)* WSAGetLastError_t;
 
 typedef NTSTATUS NtSetInformationThread(
 	HANDLE					  ThreadHandle,
