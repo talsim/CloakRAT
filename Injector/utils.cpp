@@ -18,7 +18,7 @@ bool SetPrivilege(
 		lpszPrivilege,   // Privilege to lookup
 		&luid))			 // Receives the LUID of the privilege
 	{
-		std::cerr << "LookupPrivilegeValue error: " << GetLastError() << std::endl;
+		std::cerr << "LookupPrivilegeValue error: " << resolve_dynamically<GetLastError_t>("GetLastError")() << std::endl;
 		return false;
 	}
 
@@ -35,12 +35,12 @@ bool SetPrivilege(
 		NULL,
 		NULL))
 	{
-		std::cerr << "AdjustTokenPrivileges error: " << GetLastError() << std::endl;
+		std::cerr << "AdjustTokenPrivileges error: " << resolve_dynamically<GetLastError_t>("GetLastError")() << std::endl;
 		return false;
 	}
 
 	// Check for any errors that may have occurred during the adjustment
-	if (GetLastError() == ERROR_NOT_ALL_ASSIGNED) {
+	if (resolve_dynamically<GetLastError_t>("GetLastError")() == ERROR_NOT_ALL_ASSIGNED) {
 		std::cerr << "The token does not have the specified privilege." << std::endl;
 		return false;
 	}
@@ -59,7 +59,7 @@ int EscalatePrivilege()
 	// Open the access token associated with the current process
 	if (!OpenProcessTokenFunc(GetCurrentProcessFunc(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
 	{
-		std::cerr << "OpenProcessToken error: " << GetLastError() << std::endl;
+		std::cerr << "OpenProcessToken error: " << resolve_dynamically<GetLastError_t>("GetLastError")() << std::endl;
 		return -1;
 	}
 

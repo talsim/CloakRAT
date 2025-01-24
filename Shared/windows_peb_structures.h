@@ -35,11 +35,3 @@ typedef struct _PEB {
 	PVOID Reserved3[2];
 	PPEB_LDR_DATA Ldr;
 } PEB, * PPEB;
-
-static PPEB GetPEB() {
-#ifdef _WIN64
-	return (PPEB)__readgsqword(0x60);
-#else
-	return (PPEB)__readfsdword(0x30);
-#endif 
-}

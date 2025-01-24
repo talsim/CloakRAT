@@ -3,6 +3,7 @@
 #include "windows_peb_structures.h"
 
 static std::wstring to_wstring(const char* narrowStr);
+static PPEB GetPEB();
 
 // Walking through the PEB here to find the base addr
 void* get_loaded_module_base_addr(const char* moduleName)
@@ -47,7 +48,7 @@ FARPROC get_proc_address(HMODULE hModule, const char* procedureName)
 	FARPROC address = nullptr;
 
 	IMAGE_DOS_HEADER* dos_header = (IMAGE_DOS_HEADER*)base_address;
-	IMAGE_NT_HEADERS* nt_headers = (IMAGE_NT_HEADERS*)(base_address + dos_header->e_lfanew); // Offset to PE/NT header
+	IMAGE_NT_HEADERS* nt_headers = (IMAGE_NT_HEADERS*)(base_address + dos_header->e_lfanew); // Offset to the PE/NT header
 	IMAGE_OPTIONAL_HEADER optional_header = nt_headers->OptionalHeader;
 	IMAGE_EXPORT_DIRECTORY* export_directory = (IMAGE_EXPORT_DIRECTORY*)(base_address + optional_header.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress); // RVA to the export directory
 
@@ -69,7 +70,6 @@ FARPROC get_proc_address(HMODULE hModule, const char* procedureName)
 	return address;
 }
 
-// Helper function
 static std::wstring to_wstring(const char* narrowStr)
 {
 	size_t len = strlen(narrowStr) + 1;
@@ -78,4 +78,12 @@ static std::wstring to_wstring(const char* narrowStr)
 	wideStr.resize(len - 1); // Trim trailing null character
 	
 	return wideStr;
+}
+
+static PPEB GetPEB() {
+#ifdef _WIN64
+	return (PPEB)__readgsqword(0x60);
+#else
+	return (PPEB)__readfsdword(0x30);
+#endif 
 }
