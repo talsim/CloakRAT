@@ -41,29 +41,3 @@ BOOL WINAPI DllMain(HINSTANCE dllHandle, DWORD reason_for_call, LPVOID lpvReserv
 	}
 	return TRUE;
 }
-
-void NTAPI TLSCallback(PVOID dllHandle, DWORD reason, PVOID reserved)
-{
-	switch (reason) {
-	case DLL_PROCESS_ATTACH:
-		/* Check for debugging here - maybe create a thread that will run infinitely and check for it debuggers*/
-		break;
-	case DLL_THREAD_ATTACH:
-		break;
-	case DLL_THREAD_DETACH:
-		break;
-	case DLL_PROCESS_DETACH:
-		break;
-	}
-}
-
-#ifdef _WIN64 
-#pragma const_seg(".CRT$XLB")
-extern "C" PIMAGE_TLS_CALLBACK tls_callback = TLSCallback;
-#pragma const_seg()
-#else
-#pragma data_seg(".CRT$XLB")
-PIMAGE_TLS_CALLBACK tls_callback = TLSCallback;
-#pragma data_seg()
-#endif
-

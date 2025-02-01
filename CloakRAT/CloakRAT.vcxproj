@@ -132,6 +132,7 @@
   <ItemGroup>
     <ClCompile Include="CloakRAT.cpp" />
     <ClCompile Include="TCPClient.cpp" />
+    <ClCompile Include="TLSCallback.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
