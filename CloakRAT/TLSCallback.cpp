@@ -1,12 +1,16 @@
 #pragma once
 
 #include <windows.h>
+#include "utils.h"
+#include "winapi_obfuscation.h"
+
 
 void NTAPI TLSCallback(PVOID dllHandle, DWORD reason, PVOID reserved)
 {
 	switch (reason) {
 	case DLL_PROCESS_ATTACH:
-		/* Check for debugging here */
+		if (resolve_dynamically<IsDebuggerPresent_t>("IsDebuggerPresent")() || isDebuggerAttached())
+			// Do something here
 		break;
 	case DLL_THREAD_ATTACH:
 		break;
@@ -46,13 +50,13 @@ _CRTALLOC(".CRT$XLZ") PIMAGE_TLS_CALLBACK __xl_z = 0;
 * Note: we can also choose to place it at .CRT$XLF and it will work fine, because the linker will merge all sections with .CRT$XL that we defined, to create the TLS Callback array.
 * i.e if we define a section and set a null terminator there, then the Windows loader will stop at the first null terminator, and treat it as the end of the array (instead of the last section .CRT$XLZ or the symbol __xl_z)
 */
-extern "C" const PIMAGE_TLS_CALLBACK tls_callback_func = TLSCallback; // in x64, the access rights to the CRT sections are different than in x86.
+extern "C" const PIMAGE_TLS_CALLBACK tls_callback_func = TLSCallback; // in x86-64, the access rights to the CRT sections are different than in x86.
 #pragma const_seg()
 #else
 #pragma comment (linker, "/INCLUDE:__tls_used")
-#pragma comment (linker, "/INCLUDE:_tls_callback_func")
+#pragma comment (linker, "/INCLUDE:_tls_callback_func") // in x86, the the complier prepends an underscore to symbols
 #pragma data_seg(".CRT$XLB")
-extern "C" PIMAGE_TLS_CALLBACK _tls_callback_func = TLSCallback;
+extern "C" PIMAGE_TLS_CALLBACK tls_callback_func = TLSCallback;
 #pragma data_seg()
 #endif
 

