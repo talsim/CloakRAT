@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma comment(lib, "advapi32.lib")
-
 bool SetPrivilege(
 	HANDLE hToken,          // Access token handle
 	LPCTSTR lpszPrivilege,  // Name of the privilege to enable/disable

