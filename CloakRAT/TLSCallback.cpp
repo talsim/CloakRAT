@@ -5,19 +5,16 @@
 #include "winapi_obfuscation.h"
 
 
+
+// This callback will be called by the Windows Loader as soon as the DLL is fully loaded to the target process (even before DllMain() will be called).
 void NTAPI TLSCallback(PVOID dllHandle, DWORD reason, PVOID reserved)
 {
-	switch (reason) {
-	case DLL_PROCESS_ATTACH:
-		if (resolve_dynamically<IsDebuggerPresent_t>("IsDebuggerPresent")() || isDebuggerAttached())
-			// Do something here
-		break;
-	case DLL_THREAD_ATTACH:
-		break;
-	case DLL_THREAD_DETACH:
-		break;
-	case DLL_PROCESS_DETACH:
-		break;
+	if (DLL_PROCESS_ATTACH)
+	{
+		if (isDebuggerAttached() || resolve_dynamically<IsDebuggerPresent_t>("IsDebuggerPresent")())
+		{
+			// call a junk function that will segfault
+		}
 	}
 }
 
@@ -47,7 +44,7 @@ _CRTALLOC(".CRT$XLZ") PIMAGE_TLS_CALLBACK __xl_z = 0;
 // Therfore, we tell the linker to place the address of the callback after the __xl_a symbol, at &__xl_a + 1 (which is CRT$XLB, because the linker organizes this alphabetically)
 #pragma const_seg(".CRT$XLB") // Place at the &__xl_a + 1 address, to be part of the TLS Callback array of pointers.
 /*
-* Note: we can also choose to place it at .CRT$XLF and it will work fine, because the linker will merge all sections with .CRT$XL that we defined, to create the TLS Callback array.
+* Note: we can also choose to place it at e.g .CRT$XLF and it will work fine, because the linker will merge all sections with .CRT$XL that we defined, to create the TLS Callback array.
 * i.e if we define a section and set a null terminator there, then the Windows loader will stop at the first null terminator, and treat it as the end of the array (instead of the last section .CRT$XLZ or the symbol __xl_z)
 */
 extern "C" const PIMAGE_TLS_CALLBACK tls_callback_func = TLSCallback; // in x86-64, the access rights to the CRT sections are different than in x86.

