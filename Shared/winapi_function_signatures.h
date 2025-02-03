@@ -22,12 +22,13 @@ typedef decltype(CreateProcessA)* CreateProcessA_t;
 typedef decltype(CreatePipe)* CreatePipe_t;
 typedef decltype(SetHandleInformation)* SetHandleInformation_t;
 typedef decltype(ReadFile)* ReadFile_t;
+typedef decltype(GetCurrentThread)* GetCurrentThread_t;
 
 // Note: Due to header conflicts between windows.h and WS2tcpip.h, ws2_32.dll related function signatures are directly declared in the TCPClient.h header.
 
-typedef NTSTATUS NtSetInformationThread(
-	HANDLE					  ThreadHandle,
-	THREAD_INFORMATION_CLASS ThreadInformationClass,
-	PVOID           ThreadInformation,
-	ULONG           ThreadInformationLength
+typedef NTSTATUS (NTAPI* NtSetInformationThread_t)(
+	HANDLE					 ThreadHandle,	
+	DWORD					 ThreadInformationClass,
+	PVOID					 ThreadInformation,
+	ULONG					 ThreadInformationLength
 );

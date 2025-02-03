@@ -90,7 +90,7 @@ std::string exec(std::string command)
 	return commandResult;
 }
 
-bool isDebuggerAttached()
+bool isDebuggerAttached() // bad function, the debugge just sees the breakpoint, and can choose to continue here or not (he can choose to bypass the `return true` or not)
 {
 	__try
 	{

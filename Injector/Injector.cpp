@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 {
 	const char* dllPath = DLL_PATH;
 	const char* procName = argc <= 1 ? TARGET_EXE : argv[1];
-
+	
 	if (EscalatePrivilege() == -1)
 	{
 		std::cerr << "Failed to escalate privileges. The injection may not work!" << std::endl;
@@ -46,6 +46,7 @@ int main(int argc, char** argv)
 			std::cerr << "Error in CreateRemoteThread(): Err#" << GetLastError() << std::endl;
 		else
 			resolve_dynamically<CloseHandle_t>("CloseHandle")(threadHandle);
+			
 	}
 	else {
 		std::cerr << "Error in OpenProcess(): Err#" << GetLastError() << std::endl;

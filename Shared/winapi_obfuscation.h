@@ -6,6 +6,7 @@
 #include "winapi_function_signatures.h"
 
 #define KERNEL32_STR "kernel32.dll"
+#define NTDLL_STR "ntdll.dll"
 #define ADVAPI32_STR "advapi32.dll"
 #define WS2_32_STR "ws2_32.dll"
 
