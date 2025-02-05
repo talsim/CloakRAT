@@ -17,7 +17,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)junk_codes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)noise.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)winapi_obfuscation.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)windows_peb_structures.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)winapi_function_signatures.h" />
@@ -26,7 +26,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)winapi_obfuscation.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="$(MSBuildThisFileDirectory)junk_codes.asm">
+    <MASM Include="$(MSBuildThisFileDirectory)destruction_code.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>

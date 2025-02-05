@@ -1,5 +1,4 @@
-
-
+;;;;;;;;;;;;;; MAKE x32 PORTABLE
 .code
 
 junk_1 MACRO
@@ -17,9 +16,10 @@ what:
 	xchg rbx, rax
 	sub rax, -1
 
-	add rsp, 16h
+	add rsp, 2h
 	pop rbp
 ENDM
+
 
 junk_2 MACRO
 	push rbp
@@ -38,37 +38,37 @@ b:
 	nop
 	nop
 
-	add rsp, 16h
+	add rsp, 8h
 	pop rbp
 ENDM
 
-small_junk_1 PROC
+
+small_junk PROC
 	test ecx, ebx
 	jne yo
 	mov eax, eax
 yo:
 	nop
 	mov ebp, ebp
-small_junk_1 ENDP
+small_junk ENDP
 
 
-destruction_1 PROC
+jmp_rsp_destruction PROC
 	junk_2
 	mov rax, [rsp+10h]
 	junk_1
+	mov rbx, rax
+	nop
 	jmp rax
-destruction_1 ENDP
+jmp_rsp_destruction ENDP
 
 
-destruction_2 PROC
-
+rsp_corrupt_destruction PROC
 	junk_1
-
-	add rsp, 40h
-
+	add rsp, 16h
 	junk_2
-
-destruction_2 ENDP
+	ret
+rsp_corrupt_destruction ENDP
 
 
 END

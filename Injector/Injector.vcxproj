@@ -139,7 +139,13 @@
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <MASM Update="C:\Users\tal78\Desktop\Workspace\CloakRAT\Shared\destruction_code.asm">
+      <FileType>Document</FileType>
+    </MASM>
     <MASM Update="C:\Users\tal78\Desktop\Workspace\CloakRAT\Shared\junk_codes.asm">
+      <FileType>Document</FileType>
+    </MASM>
+    <MASM Update="C:\Users\tal78\Desktop\Workspace\CloakRAT\Shared\termination_routines.asm">
       <FileType>Document</FileType>
     </MASM>
   </ItemGroup>
