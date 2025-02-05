@@ -16,7 +16,8 @@ void NTAPI TLSCallback(PVOID dllHandle, DWORD reason, PVOID reserved)
 			MessageBoxA(NULL, "LOL", "debuggingg", MB_OK);
 
 			// call a junk function that will segfault
-			JunkAsm1();
+
+			destruction_1();
 		}
 	}
 }
