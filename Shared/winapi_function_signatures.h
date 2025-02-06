@@ -23,6 +23,8 @@ typedef decltype(CreatePipe)* CreatePipe_t;
 typedef decltype(SetHandleInformation)* SetHandleInformation_t;
 typedef decltype(ReadFile)* ReadFile_t;
 typedef decltype(GetCurrentThread)* GetCurrentThread_t;
+typedef decltype(VirtualProtect)* VirtualProtect_t;
+typedef decltype(GetModuleHandleW)* GetModuleHandleW_t;
 
 // Note: Due to header conflicts between windows.h and WS2tcpip.h, ws2_32.dll related function signatures are directly declared in the TCPClient.h header.
 

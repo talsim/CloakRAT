@@ -18,7 +18,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)winapi_obfuscation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)noise.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)junk_codes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

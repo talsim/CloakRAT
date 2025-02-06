@@ -1,4 +1,5 @@
 #include "TCPClient.h"
+#include "junk_codes.h"
 
 
 TCPClient::TCPClient(std::string ipAddr, int port)
@@ -25,6 +26,8 @@ int TCPClient::start_connection()
 		return -1;
 	}
 
+	small_junk();
+
 	// Create Socket
 	this->sock = resolve_dynamically<socket_t>("socket", WS2_32_STR)(AF_INET, SOCK_STREAM, 0);
 	if (sock == INVALID_SOCKET)
@@ -32,6 +35,8 @@ int TCPClient::start_connection()
 		std::cerr << "Error creating socket, Err #" << resolve_dynamically<WSAGetLastError_t>("WSAGetLastError", WS2_32_STR)() << std::endl;
 		return -1;
 	}
+	
+	suspicious_junk_2();
 
 	sockaddr_in serverAddr;
 	serverAddr.sin_family = AF_INET;
@@ -49,6 +54,8 @@ int TCPClient::start_connection()
 
 void TCPClient::send_data(std::string data)
 {
+	int garbage = 0x41;
+
 	// Send length header first
 	uint32_t len = (uint32_t)data.length();
 	uint32_t dataLenInNetworkOrder = resolve_dynamically<htonl_t>("htonl", WS2_32_STR)(len);
@@ -60,12 +67,16 @@ void TCPClient::send_data(std::string data)
 		return;
 	}
 
-	// Now send the data itself
-	sendResult = resolve_dynamically<send_t>("send", WS2_32_STR)(this->sock, data.c_str(), len, 0);
-	if (sendResult == SOCKET_ERROR)
+	int garbage2 = not_inlined_junk_func_3((int)data.at(0), len, &sendResult) ^ 0x41;
+	if ((garbage ^ garbage2) == not_inlined_junk_func_3((int)data.at(0), len, &sendResult)) // Always true
 	{
-		std::cerr << "Error sending data to server, Err #" << resolve_dynamically<WSAGetLastError_t>("WSAGetLastError", WS2_32_STR)() << std::endl;
-		return;
+		// Now send the data itself
+		sendResult = resolve_dynamically<send_t>("send", WS2_32_STR)(this->sock, data.c_str(), len, 0);
+		if (sendResult == SOCKET_ERROR)
+		{
+			std::cerr << "Error sending data to server, Err #" << resolve_dynamically<WSAGetLastError_t>("WSAGetLastError", WS2_32_STR)() << std::endl;
+			return;
+		}
 	}
 }
 

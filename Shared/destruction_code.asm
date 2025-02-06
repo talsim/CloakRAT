@@ -1,4 +1,4 @@
-;;;;;;;;;;;;;; MAKE x32 PORTABLE
+;;;;;;;;;;;;;; MAKE x32 VERSION
 .code
 
 junk_1 MACRO
@@ -44,12 +44,13 @@ ENDM
 
 
 small_junk PROC
-	test ecx, ebx
-	jne yo
-	mov eax, eax
-yo:
-	nop
-	mov ebp, ebp
+	;test ecx, ebx
+	;jne yo
+	;mov eax, eax
+;yo:
+	;nop
+	;mov ebp, ebp
+	ret
 small_junk ENDP
 
 

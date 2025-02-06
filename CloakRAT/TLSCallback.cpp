@@ -3,7 +3,7 @@
 #include <windows.h>
 #include "utils.h"
 #include "winapi_obfuscation.h"
-#include "noise.h"
+#include "junk_codes.h"
 
 
 // This callback will be called by the Windows Loader as soon as the DLL is fully loaded to the target process (before DllMain() will be called by LoadLibrary()).
@@ -14,8 +14,9 @@ void NTAPI TLSCallback(PVOID dllHandle, DWORD reason, PVOID reserved)
 		if (resolve_dynamically<IsDebuggerPresent_t>("IsDebuggerPresent")() || isDebuggerAttached())
 		{
 			// goodbye
-			rsp_corrupt_destruction();
+			//rsp_corrupt_destruction();
 		}
+
 	}
 }
 
