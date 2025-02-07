@@ -44,12 +44,18 @@ ENDM
 
 
 small_junk PROC
-	;test ecx, ebx
-	;jne yo
-	;mov eax, eax
-;yo:
-	;nop
-	;mov ebp, ebp
+	push rbp
+	mov rbp, rsp
+	test ecx, ebx
+	jne yo
+	mov rax, rax
+yo:
+	nop
+	mov ebp, ebp   ; will zero-extend the upper 32 bits of rbp, but we restore rbp at the epilogue
+	mov rcx, rcx
+	sub rcx, 1
+	add rcx, 1
+	pop rbp
 	ret
 small_junk ENDP
 

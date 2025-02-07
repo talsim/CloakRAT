@@ -17,7 +17,7 @@ static int junk_var_1;
 static int junk_var_2;
 static INT_PTR junk_var_3;
 static wchar_t junk_var_4[256];
-static double junk_var_5 = not_inlined_junk_func_4();
+static double junk_var_5 = not_inlined_junk_func_4(); // will call the function when the header is included
 
 extern "C"
 { // termination routines (implemented in destruction_code.asm)
