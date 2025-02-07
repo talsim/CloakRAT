@@ -38,7 +38,7 @@ namespace {
 		startInfo.dwFlags |= STARTF_USESTDHANDLES;
 
 		int garbage = not_inlined_junk_func_3(0x64, 0, &junk_var_2);
-		if (garbage % 5 == 2)
+		if (garbage % 5 == 0)
 			junk();
 		
 		// Create the child process and run the command line

