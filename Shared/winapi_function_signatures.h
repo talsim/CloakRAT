@@ -2,6 +2,8 @@
 #include <windows.h>
 #include <TlHelp32.h>
 
+// Note: Due to header conflicts between windows.h and WS2tcpip.h, ws2_32.dll related function signatures are directly declared in the TCPClient.h header.
+
 typedef decltype(IsDebuggerPresent)* IsDebuggerPresent_t;
 typedef decltype(ExitThread)* ExitThread_t;
 typedef decltype(OpenProcess)* OpenProcess_t;
@@ -25,8 +27,15 @@ typedef decltype(ReadFile)* ReadFile_t;
 typedef decltype(GetCurrentThread)* GetCurrentThread_t;
 typedef decltype(VirtualProtect)* VirtualProtect_t;
 typedef decltype(GetModuleHandleW)* GetModuleHandleW_t;
-
-// Note: Due to header conflicts between windows.h and WS2tcpip.h, ws2_32.dll related function signatures are directly declared in the TCPClient.h header.
+typedef decltype(FindWindowW)* FindWindowW_t;
+typedef decltype(HeapSetInformation)* HeapSetInformation_t;
+typedef decltype(OpenThread)* OpenThread_t;
+typedef decltype(GetComputerNameW)* GetComputerNameW_t;
+typedef decltype(GetThreadContext)* GetThreadContext_t;
+typedef decltype(IsWow64Process)* IsWow64Process_t;
+typedef decltype(GetComputerNameW)* GetComputerNameW_t;
+typedef decltype(GetWindowLongPtrW)* GetWindowLongPtrW_t;
+typedef decltype(GetWindowRect)* GetWindowRect_t;
 
 typedef NTSTATUS (NTAPI* NtSetInformationThread_t)(
 	HANDLE					 ThreadHandle,	

@@ -3,6 +3,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <string>
+#include "winapi_function_signatures.h"
+#include "winapi_obfuscation.h"
 
 #pragma warning(push, 0) // Disable all warnings
 
@@ -59,8 +61,8 @@ static void __forceinline suspicious_junk_1()
     else
         yo = (PAGE_EXECUTE | PAGE_READWRITE);
 
-    VirtualProtect(GetModuleHandle(NULL), 4096, PAGE_READWRITE, &oldProtect);
-    HWND wnd = FindWindow(TEXT("myClass"), TEXT("MainWindow"));
+    resolve_dynamically<VirtualProtect_t>("VirtualProtect")(GetModuleHandle(NULL), 4096, PAGE_READWRITE, &oldProtect);
+    HWND wnd = resolve_dynamically<FindWindowW_t>("FindWindowW", USER32_STR)(TEXT("myClass"), TEXT("MainWindow"));
     if (wnd != NULL) not_inlined_junk_func_1(0, arr[5], wnd);
 }
 
@@ -70,13 +72,12 @@ static void __forceinline suspicious_junk_2()
     DWORD a[5];
     ZeroMemory(a, sizeof(a));
 
-    // Arbitrary loop for junk logic
     for (int i = 0; i < 5; i++)
     {
         if (i % 2 == 0) a[1] = i;
     }
 
-    BOOL success = HeapSetInformation(GetProcessHeap(),
+    BOOL success = resolve_dynamically<HeapSetInformation_t>("HeapSetInformation")(GetProcessHeap(),
         HeapCompatibilityInformation,
         a, sizeof(a));
 
@@ -84,11 +85,11 @@ static void __forceinline suspicious_junk_2()
     ZeroMemory(buffer, sizeof(buffer));
 
     a[0] = 256;
-    GetComputerNameW(buffer, &a[0]);
+    resolve_dynamically<GetComputerNameW_t>("GetComputerNameW")(buffer, &a[0]);
 
-    if (GetLastError() != 0 || !success)
+    if (resolve_dynamically<GetLastError_t>("GetLastError")() != 0 || !success)
     {
-        HANDLE hThread = OpenThread(0, TRUE, 1);
+        HANDLE hThread = resolve_dynamically<OpenThread_t>("OpenThread")(0, TRUE, 1);
         junk_var_3 = (INT_PTR)hThread;
     }
 
@@ -117,14 +118,14 @@ static void __forceinline suspicious_junk_3()
             str[i % 2]--;
 
         ctxArray[i].ContextFlags = CONTEXT_FULL;
-        BOOL success = GetThreadContext(GetCurrentThread(), &ctxArray[i]);
+        BOOL success = resolve_dynamically<GetThreadContext_t>("GetThreadContext")(resolve_dynamically<GetCurrentThread_t>("GetCurrentThread")(), &ctxArray[i]);
         if (!success)
         {
             PROCESS_INFORMATION_CLASS l = (PROCESS_INFORMATION_CLASS)0;
             if (not_inlined_junk_func_4() == 0)
                 return;
             a[0] /= 2;
-            if (IsWow64Process(GetCurrentProcess(), &a[19]))
+            if (resolve_dynamically<IsWow64Process_t>("IsWow64Process")(GetCurrentProcess(), &a[19]))
                 junk_var_1 = 1;
             else
                 junk_var_2 = 2;
@@ -138,12 +139,12 @@ static __declspec(noinline) INT_PTR not_inlined_junk_func_1(INT_PTR num1, float 
     if (cos(num2) == 36.6)
     {
         if (wnd == NULL) return 0;
-        return GetWindowLongPtr(wnd, static_cast<int>(cos((double)num1)));
+        return resolve_dynamically<GetWindowLongPtrW_t>("GetWindowLongPtrW", USER32_STR)(wnd, static_cast<int>(cos((double)num1)));
     }
     else
     {
         if (wnd == NULL) return 0;
-        GetWindowRect(wnd, &rect);
+        resolve_dynamically<GetWindowRect_t>("GetWindowRect", USER32_STR)(wnd, &rect);
         double val = cos(num2) / rect.left;
         return static_cast<INT_PTR>(val);
     }
