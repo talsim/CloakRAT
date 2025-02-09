@@ -5,6 +5,9 @@
     <HasSharedItems>true</HasSharedItems>
     <ItemsProjectGuid>{e04aa78f-f69d-4ebd-8975-2781bcdfea3c}</ItemsProjectGuid>
   </PropertyGroup>
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
@@ -14,6 +17,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)junk_codes.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)winapi_obfuscation.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)windows_peb_structures.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)winapi_function_signatures.h" />
@@ -21,4 +25,15 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)winapi_obfuscation.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <MASM Include="$(MSBuildThisFileDirectory)destruction_code.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </MASM>
+  </ItemGroup>
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+  </ImportGroup>
 </Project>

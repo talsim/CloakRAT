@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 {
 	const char* dllPath = DLL_PATH;
 	const char* procName = argc <= 1 ? TARGET_EXE : argv[1];
-	
+
 	if (EscalatePrivilege() == -1)
 	{
 		std::cerr << "Failed to escalate privileges. The injection may not work!" << std::endl;
@@ -24,7 +24,6 @@ int main(int argc, char** argv)
 		procID = GetProcessIdByName(procName);
 		resolve_dynamically<Sleep_t>("Sleep")(300);
 	}
-	
 	HANDLE hProc = resolve_dynamically<OpenProcess_t>("OpenProcess")(PROCESS_ALL_ACCESS, 0, procID);
 
 	if (hProc && hProc != INVALID_HANDLE_VALUE) // if we got a handle successfully
