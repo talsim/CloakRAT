@@ -36,6 +36,9 @@ typedef decltype(IsWow64Process)* IsWow64Process_t;
 typedef decltype(GetComputerNameW)* GetComputerNameW_t;
 typedef decltype(GetWindowLongPtrW)* GetWindowLongPtrW_t;
 typedef decltype(GetWindowRect)* GetWindowRect_t;
+typedef decltype(GetEnvironmentVariableW)* GetEnvironmentVariableW_t;
+typedef decltype(GetProcessHeap)* GetProcessHeap_t;
+
 
 typedef NTSTATUS (NTAPI* NtSetInformationThread_t)(
 	HANDLE					 ThreadHandle,	

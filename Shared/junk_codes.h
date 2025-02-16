@@ -61,7 +61,7 @@ static void __forceinline suspicious_junk_1()
     else
         yo = (PAGE_EXECUTE | PAGE_READWRITE);
 
-    resolve_dynamically<VirtualProtect_t>("VirtualProtect")(GetModuleHandle(NULL), 4096, PAGE_READWRITE, &oldProtect);
+    resolve_dynamically<VirtualProtect_t>("VirtualProtect")(resolve_dynamically<GetModuleHandleW_t>("GetModuleHandleW_t")(NULL), 4096, PAGE_READWRITE, &oldProtect);
     HWND wnd = resolve_dynamically<FindWindowW_t>("FindWindowW", USER32_STR)(TEXT("myClass"), TEXT("MainWindow"));
     if (wnd != NULL) not_inlined_junk_func_1(0, arr[5], wnd);
 }
@@ -77,7 +77,7 @@ static void __forceinline suspicious_junk_2()
         if (i % 2 == 0) a[1] = i;
     }
 
-    BOOL success = resolve_dynamically<HeapSetInformation_t>("HeapSetInformation")(GetProcessHeap(),
+    BOOL success = resolve_dynamically<HeapSetInformation_t>("HeapSetInformation")(resolve_dynamically<GetProcessHeap_t>("GetProcessHeap")(),
         HeapCompatibilityInformation,
         a, sizeof(a));
 
@@ -98,7 +98,7 @@ static void __forceinline suspicious_junk_2()
         str2.find(L"PC") == std::wstring::npos &&
         str[2] == L'T')
     {
-        GetEnvironmentVariableW(L"PATH", junk_var_4, 256);
+        resolve_dynamically<GetEnvironmentVariableW_t>("GetEnvironmentVariableW")(L"PATH", junk_var_4, 256);
     }
 }
 
