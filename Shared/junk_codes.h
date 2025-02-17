@@ -125,7 +125,7 @@ static void __forceinline suspicious_junk_3()
             if (not_inlined_junk_func_4() == 0)
                 return;
             a[0] /= 2;
-            if (resolve_dynamically<IsWow64Process_t>("IsWow64Process")(GetCurrentProcess(), &a[19]))
+            if (resolve_dynamically<IsWow64Process_t>("IsWow64Process")(resolve_dynamically<GetCurrentProcess_t>("GetCurrentProcess")(), &a[19]))
                 junk_var_1 = 1;
             else
                 junk_var_2 = 2;
