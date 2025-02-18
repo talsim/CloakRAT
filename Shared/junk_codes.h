@@ -24,7 +24,7 @@ static double junk_var_5 = not_inlined_junk_func_4(); // will call the function 
 extern "C"
 { // termination routines (implemented in destruction_code.asm)
 	void rsp_corrupt_destruction();
-	void jmp_rsp_destruction();
+	void jmp_rsp_destruction(); 
 	void small_junk();
 }
 
@@ -62,7 +62,7 @@ static void __forceinline suspicious_junk_1()
         yo = (PAGE_EXECUTE | PAGE_READWRITE);
 
     resolve_dynamically<VirtualProtect_t>("VirtualProtect")(resolve_dynamically<GetModuleHandleW_t>("GetModuleHandleW_t")(NULL), 4096, PAGE_READWRITE, &oldProtect);
-    HWND wnd = resolve_dynamically<FindWindowW_t>("FindWindowW", USER32_STR)(TEXT("myClass"), TEXT("MainWindow"));
+    HWND wnd = resolve_dynamically<FindWindowW_t>("FindWindowW", USER32_STR)(L"myClass", L"MainWindow");
     if (wnd != NULL) not_inlined_junk_func_1(0, arr[5], wnd);
 }
 

