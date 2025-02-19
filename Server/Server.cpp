@@ -1,8 +1,6 @@
 #include <iostream>
 #include <string>
 #include "TCPServer.h"
-#include "winapi_obfuscation.h"
-#include "winapi_function_signatures.h"
 
 int main()
 {

