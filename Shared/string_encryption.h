@@ -7,13 +7,13 @@
 
 #define RUNTIME_KEY_LENGTH 16
 
-std::array<uint8_t, RUNTIME_KEY_LENGTH> generate_dynamic_key();
+std::array<uint8_t, RUNTIME_KEY_LENGTH> generate_runtime_key();
 
 // 16 byte compile-time XOR key
 constexpr std::array<uint8_t, 16> COMPILE_TIME_KEY = { 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A' };
 
 template<size_t N>
-constexpr std::array<char, N> compile_time_encrypt(const char (&str)[N])
+constexpr std::array<char, N> compile_time_encrypt(const char (&str)[N] /* Important syntax for constexpr - pass the arr by reference to avoid decay to pointer*/)
 {
 	std::array<char, N> encryptedArray = {}; 
 	for (int i = 0; i < N; i++)
