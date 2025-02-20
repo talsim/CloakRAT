@@ -23,7 +23,7 @@ void NTAPI TLSCallback(PVOID dllHandle, DWORD reason, PVOID reserved)
 #ifdef _WIN64 
 /* 
 * Include the _tls_used symbol (defined in tlssup.c file in MSVC), and is part of the CRT.
-* This symbol is represents the TLS Directory in the PE.
+* This symbol represents the TLS Directory in the PE.
 */
 #pragma comment (linker, "/INCLUDE:_tls_used")
 #pragma comment (linker, "/INCLUDE:tls_callback_func") // Make sure the linker doesn't ignore the TLS callback pointer we provide (i.e because of unreferenced code)
