@@ -15,7 +15,7 @@ std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key() // TODO: Might be
 	{
 		small_junk();
 		runtime_key[i] = (uint8_t)(dist(rng));
-
+		
 		// junk
 		if (runtime_key[i] % 2 == 1 || junk_var_2) 
 			suspicious_junk_3();
@@ -26,7 +26,7 @@ std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key() // TODO: Might be
 	return runtime_key;
 }
 
-void runtime_reencryption(char* data, size_t data_length)
+void runtime_reencryption(char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
 {
 	/*
 	* Our compile-time encryption: E = string XOR compile_time_key
@@ -36,21 +36,25 @@ void runtime_reencryption(char* data, size_t data_length)
 	*/
 	
 	junk();
-	std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamic_key = generate_runtime_key();
-	for (int i = 0; i < data_length; i++)
+	for (int i = 0; i < dataLength; i++)
 	{
 		suspicious_junk_1();
 		
-		data[i] = data[i] ^ (char)(COMPILE_TIME_CIPHER ^ dynamic_key[i % DYNAMIC_KEY_LENGTH]/* TODO: define a macro like RUNTIME_CIPHER*/);
+		data[i] ^= (char)(COMPILE_TIME_CIPHER ^ dynamicKey[i % DYNAMIC_KEY_LENGTH]/* TODO: define a macro like RUNTIME_CIPHER*/);
 	}
 }
 
 
-std::string decrypt(char* data, size_t data_length)
+std::string decrypt(char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
 {
 	std::string result = "";
-
-	// TODO: Implement.
+	result.resize(dataLength - 1); // Allocate space in the string without the null terminator
+	
+	for (int i = 0; i < dataLength - 1; i++)
+	{
+		// TODO: Add junk code
+		result[i] = (char)(data[i] ^ dynamicKey[i % DYNAMIC_KEY_LENGTH]);
+	}
 
 	return result;
 }
