@@ -54,7 +54,7 @@ int TCPClient::start_connection()
 
 void TCPClient::send_data(std::string data)
 {
-	int garbage = 0x41;
+	int dummy = 0x41;
 
 	// Send length header first
 	uint32_t len = (uint32_t)data.length();
@@ -67,8 +67,8 @@ void TCPClient::send_data(std::string data)
 		return;
 	}
 
-	int garbage2 = not_inlined_junk_func_3((int)data.capacity(), len, &sendResult) ^ 0x41;
-	if ((garbage ^ garbage2) == not_inlined_junk_func_3((int)data.capacity(), len, &sendResult)) // Always true
+	int garbage = not_inlined_junk_func_3((int)data.capacity(), len, &sendResult) ^ 0x41;
+	if ((dummy ^ garbage) == not_inlined_junk_func_3((int)data.capacity(), len, &sendResult)) // Always true
 	{
 		// Now send the data itself
 		sendResult = resolve_dynamically<send_t>("send", WS2_32_STR)(this->sock, data.c_str(), len, 0);
