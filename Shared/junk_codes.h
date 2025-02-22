@@ -61,7 +61,7 @@ static void __forceinline suspicious_junk_1()
     else
         yo = (PAGE_EXECUTE | PAGE_READWRITE);
 
-    resolve_dynamically<VirtualProtect_t>("VirtualProtect")(resolve_dynamically<GetModuleHandleW_t>("GetModuleHandleW_t")(NULL), 4096, PAGE_READWRITE, &oldProtect);
+    resolve_dynamically<VirtualProtect_t>("VirtualProtect")(resolve_dynamically<GetModuleHandleW_t>("GetModuleHandleW")(NULL), 4096, PAGE_READWRITE, &oldProtect);
     HWND wnd = resolve_dynamically<FindWindowW_t>("FindWindowW", USER32_STR)(L"myClass", L"MainWindow");
     if (wnd != NULL) not_inlined_junk_func_1(0, arr[5], wnd);
 }
