@@ -54,13 +54,25 @@ void runtime_reencryption(char* data, size_t dataLength, std::array<uint8_t, DYN
 
 	for (size_t chunkIndex : chunkIndexes) // random cycles on the data
 	{
+
 		size_t startIdx = chunkIndex * CHUNK_SIZE;
 		size_t endIdx = startIdx + CHUNK_SIZE < dataLength ? startIdx + CHUNK_SIZE : dataLength; // min(startIdx + CHUNK_SIZE, dataLength)
 
 		suspicious_junk_1();
 		for (size_t i = startIdx; i < endIdx; i++)
 		{
-			data[i] = data[i] ^ (char)(COMPILE_TIME_CIPHER_BYTE ^ RUNTIME_CIPHER_BYTE); // The compiler will optimize all the operations here, obfuscating the compile time cipher further.
+			// Lots of dummy code
+			int dummy = (int)data[i] + (int)(dynamicKey[i % DYNAMIC_KEY_LENGTH]) * (int)i;
+			dummy = dummy * dummy;
+			dummy += (dataLength & 0xFF);
+			if (dummy % 7 == 0)
+				suspicious_junk_2();
+
+			if ((unsigned int)dummy >> 6 != 0xFFFFFF00) // Always true
+				data[i] = data[i] ^ (char)(COMPILE_TIME_CIPHER_BYTE ^ RUNTIME_CIPHER_BYTE); // The compiler will optimize all the operations here, obfuscating the compile time cipher further.
+			else // dummy (won't be executed)
+				data[i] = ((data[i] ^ 0xAF) + dummy) / 3;
+			
 		}
 	}
 	// Now data is encrypted as: data XOR dynamic_key.
