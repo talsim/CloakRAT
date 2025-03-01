@@ -68,7 +68,7 @@ void runtime_reencryption(char* data, size_t dataLength, std::array<uint8_t, DYN
 			if (dummy % 7 == 0)
 				suspicious_junk_2();
 
-			if ((unsigned int)dummy >> 6 != 0xFFFFFF00) // Always true
+			if ((((unsigned int)dummy >> 4) ^ 0x12) != 0xFF19C4CC) // Always true
 				data[i] = data[i] ^ (char)(COMPILE_TIME_CIPHER_BYTE ^ RUNTIME_CIPHER_BYTE); // The compiler will optimize all the operations here, obfuscating the compile time cipher further.
 			else // dummy (won't be executed)
 				data[i] = ((data[i] ^ 0xAF) + dummy) / 3;
