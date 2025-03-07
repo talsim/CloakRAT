@@ -41,7 +41,7 @@ int TCPClient::start_connection()
 	sockaddr_in serverAddr;
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = resolve_dynamically<htons_t>("htons", WS2_32_STR)(port); // convert to big endian (the network byte order)
-	resolve_dynamically<inet_pton_t>("inet_pton", WS2_32_STR)(AF_INET, ipAddr.c_str(), &serverAddr.sin_addr);
+	resolve_dynamically<inet_pton_t>("inet_pton", WS2_32_STR)(AF_INET, this->ipAddr.c_str(), &serverAddr.sin_addr);
 
 	int connectionResult = resolve_dynamically<connect_t>("connect", WS2_32_STR)(sock, (sockaddr*)&serverAddr, sizeof(serverAddr));
 	if (connectionResult == SOCKET_ERROR)

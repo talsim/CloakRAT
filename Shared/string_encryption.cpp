@@ -78,8 +78,8 @@ void runtime_reencryption(char* data, size_t dataLength, std::array<uint8_t, DYN
 	// Now data is encrypted as: data XOR dynamic_key.
 }
 
-
-std::string decrypt_bytes(char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
+// Used as decryption / encryption routines
+std::string xor_transform(char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
 {
 	std::string result = "";
 	result.resize(dataLength - 1); // Allocate space in the string without the null terminator (the null terminator is encrypted too)
@@ -111,4 +111,8 @@ std::string decrypt_bytes(char* data, size_t dataLength, std::array<uint8_t, DYN
 	return result;
 }
 
-
+void wipeStr(std::string& str)
+{
+	SecureZeroMemory(&str[0], str.size()); // Make sure the complier won't optimize this by ignoring it, then the string will remain in the stack frame
+	str.clear();
+}
