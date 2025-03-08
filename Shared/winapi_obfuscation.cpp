@@ -9,7 +9,7 @@ static PPEB GetPEB();
 void* get_loaded_module_base_addr(const char* moduleName)
 {
 	PPEB peb = GetPEB();
-	PLIST_ENTRY head_list_entry = &peb->Ldr->InLoadOrderModuleList; // When the InLoadOrderModuleList doubly linked list reaches the last entry, it circles to the head of the list
+	PLIST_ENTRY head_list_entry = &peb->Ldr->InLoadOrderModuleList; // When the InLoadOrderModuleList doubly linked list reaches the last entry, it circles to the head of the list (the first entry)
 	PLIST_ENTRY curr_list_entry = peb->Ldr->InLoadOrderModuleList.Flink;
 
 	while (curr_list_entry != head_list_entry)
