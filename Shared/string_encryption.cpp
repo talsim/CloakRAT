@@ -29,7 +29,7 @@ std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key() // TODO: Might be
 	return runtime_key;
 }
 
-void runtime_reencryption(char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
+void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
 {
 	/*
 	* Our compile-time encryption: E = string XOR compile_time_key
@@ -72,14 +72,14 @@ void runtime_reencryption(char* data, size_t dataLength, std::array<uint8_t, DYN
 				data[i] = data[i] ^ (char)(COMPILE_TIME_CIPHER_BYTE ^ RUNTIME_CIPHER_BYTE); // The compiler will optimize all the operations here, obfuscating the compile time cipher further.
 			else
 				data[i] = ((data[i] ^ 0xAF) + dummy) / 3;
-			
+
 		}
 	}
 	// Now data is encrypted as: data XOR dynamic_key.
 }
 
 // Used as decryption / encryption routines
-std::string xor_transform(char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
+std::string xor_transform(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
 {
 	std::string result = "";
 	result.resize(dataLength - 1); // Allocate space in the string without the null terminator (the null terminator is encrypted too)
@@ -101,7 +101,7 @@ std::string xor_transform(char* data, size_t dataLength, std::array<uint8_t, DYN
 		size_t startIdx = chunkIndex * CHUNK_SIZE;
 		size_t endIdx = startIdx + CHUNK_SIZE < dataLength ? startIdx + CHUNK_SIZE : dataLength;
 
-		for (size_t i = startIdx; i < endIdx; i++)
+		for (size_t i = startIdx; i < endIdx && i < dataLength - 1; i++) // loop until dataLength - 1 to exclude the null terminator from data (no need to add it to an std::string)
 		{
 			// TODO: Add junk code
 			result[i] = (char)(data[i] ^ RUNTIME_CIPHER_BYTE);
@@ -113,6 +113,6 @@ std::string xor_transform(char* data, size_t dataLength, std::array<uint8_t, DYN
 
 void wipeStr(std::string& str)
 {
-	SecureZeroMemory(&str[0], str.size()); // Make sure the complier won't optimize this by ignoring it, then the string will remain in the stack frame
+	SecureZeroMemory(&str[0], str.size()); // Make sure the complier won't optimize this by ignoring it, then the string will remain in memory
 	str.clear();
 }
