@@ -24,12 +24,18 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)string_encryption.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)encrypted_strings_autogen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)winapi_obfuscation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)string_encryption.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)encrypted_strings_autogen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
