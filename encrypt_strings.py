@@ -66,12 +66,13 @@ def main():
         for var_name, string in strings_to_encrypt.items():
             encrypted_string_lst = xor_encrypt(string, key, byte_chiper)
             encrypted_c_arr = to_c_array(var_name, encrypted_string_lst)
-            source_file.write(encrypted_c_arr + '\n')
+            source_file.write(encrypted_c_arr + '\n')  # Write the encrypted string array
+            source_file.write(f'size_t {var_name}_len = sizeof({var_name});\n')  # Write the length of the array
     
     # Generate the Header file
     with open(f'{DIR}/{HEADER_NAME}', 'w') as header_file:
         
-        c_style_byte_cipher = f"(char)((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()] & ((i/2)>>3) * i {rand_op3} {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()]) << i) ^ {rand_xor_value})"
+        c_style_byte_cipher = f"(unsigned char)((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()] & ((i/2)>>3) * i {rand_op3} {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()]) << i) ^ {rand_xor_value})"
         
         header_file.write('#pragma once\n\n')
         header_file.write('#include <array>\n\n')
@@ -81,6 +82,7 @@ def main():
         for var_name in strings_to_encrypt.keys():
             extern_decl = to_extern_decl(var_name)
             header_file.write(extern_decl + '\n')
+            header_file.write(f'extern size_t {var_name}_len;\n')
 
 if __name__ == '__main__':
         main()
