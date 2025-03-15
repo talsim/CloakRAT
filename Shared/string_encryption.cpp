@@ -4,7 +4,7 @@
 // At runtime, we will introduce a dynamic key that will replace the compile-time encryption and be random - the effective XOR key.
 // Then we will re-encrypt the strings on program startup (maybe in the tls callback) using the effective key.
 
-#define RUNTIME_CIPHER_BYTE (char)((((i * 13 + i * i) >> i) - dynamicKey[i % DYNAMIC_KEY_LENGTH]) ^ 0xD3) // random ops to avoid XORing with just the key
+#define RUNTIME_CIPHER_BYTE (unsigned char)((((i * 13 + i * i) >> i) - dynamicKey[i % DYNAMIC_KEY_LENGTH]) ^ 0xD3) // random ops to avoid XORing with just the key
 #define CHUNK_SIZE 6 // Lower chunk size means more iterations and random cycles
 
 std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key() // TODO: Might be better inlined for stealth cuz this is a super sensitive func
@@ -34,7 +34,7 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 	/*
 	* Our compile-time encryption: E = string XOR compile_time_key
 	* We want final data:          E' = string XOR dynamic_key
-	* Thus, the runtime re-encryption is as follows: data[i] ^ (compile_time_key[i] ^ dynamic_key[i])
+	* Thus, the runtime re-encryption is as follows: data[i] ^ (build_time_key[i] ^ dynamic_key[i])
 	* where data = E
 	*/
 
@@ -69,7 +69,7 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 				suspicious_junk_2();
 
 			if ((((unsigned int)dummy >> 4) ^ 0x12) != 0xFF19C4CC) // Always true
-				data[i] = data[i] ^ (char)(BUILD_TIME_CIPHER_BYTE ^ RUNTIME_CIPHER_BYTE); // The compiler will optimize all the operations here, obfuscating the compile time cipher further.
+				data[i] = data[i] ^ (unsigned char)(BUILD_TIME_CIPHER_BYTE ^ RUNTIME_CIPHER_BYTE); // The compiler will optimize all the operations here, obfuscating the compile time cipher further.
 			else
 				data[i] = ((data[i] ^ 0xAF) + dummy) / 3;
 

