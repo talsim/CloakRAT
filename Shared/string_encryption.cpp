@@ -33,7 +33,7 @@ std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key() // TODO: Might be
 void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey) 
 {
 	/*
-	* Our compile-time encryption: E = string XOR compile_time_key
+	* Our compile-time encryption: E = string XOR build_time_key
 	* We want final data:          E' = string XOR dynamic_key
 	* Thus, the runtime re-encryption is as follows: data[i] ^ (build_time_key[i] ^ dynamic_key[i])
 	* where data = E
@@ -49,13 +49,12 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 	std::random_device rd;
 	std::mt19937 rng(rd());
 	small_junk();
-	std::shuffle(chunkIndexes.begin(), chunkIndexes.end(), rng); // Shuffle the chunk indexes to avoid a linear loop
+	std::shuffle(chunkIndexes.begin(), chunkIndexes.end(), rng); // Shuffle the chunk indexes
 
 	junk();
 
 	for (size_t chunkIndex : chunkIndexes) // random cycles on the data
 	{
-
 		size_t startIdx = chunkIndex * CHUNK_SIZE;
 		size_t endIdx = startIdx + CHUNK_SIZE < dataLength ? startIdx + CHUNK_SIZE : dataLength; // min(startIdx + CHUNK_SIZE, dataLength)
 
@@ -116,9 +115,7 @@ std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uin
 	return result;
 }
 
-
-
-void wipeStr(std::string& str)
+void inline wipeStr(std::string& str)
 {
 	SecureZeroMemory(&str[0], str.size()); // Make sure the complier won't optimize this by ignoring it, then the string will remain in memory
 	str.clear();
