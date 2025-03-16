@@ -29,7 +29,8 @@ std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key() // TODO: Might be
 	return runtime_key;
 }
 
-void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
+// TODO: Set the the highest bit in the first byte to indicate if the string was already reencrypted
+void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey) 
 {
 	/*
 	* Our compile-time encryption: E = string XOR compile_time_key
@@ -78,13 +79,17 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 	// Now data is encrypted as: data XOR dynamic_key.
 }
 
-// Used as decryption / encryption routines
-std::string xor_transform(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
+//void encrypt(char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
+//{
+//	// Implement..
+//}
+
+std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
 {
 	std::string result = "";
 	result.resize(dataLength - 1); // Allocate space in the string without the null terminator (the null terminator is encrypted too)
 
-	// Decrypt the data in random chunks of CHUNK_SIZE, and not linearly
+	// Decrypt the data in random chunks of CHUNK_SIZE, not linearly
 	// Important note - the decryption order will be randomized differently from the encryption order of the bytes, but it doesn't matter because each byte transformation is independent of other elements, but only its current iteration.
 	size_t chunksNum = (dataLength + CHUNK_SIZE - 1) + CHUNK_SIZE; // round up for the remainder
 	std::vector<size_t> chunkIndexes(chunksNum);
@@ -110,6 +115,8 @@ std::string xor_transform(unsigned char* data, size_t dataLength, std::array<uin
 
 	return result;
 }
+
+
 
 void wipeStr(std::string& str)
 {

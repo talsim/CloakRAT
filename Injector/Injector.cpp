@@ -10,10 +10,6 @@
 
 int main(int argc, char** argv)
 {
-	std::string test = reencrypt_and_decrypt(str_cmd, str_cmd_len);
-	std::cout << test;
-
-
 	std::string dllPathString = reencrypt_and_decrypt(str_dllPath, str_dllPath_len);
 	const char* dllPathCStr = dllPathString.c_str();
 	const char* procName = argc <= 1 ? TARGET_EXE : argv[1];
