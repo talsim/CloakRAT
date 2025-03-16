@@ -38,6 +38,9 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 	* Thus, the runtime re-encryption is as follows: data[i] ^ (build_time_key[i] ^ dynamic_key[i])
 	* where data = E
 	*/
+	
+	if (data[0] & 0x80) // If the reencryption has already happen
+		return;
 
 	// Spilt the data to chunks, and shuffle the chunks order to re-encrypt the data at random chunks, instead of a linear loop (less obvious).
 	size_t chunksNum = (dataLength + CHUNK_SIZE - 1) / CHUNK_SIZE; // round up to include an extra chunk for the remainder
@@ -53,14 +56,15 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 
 	junk();
 
-	for (size_t chunkIndex : chunkIndexes) // random cycles on the data
+	for (size_t chunkIndex : chunkIndexes) // Iterate on the chunks indexes
 	{
 		size_t startIdx = chunkIndex * CHUNK_SIZE;
 		size_t endIdx = startIdx + CHUNK_SIZE < dataLength ? startIdx + CHUNK_SIZE : dataLength; // min(startIdx + CHUNK_SIZE, dataLength)
 
 		suspicious_junk_1();
-		for (size_t i = startIdx; i < endIdx; i++)
+		for (size_t i = startIdx; i < endIdx; i++) // Iterate on the data itself
 		{
+			if (i == 0) continue; // Skip the first byte which is the flag byte
 			// Lots of dummy code
 			int dummy = (int)data[i] + (int)(dynamicKey[i % DYNAMIC_KEY_LENGTH]) * (int)i;
 			dummy = dummy * dummy;
@@ -86,7 +90,7 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
 {
 	std::string result = "";
-	result.resize(dataLength - 1); // Allocate space in the string without the null terminator (the null terminator is encrypted too)
+	result.resize(dataLength - 1); // Allocate space in the string without the null terminator (the null terminator is encrypted too) and the first byte (the flag byte)
 
 	// Decrypt the data in random chunks of CHUNK_SIZE, not linearly
 	// Important note - the decryption order will be randomized differently from the encryption order of the bytes, but it doesn't matter because each byte transformation is independent of other elements, but only its current iteration.
@@ -105,8 +109,10 @@ std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uin
 		size_t startIdx = chunkIndex * CHUNK_SIZE;
 		size_t endIdx = startIdx + CHUNK_SIZE < dataLength ? startIdx + CHUNK_SIZE : dataLength;
 
-		for (size_t i = startIdx; i < endIdx && i < dataLength - 1; i++) // loop until dataLength - 1 to exclude the null terminator from data (no need to add it to an std::string)
+		for (size_t i = startIdx; i < endIdx && i < dataLength - 1; i++) // loop until dataLength - 2 to exclude the null terminator from data (no need to add it to an std::string) and the flag byte
 		{
+			if (i == 0) continue; // Skip the first byte which is the flag byte
+			
 			// TODO: Add junk code
 			result[i] = (char)(data[i] ^ RUNTIME_CIPHER_BYTE);
 		}
