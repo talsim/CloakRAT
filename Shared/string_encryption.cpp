@@ -29,17 +29,18 @@ std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key() // TODO: Might be
 	return runtime_key;
 }
 
-// TODO: Set the the highest bit in the first byte to indicate if the string was already reencrypted
 void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey) 
 {
 	/*
 	* Our compile-time encryption: E = string XOR build_time_key
 	* We want final data:          E' = string XOR dynamic_key
 	* Thus, the runtime re-encryption is as follows: data[i] ^ (build_time_key[i] ^ dynamic_key[i])
-	* where data = E
+	* where data = E.
+	* 
+	* It also sets the the highest bit in the preserved first byte to indicate that the string was already reencrypted.
 	*/
 	
-	if (data[0] & 0x80) // If the reencryption has already happen
+	if (data[0] & 0x80) // If the reencryption has already happenend
 		return;
 
 	// Spilt the data to chunks, and shuffle the chunks order to re-encrypt the data at random chunks, instead of a linear loop (less obvious).
@@ -80,6 +81,8 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 		}
 	}
 	// Now data is encrypted as: data XOR dynamic_key.
+
+	data[0] |= 0x80; // Set the highest bit in the first byte to indicate that runtime re-encryption has already happened on subsequent calls.
 }
 
 //void encrypt(char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
@@ -90,7 +93,7 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
 {
 	std::string result = "";
-	result.resize(dataLength - 1); // Allocate space in the string without the null terminator (the null terminator is encrypted too) and the first byte (the flag byte)
+	result.resize(dataLength - 2); // Allocate space in the string without the flag byte (first byte) and the null terminator (the null terminator is encrypted too)
 
 	// Decrypt the data in random chunks of CHUNK_SIZE, not linearly
 	// Important note - the decryption order will be randomized differently from the encryption order of the bytes, but it doesn't matter because each byte transformation is independent of other elements, but only its current iteration.
@@ -104,17 +107,18 @@ std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uin
 	std::mt19937 rng(rd());
 	std::shuffle(chunkIndexes.begin(), chunkIndexes.end(), rng); // Shuffle the chunk indexes 
 
-	for (size_t chunkIndex : chunkIndexes) // random cycles on the data
+	for (size_t chunkIndex : chunkIndexes) // Random cycles on the data
 	{
 		size_t startIdx = chunkIndex * CHUNK_SIZE;
 		size_t endIdx = startIdx + CHUNK_SIZE < dataLength ? startIdx + CHUNK_SIZE : dataLength;
 
-		for (size_t i = startIdx; i < endIdx && i < dataLength - 1; i++) // loop until dataLength - 2 to exclude the null terminator from data (no need to add it to an std::string) and the flag byte
-		{
-			if (i == 0) continue; // Skip the first byte which is the flag byte
-			
+		// loop until dataLength - 1 to exclude
+		// the null terminator from data (no need to add it to an std::string)
+		// the dataLength - 2 is to account for (i + 1) when iterating over the data, because the actual string starts at an offset of 1 (at data[1]),
+		for (size_t i = startIdx; i < endIdx && i < dataLength - 2; i++) 
+		{	
 			// TODO: Add junk code
-			result[i] = (char)(data[i] ^ RUNTIME_CIPHER_BYTE);
+			result[i] = (char)(data[i+1] ^ RUNTIME_CIPHER_BYTE);
 		}
 	}
 
@@ -123,6 +127,8 @@ std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uin
 
 void inline wipeStr(std::string& str)
 {
-	SecureZeroMemory(&str[0], str.size()); // Make sure the complier won't optimize this by ignoring it, then the string will remain in memory
+	// Make sure the complier won't optimize this by ignoring it, then the string will remain in memory.
+	// It just treats the address provided as a volatile pointer and zeroes all the bytes up to the size.
+	SecureZeroMemory(&str[0], str.size()); 
 	str.clear();
 }
