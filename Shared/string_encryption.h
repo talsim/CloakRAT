@@ -7,6 +7,7 @@
 #include "encrypted_strings_autogen.h"
 
 #define DYNAMIC_KEY_LENGTH 16
+#define string_decrypt_cstr(str, len) string_decrypt(str, len).c_str()
 
 std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key();
 void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey);

