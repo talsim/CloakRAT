@@ -46,6 +46,10 @@ strings_to_encrypt = {
     
     # DLLs
     'str_kernel32': 'kernel32.dll',
+    'str_ntdll': 'ntdll.dll',
+    'str_advapi32': 'advapi32.dll',
+    'str_ws2_32': 'ws2_32.dll',
+    'str_user32': 'user32.dll'
 }
 
 def gen_key() -> list[int]:

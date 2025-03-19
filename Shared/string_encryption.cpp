@@ -18,14 +18,14 @@ std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key() // TODO: Might be
 
 	for (int i = 0; i < DYNAMIC_KEY_LENGTH; i++)
 	{
-		small_junk();
+		//small_junk();
 		runtime_key[i] = (uint8_t)(dist(rng));
 
 		// dummy code
 		if (runtime_key[i] % 2 == 1 || junk_var_2)
-			suspicious_junk_3();
+			junk_var_2 = not_inlined_junk_func_4();
 		else
-			junk();
+			junk_var_2 ^= junk_var_2;
 	}
 
 	return runtime_key;
@@ -64,7 +64,7 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 		size_t startIdx = chunkIndex * CHUNK_SIZE;
 		size_t endIdx = startIdx + CHUNK_SIZE < dataLength ? startIdx + CHUNK_SIZE : dataLength; // min(startIdx + CHUNK_SIZE, dataLength)
 
-		suspicious_junk_1();
+		double junk = not_inlined_junk_func_2(13.32f);
 		for (size_t i = startIdx; i < endIdx; i++) // Iterate on the data itself
 		{
 			if (i == 0) continue; // Skip the first byte which is the flag byte
@@ -73,7 +73,7 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 			dummy = dummy * dummy;
 			dummy += (dataLength & 0xFF);
 			if (dummy % 7 == 0)
-				suspicious_junk_2();
+				junk_var_5 = ((int)junk >> 8) & 0xFF;
 
 			if ((((unsigned int)dummy >> 4) ^ 0x12) != 0xFF19C4CC) // Always true
 				data[i] = data[i] ^ (unsigned char)(BUILD_TIME_CIPHER_BYTE ^ RUNTIME_CIPHER_BYTE); // The compiler will optimize all the operations here, obfuscating the compile time cipher further.

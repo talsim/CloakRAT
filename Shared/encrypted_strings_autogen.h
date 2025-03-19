@@ -2,8 +2,8 @@
 
 #include <array>
 
-#define BUILD_TIME_CIPHER_BYTE (unsigned char)((i % 4 | ((i * 9) * 2 + BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()] & ((i/2)>>3) * i - BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()]) << 16) ^ 170)
-static std::array<uint8_t, 16> BUILD_TIME_KEY = { 242, 42, 227, 180, 172, 12, 182, 4, 26, 210, 166, 255, 109, 183, 56, 28 };
+#define BUILD_TIME_CIPHER_BYTE (unsigned char)((i % 4 | ((i - 9) - 2 + BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()] & ((i/2)>>3) * i * BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()]) << 16) ^ 73)
+static std::array<uint8_t, 16> BUILD_TIME_KEY = { 195, 175, 238, 126, 240, 32, 153, 10, 39, 6, 9, 235, 131, 137, 169, 50 };
 
 extern unsigned char str_ip[];
 extern size_t str_ip_len;
@@ -88,4 +88,16 @@ extern size_t str_CreateProcessA_len;
 
 extern unsigned char str_kernel32[];
 extern size_t str_kernel32_len;
+
+extern unsigned char str_ntdll[];
+extern size_t str_ntdll_len;
+
+extern unsigned char str_advapi32[];
+extern size_t str_advapi32_len;
+
+extern unsigned char str_ws2_32[];
+extern size_t str_ws2_32_len;
+
+extern unsigned char str_user32[];
+extern size_t str_user32_len;
 

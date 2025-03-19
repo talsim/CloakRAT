@@ -17,7 +17,7 @@ FARPROC get_proc_address(HMODULE hModule, const char* procedureName);
 
 // TODO: Add caching the base addresses
 template <typename T>
-T resolve_dynamically(const char* funcName, const char* dllName = KERNEL32_STR)
+T resolve_dynamically(const char* funcName, const char* dllName = string_decrypt(str_kernel32, str_kernel32_len).c_str())
 {
 	// Walk through the PEB to find the module's base address
 	HMODULE hModule = reinterpret_cast<HMODULE>(get_loaded_module_base_addr((dllName)));

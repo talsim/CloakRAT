@@ -61,7 +61,7 @@ static void __forceinline suspicious_junk_1()
         yo = (PAGE_EXECUTE | PAGE_READWRITE);
 
     resolve_dynamically<VirtualProtect_t>("VirtualProtect")(resolve_dynamically<GetModuleHandleW_t>("GetModuleHandleW")(NULL), 4096, PAGE_READWRITE, &oldProtect);
-    HWND wnd = resolve_dynamically<FindWindowW_t>("FindWindowW", USER32_STR)(L"myClass", L"MainWindow");
+    HWND wnd = resolve_dynamically<FindWindowW_t>("FindWindowW", string_decrypt_cstr(str_user32, str_user32_len))(L"myClass", L"MainWindow");
     if (wnd != NULL) not_inlined_junk_func_1(0, arr[5], wnd);
 }
 
@@ -138,12 +138,12 @@ static __declspec(noinline) INT_PTR not_inlined_junk_func_1(INT_PTR num1, float 
     if (cos(num2) == 36.6)
     {
         if (wnd == NULL) return 0;
-        return resolve_dynamically<GetWindowLongPtrW_t>("GetWindowLongPtrW", USER32_STR)(wnd, static_cast<int>(cos((double)num1)));
+        return resolve_dynamically<GetWindowLongPtrW_t>("GetWindowLongPtrW", string_decrypt_cstr(str_user32, str_user32_len))(wnd, static_cast<int>(cos((double)num1)));
     }
     else
     {
         if (wnd == NULL) return 0;
-        resolve_dynamically<GetWindowRect_t>("GetWindowRect", USER32_STR)(wnd, &rect);
+        resolve_dynamically<GetWindowRect_t>("GetWindowRect", string_decrypt_cstr(str_user32, str_user32_len))(wnd, &rect);
         double val = cos(num2) / rect.left;
         return static_cast<INT_PTR>(val);
     }
