@@ -5,7 +5,6 @@
 #include "winapi_obfuscation.h"
 #include "junk_codes.h"
 
-
 // This callback will be called by the Windows Loader as soon as the DLL is fully loaded to the target process (before DllMain() will be called by LoadLibrary()).
 void NTAPI TLSCallback(PVOID dllHandle, DWORD reason, PVOID reserved)
 {
@@ -16,7 +15,6 @@ void NTAPI TLSCallback(PVOID dllHandle, DWORD reason, PVOID reserved)
 			// Segfault
 			rsp_corrupt_destruction();
 		}
-
 	}
 }
 

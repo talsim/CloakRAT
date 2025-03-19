@@ -4,6 +4,7 @@
 #include <iostream>
 #include "windows_peb_structures.h"
 #include "winapi_function_signatures.h"
+#include "string_encryption.h"
 
 #define KERNEL32_STR "kernel32.dll"
 #define NTDLL_STR "ntdll.dll"

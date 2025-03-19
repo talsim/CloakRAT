@@ -1,4 +1,6 @@
+#include <random>
 #include "string_encryption.h"
+#include "junk_codes.h"
 
 // We will encrypt with a XOR key at compile-time
 // At runtime, we will introduce a dynamic key that will replace the compile-time encryption and be random - the effective XOR key.

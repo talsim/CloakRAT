@@ -2,8 +2,6 @@
 #include <WS2tcpip.h>
 #include <iostream>
 #include <string>
-#include "winapi_function_signatures.h"
-#include "winapi_obfuscation.h"
 
 typedef decltype(WSAStartup)* WSAStartup_t;
 typedef decltype(WSACleanup)* WSACleanup_t;

@@ -1,6 +1,7 @@
 #include "TCPClient.h"
 #include "junk_codes.h"
 #include "string_encryption.h"
+#include "winapi_obfuscation.h"
 
 TCPClient::TCPClient(std::string ipAddr, int port)
 {

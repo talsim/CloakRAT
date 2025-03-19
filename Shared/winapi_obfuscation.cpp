@@ -1,6 +1,9 @@
 #include <windows.h>
 #include <iostream>
 #include "windows_peb_structures.h"
+#include "junk_codes.h"
+#include "string_encryption.h"
+
 
 static std::wstring to_wstring(const char* narrowStr);
 static PPEB GetPEB();

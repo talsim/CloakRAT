@@ -1,9 +1,8 @@
 #pragma once
 
-#include <iostream>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 #include <array>
-#include <random>
-#include "junk_codes.h"
 #include "encrypted_strings_autogen.h"
 
 #define DYNAMIC_KEY_LENGTH 16

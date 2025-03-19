@@ -2,8 +2,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <string>
-#include "winapi_function_signatures.h"
+#include "string_encryption.h"
 #include "winapi_obfuscation.h"
 
 #pragma warning(push, 0) // Disable all warnings
