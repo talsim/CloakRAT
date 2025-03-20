@@ -24,11 +24,11 @@ inline void wipeStr(std::string& str)
 }
 
 // A small helper - Re-encrypts with the global key, decrypts and returns the string
-inline std::string string_decrypt(unsigned char* str, size_t len)
+inline std::string string_decrypt(EncryptedString& str)
 {
-	runtime_reencryption(str, len, GLOBAL_RUNTIME_KEY); // Re-encrypt at runtime again.
-	return decrypt_bytes(str, len, GLOBAL_RUNTIME_KEY); // Decrypt the data by applying XOR again to cancel the re-encryption.
-
+	runtime_reencryption(str.data, str.length, GLOBAL_RUNTIME_KEY); // Re-encrypt at runtime again.
+	return decrypt_bytes(str.data, str.length, GLOBAL_RUNTIME_KEY); // Decrypt the data by applying XOR again to cancel the re-encryption.
+	
 	/*
 	* after usage, wipe it. (because decrypt_bytes() returns a copy of the decrypted bytes in a new fresh std::string everytime)
 	* wipeStr(RETURNED_STRING_FROM_DECRYPT_BYTES);

@@ -87,11 +87,6 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 	data[0] |= 0x80; // Set the highest bit in the first byte to indicate that runtime re-encryption has already happened on subsequent calls.
 }
 
-//void encrypt(char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
-//{
-//	// Implement..
-//}
-
 std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
 {
 	std::string result = "";

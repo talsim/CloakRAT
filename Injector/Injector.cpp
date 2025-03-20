@@ -10,7 +10,7 @@
 
 int main(int argc, char** argv)
 {
-	std::string dllPathString = string_decrypt(str_dllPath, str_dllPath_len);
+	std::string dllPathString = string_decrypt(str_dllPath);
 	const char* dllPathCStr = dllPathString.c_str();
 	const char* procName = argc <= 1 ? TARGET_EXE : argv[1];
 

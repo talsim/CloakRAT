@@ -9,7 +9,7 @@ static std::wstring to_wstring(const char* narrowStr);
 static PPEB GetPEB();
 
 // Walking through the PEB here to find the base addr
-void* get_loaded_module_base_addr(const char* moduleName)
+void* get_loaded_module_base_addr(EncryptedString &moduleName)
 {
 	PPEB peb = GetPEB();
 	PLIST_ENTRY head_list_entry = &peb->Ldr->InLoadOrderModuleList; // When the InLoadOrderModuleList doubly linked list reaches the last entry, it circles to the head of the list (the first entry)
@@ -22,9 +22,16 @@ void* get_loaded_module_base_addr(const char* moduleName)
 
 		// Check if BaseDllName is the moduleName paramater
 		PWSTR dllName = ldr_entry->BaseDllName.Buffer;
-		std::wstring wideModuleName = to_wstring(moduleName);
+
+		std::string moduleNameDecrypted = string_decrypt(moduleName);
+		std::wstring wideModuleName = to_wstring(moduleNameDecrypted.c_str());
 		if (_wcsicmp(dllName, wideModuleName.c_str()) == 0) // Perfrom a case-insensitive string compare
 			return ldr_entry->DllBase;
+
+		// Wipe the decrypted module name string
+		wipeStr(moduleNameDecrypted);
+		SecureZeroMemory(&wideModuleName[0], wideModuleName.size());
+		wideModuleName.clear();
 
 		// Continue to the next entry in the doubly linked list
 		curr_list_entry = curr_list_entry->Flink;
@@ -33,7 +40,7 @@ void* get_loaded_module_base_addr(const char* moduleName)
 	return NULL;
 }
 
-FARPROC get_proc_address(HMODULE hModule, const char* procedureName)
+FARPROC get_proc_address(HMODULE hModule, EncryptedString &procedureName)
 {
 	// How to find the Image Export Directory:
 	// Image NT Headers (a offset to the NT headers can be found at offset 0x3C in the DOS header, which is at the start of the PE after the signature)
@@ -59,13 +66,15 @@ FARPROC get_proc_address(HMODULE hModule, const char* procedureName)
 	DWORD* address_table = (DWORD*)(base_address + export_directory->AddressOfFunctions); // Export Address Table (points to function addresses)
 	WORD* ordinal_table = (WORD*)(base_address + export_directory->AddressOfNameOrdinals); // Export Ordinal Table
 
+	std::string procedureNameDecrypted = string_decrypt(procedureName);
 	for (DWORD i = 0; i < export_directory->NumberOfNames; i++)
 	{
 		char* name = (char*)(base_address + name_table[i]); // Dereference to a string 
 
-		if (_stricmp(procedureName, name) == 0) // Perfrom a case-insensitive string compare between the procedure names
+		if (_stricmp(procedureNameDecrypted.c_str(), name) == 0) // Perfrom a case-insensitive string compare between the procedure names
 		{
 			address = (FARPROC)(base_address + (DWORD)address_table[ordinal_table[i]]); // base_address + the RVA of the procedure
+			wipeStr(procedureNameDecrypted);
 			break;
 		}
 	}
