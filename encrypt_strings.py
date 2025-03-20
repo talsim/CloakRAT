@@ -14,7 +14,7 @@ strings_to_encrypt = {
     # CloakRAT general strings
     'str_ip': '127.0.0.1',
     'str_cmd': 'cmd.exe /C',
-    'str_dllPath': 'C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\x64\\Release\\CloakRAT.dll',
+    'str_dllPath': 'C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\x64\\Debug\\CloakRAT.dll',
     'str_socket': 'socket',
     
     # function names
