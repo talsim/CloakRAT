@@ -92,7 +92,7 @@ def main():
     rand_xor_value = secrets.randbelow(256)
     
     # BE CAREFUL TO EDIT VARIABLE NAMES HERE, BECAUSE THIS IS GOING TO BE PROCESSED BY eval()
-    byte_chiper = f"((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + key[i % len(key)] & ((i//2)>>3) * i {rand_op3} key[i % len(key)]) << 16) ^ {rand_xor_value})" # randomize the cipher each run
+    byte_chiper = f"((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + key[i % len(key)] & ((i//2)>>3) * i {rand_op3} key[i % len(key)]) << (i % 5)) & 0x7F ^ {rand_xor_value})" # randomize the cipher each run
     
     # Generate the Source file 
     with open(f'{DIR}/{SOURCE_NAME}', 'w') as source_file:
@@ -106,7 +106,7 @@ def main():
     
     # Generate the Header file
     with open(f'{DIR}/{HEADER_NAME}', 'w') as header_file:
-        c_style_byte_cipher = f"(unsigned char)((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()] & ((i/2)>>3) * i {rand_op3} {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()]) << 16) ^ {rand_xor_value})"
+        c_style_byte_cipher = f"(unsigned char)((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()] & ((i/2)>>3) * i {rand_op3} {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()]) << (i % 5)) & 0x7F ^ {rand_xor_value})"
         
         header_file.write('#pragma once\n\n')
         header_file.write('#include <array>\n\n')
