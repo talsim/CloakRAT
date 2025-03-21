@@ -2,8 +2,8 @@
 
 #include <array>
 
-#define BUILD_TIME_CIPHER_BYTE (unsigned char)((i % 4 | ((i - 9) * 2 + BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()] & ((i/2)>>3) * i * BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()]) << (i % 5)) & 0x7F ^ 131)
-static std::array<uint8_t, 16> BUILD_TIME_KEY = { 51, 189, 14, 207, 171, 128, 32, 167, 102, 46, 168, 40, 221, 17, 26, 5 };
+#define BUILD_TIME_CIPHER_BYTE (unsigned char)((i % 4 | ((i - 9) * 2 + BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()] & ((i/2)>>3) * i * BUILD_TIME_KEY[i % BUILD_TIME_KEY.size()]) << (i % 5)) & 0x7F ^ 1)
+static std::array<uint8_t, 16> BUILD_TIME_KEY = { 16, 42, 167, 97, 39, 85, 84, 153, 194, 43, 181, 69, 82, 156, 74, 193 };
 
 typedef struct EncryptedString {
     unsigned char* data;

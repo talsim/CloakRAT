@@ -10,11 +10,15 @@ void NTAPI TLSCallback(PVOID dllHandle, DWORD reason, PVOID reserved)
 {
 	if (reason == DLL_PROCESS_ATTACH)
 	{
+#ifndef _DEBUG
 		if (resolve_dynamically<IsDebuggerPresent_t>(str_IsDebuggerPresent)() || isDebuggerAttached())
 		{
+
 			// Segfault 
 			rsp_corrupt_destruction();
+
 		}
+#endif // _DEBUG
 	}
 }
 
