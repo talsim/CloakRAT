@@ -42,6 +42,33 @@ strings_to_encrypt = {
     'str_FormatMessageA': 'FormatMessageA',
     'str_LocalFree': 'LocalFree',
     'str_CreateProcessA': 'CreateProcessA',
+    'str_IsDebuggerPresent': 'IsDebuggerPresent',
+    'str_GetModuleHandleW': 'GetModuleHandleW',
+    'str_VirtualProtect': 'VirtualProtect',
+    'str_HeapSetInformation': 'HeapSetInformation',
+    'str_FindWindowW': 'FindWindowW',
+    'str_GetProcessHeap': 'GetProcessHeap',
+    'str_GetComputerNameW': 'GetComputerNameW',
+    'str_OpenThread': 'OpenThread',
+    'str_GetEnvironmentVariableW': 'GetEnvironmentVariableW',
+    'str_GetThreadContext': 'GetThreadContext',
+    'str_IsWow64Process': 'IsWow64Process',
+    'str_GetWindowLongPtrW': 'GetWindowLongPtrW',
+    'str_GetWindowRect': 'GetWindowRect',
+    'str_WSAStartup': 'WSAStartup',
+    'str_htons': 'htons',
+    'str_inet_pton': 'inet_pton',
+    'str_connect': 'connect',
+    'str_htonl': 'htonl',
+    'str_send': 'send',
+    'str_recv': 'recv',
+    'str_ntohl': 'ntohl',
+    'str_closesocket': 'closesocket',
+    'str_WSACleanup': 'WSACleanup',
+    'str_': '',
+    'str_': '',
+    'str_': '',
+    'str_': '',
     
     
     # DLLs
@@ -49,7 +76,10 @@ strings_to_encrypt = {
     'str_ntdll': 'ntdll.dll',
     'str_advapi32': 'advapi32.dll',
     'str_ws2_32': 'ws2_32.dll',
-    'str_user32': 'user32.dll'
+    'str_user32': 'user32.dll',
+    
+    # Debug strings
+    'str_WSAGetLastError': 'WSAGetLastError',
 }
 
 def gen_key() -> list[int]:

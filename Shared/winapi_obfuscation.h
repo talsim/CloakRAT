@@ -24,11 +24,21 @@ T resolve_dynamically(EncryptedString &funcName, EncryptedString &dllName)
 	if (hModule == NULL) // If the module isn't loaded
 	{
 		// Explicitly load the module with LoadLibraryA()
-		hModule = resolve_dynamically<LoadLibraryA_t>(str_LoadLibraryA)(dllName);
+		std::string dllNameDecrypted = string_decrypt(dllName);
+		hModule = resolve_dynamically<LoadLibraryA_t>(str_LoadLibraryA)(dllNameDecrypted.c_str());
+		wipeStr(dllNameDecrypted);
 	}
 		
 	FARPROC procAddr = get_proc_address(hModule, funcName);
 	if (procAddr == NULL)
+
+
+
+
+
+
+
+		// TODO: REMOVEEEEEEEEE HERE!!!!!!!!
 		std::cerr << "Failed to resolve function: " + string_decrypt(funcName) << std::endl;
 
 	return reinterpret_cast<T>(procAddr);

