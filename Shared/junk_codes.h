@@ -47,7 +47,7 @@ static void __forceinline junk()
 
 static void __forceinline suspicious_junk_1()
 {
-    DWORD oldProtect;
+    /*DWORD oldProtect;
     int yo = 19;
     float arr[0x10];
     ZeroMemory(arr, sizeof(arr));
@@ -62,13 +62,13 @@ static void __forceinline suspicious_junk_1()
 
     resolve_dynamically<VirtualProtect_t>(str_VirtualProtect)(resolve_dynamically<GetModuleHandleW_t>(str_GetModuleHandleW)(NULL), 4096, PAGE_READWRITE, &oldProtect);
     HWND wnd = resolve_dynamically<FindWindowW_t>(str_FindWindowW, str_user32)(L"myClass", L"MainWindow");
-    if (wnd != NULL) not_inlined_junk_func_1(0, arr[5], wnd);
+    if (wnd != NULL) not_inlined_junk_func_1(0, arr[5], wnd);*/
 }
 
 static void __forceinline suspicious_junk_2()
 {
     std::wstring str = L"_CRT";
-    DWORD a[5];
+    /*DWORD a[5];
     ZeroMemory(a, sizeof(a));
 
     for (int i = 0; i < 5; i++)
@@ -98,12 +98,12 @@ static void __forceinline suspicious_junk_2()
         str[2] == L'T')
     {
         resolve_dynamically<GetEnvironmentVariableW_t>(str_GetEnvironmentVariableW)(L"PATH", junk_var_4, 256);
-    }
+    }*/
 }
 
 static void __forceinline suspicious_junk_3()
 {
-    char str[] = "$$";
+    /*char str[] = "$$";
     int a[20];
     ZeroMemory(a, sizeof(a));
 
@@ -129,7 +129,7 @@ static void __forceinline suspicious_junk_3()
             else
                 junk_var_2 = 2;
         }
-    }
+    }*/
 }
 
 static __declspec(noinline) INT_PTR not_inlined_junk_func_1(INT_PTR num1, float num2, HWND wnd)

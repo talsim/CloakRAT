@@ -67,13 +67,19 @@ std::string exec(std::string command)
 	securityAttr.lpSecurityDescriptor = NULL;
 
 	// Create an STDOUT Pipe for the child process
-	if (!resolve_dynamically<CreatePipe_t>(str_CreatePipe)(&stdOutRead, &stdOutWrite, &securityAttr, 0)) {
+	bool result = resolve_dynamically<CreatePipe_t>(str_CreatePipe)(&stdOutRead, &stdOutWrite, &securityAttr, 0);
+#ifdef _DEBUG
+	if (!result) {
 		return "Error - CreatePipe() failed: " + GetLastErrorAsString();
 	}
+#endif // _DEBUG
 
-	if (!resolve_dynamically<SetHandleInformation_t>(str_SetHandleInformation)(stdOutRead, HANDLE_FLAG_INHERIT, 0)) {
+	result = resolve_dynamically<SetHandleInformation_t>(str_SetHandleInformation)(stdOutRead, HANDLE_FLAG_INHERIT, 0);
+#ifdef _DEBUG
+	if (!result) {
 		return "Error - SetHandleInformation() failed: " + GetLastErrorAsString();
 	}
+#endif // _DEBUG
 
 	// Create the child process
 	try {

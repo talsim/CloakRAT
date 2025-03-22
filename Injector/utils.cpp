@@ -19,7 +19,9 @@ bool SetPrivilege(
 		lpszPrivilege,   // Privilege to lookup
 		&luid))			 // Receives the LUID of the privilege
 	{
+#ifdef _DEBUG
 		std::cerr << "LookupPrivilegeValue error: " << resolve_dynamically<GetLastError_t>(str_GetLastError)() << std::endl;
+#endif // _DEBUG
 		return false;
 	}
 
@@ -36,13 +38,17 @@ bool SetPrivilege(
 		NULL,
 		NULL))
 	{
+#ifdef _DEBUG
 		std::cerr << "AdjustTokenPrivileges error: " << resolve_dynamically<GetLastError_t>(str_GetLastError)() << std::endl;
+#endif // _DEBUG
 		return false;
 	}
 
 	// Check for any errors that may have occurred during the adjustment
 	if (resolve_dynamically<GetLastError_t>(str_GetLastError)() == ERROR_NOT_ALL_ASSIGNED) {
+#ifdef _DEBUG
 		std::cerr << "The token does not have the specified privilege." << std::endl;
+#endif // _DEBUG
 		return false;
 	}
 
@@ -60,16 +66,21 @@ int EscalatePrivilege()
 	// Open the access token associated with the current process
 	if (!OpenProcessTokenFunc(GetCurrentProcessFunc(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
 	{
+#ifdef _DEBUG
 		std::cerr << "OpenProcessToken error: " << resolve_dynamically<GetLastError_t>(str_GetLastError)() << std::endl;
+#endif // _DEBUG
 		return -1;
 	}
 
 	// Attempt to enable SeDebugPrivilege
-	if (!SetPrivilege(hToken, SE_DEBUG_NAME, TRUE))
-	{
-		std::cerr << "Failed to enable SeDebugPrivilege." << std::endl;
-		return -1;
-	}
+		if (!SetPrivilege(hToken, SE_DEBUG_NAME, TRUE))
+		{
+#ifdef _DEBUG
+			std::cerr << "Failed to enable SeDebugPrivilege." << std::endl;
+#endif // _DEBUG
+			return -1;
+		}
+
 
 	resolve_dynamically<CloseHandle_t>(str_CloseHandle)(hToken);
 	return 0;
