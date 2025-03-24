@@ -25,7 +25,7 @@ inline std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key()
 		if (runtime_key[i] % 2 == 1 || junk_var_2)
 			junk_var_2 = not_inlined_junk_func_4();
 		else
-			junk_var_2 ^= junk_var_2;
+			junk_var_2 ^= junk_var_1;
 	}
 
 	return runtime_key;
@@ -90,6 +90,7 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 
 std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey, size_t dummy)
 {
+	junk_var_2 = 5;
 	std::string result = "";
 	result.resize(dataLength - 2); // Allocate space in the string without the flag byte (first byte) and the null terminator (the null terminator is encrypted too)
 
@@ -105,23 +106,27 @@ std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uin
 	std::mt19937 rng(rd());
 	std::shuffle(chunkIndexes.begin(), chunkIndexes.end(), rng); // Shuffle the chunk indexes 
 	junk_var_1 = (int)dummy ^ 0xD3;
-	junk_var_2 = 5;
 
-	for (size_t chunkIndex : chunkIndexes) // Random cycles on the data
+	if (!(dummy - ((dataLength + junk_var_2) ^ 0xAF))) // Always true (junk_var_2 is initialized to 5 at the start of the func)
 	{
-		size_t startIdx = chunkIndex * CHUNK_SIZE;
-		size_t endIdx = startIdx + CHUNK_SIZE < dataLength ? startIdx + CHUNK_SIZE : dataLength;
-
-		// loop until dataLength - 1 to exclude
-		// the null terminator from data (no need to add it to an std::string)
-		for (size_t i = startIdx; i < endIdx && i < dataLength - 1; i++)
+		for (size_t chunkIndex : chunkIndexes) // Random cycles on the data
 		{
-			if (i == 0) continue; // Skip the first byte
-			
-			else if (dummy + ((dataLength - junk_var_2) ^ 0xAF)) // CHANGE
+			size_t startIdx = chunkIndex * CHUNK_SIZE;
+			size_t endIdx = startIdx + CHUNK_SIZE < dataLength ? startIdx + CHUNK_SIZE : dataLength;
+
+			// loop until dataLength - 1 to exclude
+			// the null terminator from data (no need to add it to an std::string)
+			for (size_t i = startIdx; i < endIdx && i < dataLength - 1; i++)
+			{
+				if (i == 0) continue; // Skip the first byte
+
+				junk();
+
 				result[i-1] = (char)(data[i] ^ RUNTIME_CIPHER_BYTE);
+
+				small_junk();
+			}
 		}
 	}
-
 	return result;
 }
