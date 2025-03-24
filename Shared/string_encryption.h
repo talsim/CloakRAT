@@ -33,7 +33,7 @@ inline void wipeStr(std::string& str)
 }
 
 // A small helper - Re-encrypts with the global key, decrypts and returns the string
-inline std::string string_decrypt(EncryptedString& str)
+inline std::string string_decrypt(EncryptedString &str)
 {
 	runtime_reencryption(str.data, str.length, GLOBAL_RUNTIME_KEY); // Re-encrypt at runtime again.
 	return decrypt_bytes(str.data, str.length, GLOBAL_RUNTIME_KEY); // Decrypt the data by applying XOR again to cancel the re-encryption.
@@ -42,20 +42,18 @@ inline std::string string_decrypt(EncryptedString& str)
 	* after usage, wipe it. (because decrypt_bytes() returns a copy of the decrypted bytes in a new fresh std::string everytime)
 	* wipeStr(RETURNED_STRING_FROM_DECRYPT_BYTES);
 	*
-	* typical usage of strings: Decrypt -> Use -> Wipe (or reencrypt if needed as a global variable).
+	* typical usage of strings: Decrypt -> Use -> Wipe
 	* 
 	* E.g ->
 	* std::string socket_string = reencrypt_and_decrypt(str_socket, str_socket_len);
-	* this->sock = resolve_dynamically<socket_t>("socket", WS2_32_STR)(AF_INET, SOCK_STREAM, 0);
+	* this->sock = resolve_dynamically<socket_t>(socket_string.c_str(), WS2_32_STR)(AF_INET, SOCK_STREAM, 0);
 	* wipeStr(socket_string);
 	*/
 }
 
 // Another small helper - Re-encrypts with the provided runtimeKey, decrypts and returns the string
-//template<size_t N>
-//inline std::string reencrypt_and_decrypt(const char(&str)[N], std::array<uint8_t, DYNAMIC_KEY_LENGTH> runtimeKey)
-//{
-//	auto arr = compile_time_encrypt(str);
-//	runtime_reencryption(arr.data(), arr.size(), runtimeKey);
-//	return xor_transform(arr.data(), arr.size(), runtimeKey);
-//}
+inline std::string string_decrypt(EncryptedString &str, std::array<uint8_t, DYNAMIC_KEY_LENGTH> key)
+{
+	runtime_reencryption(str.data, str.length, key); // Re-encrypt at runtime again.
+	return decrypt_bytes(str.data, str.length, key); // Decrypt the data by applying XOR again to cancel the re-encryption.
+}

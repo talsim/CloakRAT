@@ -1,5 +1,7 @@
 #pragma once
 
+#include "string_encryption.h"
+
 bool SetPrivilege(
 	HANDLE hToken,          // Access token handle
 	LPCTSTR lpszPrivilege,  // Name of the privilege to enable/disable
@@ -10,4 +12,4 @@ bool SetPrivilege(
 // Returns 0 if succeeded, and -1 otherwise.
 int EscalatePrivilege();
 
-DWORD GetProcessIdByName(const char* procName);
+DWORD GetProcessIdByName(EncryptedString& procName);

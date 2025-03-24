@@ -35,9 +35,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)string_encryption.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)encrypted_strings_autogen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="$(MSBuildThisFileDirectory)destruction_code.asm">

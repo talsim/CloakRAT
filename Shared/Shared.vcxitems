@@ -25,7 +25,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)winapi_function_signatures.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)encrypted_strings_autogen.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)string_encryption.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)winapi_obfuscation.cpp" />
   </ItemGroup>

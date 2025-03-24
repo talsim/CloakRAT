@@ -25,7 +25,7 @@ int TCPClient::start_connection()
 	{
 #ifdef _DEBUG
 		std::cerr << "Error initializing Winsock, Err #" << wsResult << std::endl;
-#endif // _DEBUG
+#endif
 		return -1;
 	}
 
@@ -38,7 +38,7 @@ int TCPClient::start_connection()
 	{
 #ifdef _DEBUG
 		std::cerr << "Error creating socket, Err #" << resolve_dynamically<WSAGetLastError_t>(str_WSAGetLastError, str_ws2_32)() << std::endl;
-#endif // _DEBUG
+#endif 
 		return -1;
 	}
 
@@ -58,7 +58,7 @@ int TCPClient::start_connection()
 	{
 #ifdef _DEBUG
 			std::cerr << "Error connecting to server, Err #" << resolve_dynamically<WSAGetLastError_t>(str_WSAGetLastError, str_ws2_32)() << std::endl;
-#endif // _DEBUG
+#endif 
 		return -1;
 	}
 
@@ -79,7 +79,7 @@ void TCPClient::send_data(std::string data)
 	{
 #ifdef _DEBUG
 		std::cerr << "Error sending length header, Err #" << resolve_dynamically<WSAGetLastError_t>(str_WSAGetLastError, str_ws2_32)() << std::endl;
-#endif // _DEBUG
+#endif
 		return;
 	}
 
@@ -93,7 +93,7 @@ void TCPClient::send_data(std::string data)
 		{
 #ifdef _DEBUG
 			std::cerr << "Error sending data to server, Err #" << resolve_dynamically<WSAGetLastError_t>(str_WSAGetLastError, str_ws2_32)() << std::endl;
-#endif // _DEBUG
+#endif 
 			return;
 		}
 
@@ -128,7 +128,7 @@ std::string TCPClient::recv_data() {
 		{
 			std::cerr << "Error in recv(), Err #" << resolve_dynamically<WSAGetLastError_t>(str_WSAGetLastError, str_ws2_32)() << std::endl;
 		}
-#endif // _DEBUG
+#endif
 		return buf;
 	}
 	return std::string("");
