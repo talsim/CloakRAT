@@ -9,7 +9,7 @@
 #define RUNTIME_CIPHER_BYTE (unsigned char)((((i * 13 + i * i) >> i) - dynamicKey[i % DYNAMIC_KEY_LENGTH]) ^ 0xD3) // random ops to avoid XORing with just the key
 #define CHUNK_SIZE 6 // Lower chunk size means more iterations and random cycles
 
-std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key() // TODO: Might be better inlined for stealth cuz this is a super sensitive func
+inline std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key()
 {
 	std::array<uint8_t, DYNAMIC_KEY_LENGTH> runtime_key = {}; // dynamic key
 	std::random_device rd; // Used as the seed
@@ -75,10 +75,11 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 			if (dummy % 7 == 0)
 				junk_var_5 = ((int)junk >> 8) & 0xFF;
 
-			if ((((unsigned int)dummy >> 4) ^ 0x12) != 0xFF19C4CC) // Always true
+			if ((((unsigned int)dummy >> 4) ^ 0xAF) == 0xFF19C4CC) 
+				data[i] = ((data[i] ^ 0xAF) + dummy) / 3; 
+			else // Always true
 				data[i] = data[i] ^ (unsigned char)(BUILD_TIME_CIPHER_BYTE ^ RUNTIME_CIPHER_BYTE); // The compiler will optimize all the operations here, obfuscating the compile time cipher further.
-			else
-				data[i] = ((data[i] ^ 0xAF) + dummy) / 3;
+
 
 		}
 	}
@@ -87,7 +88,7 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 	data[0] |= 0x80; // Set the highest bit in the first byte to indicate that runtime re-encryption has already happened on subsequent calls.
 }
 
-std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
+std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey, size_t dummy)
 {
 	std::string result = "";
 	result.resize(dataLength - 2); // Allocate space in the string without the flag byte (first byte) and the null terminator (the null terminator is encrypted too)
@@ -103,6 +104,8 @@ std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uin
 	std::random_device rd;
 	std::mt19937 rng(rd());
 	std::shuffle(chunkIndexes.begin(), chunkIndexes.end(), rng); // Shuffle the chunk indexes 
+	junk_var_1 = (int)dummy ^ 0xD3;
+	junk_var_2 = 5;
 
 	for (size_t chunkIndex : chunkIndexes) // Random cycles on the data
 	{
@@ -114,9 +117,9 @@ std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uin
 		for (size_t i = startIdx; i < endIdx && i < dataLength - 1; i++)
 		{
 			if (i == 0) continue; // Skip the first byte
-
-			// TODO: Add junk code
-			result[i-1] = (char)(data[i] ^ RUNTIME_CIPHER_BYTE);
+			
+			else if (dummy + ((dataLength - junk_var_2) ^ 0xAF)) // CHANGE
+				result[i-1] = (char)(data[i] ^ RUNTIME_CIPHER_BYTE);
 		}
 	}
 
