@@ -6,16 +6,6 @@
 #include "encrypted_strings_autogen.h"
 
 #define DYNAMIC_KEY_LENGTH 16
-//#define string_decrypt_cstr(str, len) string_decrypt(str, len).c_str()
-
-/*
-* TODO: There is a problem in the way the code uses the GLOBAL_RUNTIME_KEY across multiple translation units.
-* Because GLOBAL_RUNTIME_KEY is generated per translation unit, the code in each translation unit uses different keys to decrypt the strings WHICH ARE SHARED BETWEEN ALL TRANSLATION UNITS (shared in the whole solution)
-* One string to the whole solution - but multiple keys (from different TUs) try to decrypt it, but only one key will work - the first one who calls runtime_reencryption must use the same key across all TUs, but different TUs = different keys = problem.
-* Simple (and the best solution?): Each TU gets its own static copy each encrypted string (just use static in the header file, instead of declaring in the cpp and externing in the header).
-* 
-* !!!UPDATE!!! - Fixed.
-*/
 
 std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key();
 void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey);

