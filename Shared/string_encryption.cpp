@@ -2,9 +2,9 @@
 #include "string_encryption.h"
 #include "junk_codes.h"
 
-// We will encrypt with a XOR key at compile-time
-// At runtime, we will introduce a dynamic key that will replace the compile-time encryption and be random - the effective XOR key.
-// Then we will re-encrypt the strings on program startup (maybe in the tls callback) using the effective key.
+// We encrypt with a XOR key at build-time (in the python script)
+// At runtime, we introduce a dynamic key that will replace the build-time encryption and be random - the effective XOR key.
+// Then we will re-encrypt the strings on the first use (A dedicated bit is set in each runtime-reencrypted string after re-encryption) using a static per translation unit key.
 
 #define RUNTIME_CIPHER_BYTE (unsigned char)((((i * 13 + i * i) >> (i % 8)) - dynamicKey[i % DYNAMIC_KEY_LENGTH]) ^ 0xD3) // random ops to avoid XORing with just the key
 #define CHUNK_SIZE 6 // Lower chunk size means more iterations and random cycles

@@ -7,7 +7,7 @@
 
 #define DYNAMIC_KEY_LENGTH 16
 
-std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key();
+inline std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key();
 void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey);
 std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey, size_t dummy);
 
