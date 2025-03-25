@@ -6,7 +6,7 @@
 // At runtime, we will introduce a dynamic key that will replace the compile-time encryption and be random - the effective XOR key.
 // Then we will re-encrypt the strings on program startup (maybe in the tls callback) using the effective key.
 
-#define RUNTIME_CIPHER_BYTE (unsigned char)((((i * 13 + i * i) >> i) - dynamicKey[i % DYNAMIC_KEY_LENGTH]) ^ 0xD3) // random ops to avoid XORing with just the key
+#define RUNTIME_CIPHER_BYTE (unsigned char)((((i * 13 + i * i) >> (i % 8)) - dynamicKey[i % DYNAMIC_KEY_LENGTH]) ^ 0xD3) // random ops to avoid XORing with just the key
 #define CHUNK_SIZE 6 // Lower chunk size means more iterations and random cycles
 
 inline std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key()
@@ -34,9 +34,9 @@ inline std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key()
 void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey) 
 {
 	/*
-	* Our compile-time encryption: E = string XOR build_time_key
-	* We want final data:          E' = string XOR dynamic_key
-	* Thus, the runtime re-encryption is as follows: data[i] ^ (build_time_key[i] ^ dynamic_key[i])
+	* Our build-time encryption: E = string XOR BUILD_TIME_CIPHER_BYTE
+	* We want final data:          E' = string XOR RUNTIME_CIPHER_BYTE
+	* Thus, the runtime re-encryption is as follows: data[i] ^ (BUILD_TIME_CIPHER_BYTE[i] ^ RUNTIME_CIPHER_BYTE[i])
 	* where data = E.
 	* 
 	* It also sets the the highest bit in the preserved first byte to indicate that the string was already reencrypted.
