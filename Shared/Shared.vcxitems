@@ -17,12 +17,15 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)encrypted_strings_autogen.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)junk_codes.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)string_encryption.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)winapi_obfuscation.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)windows_peb_structures.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)winapi_function_signatures.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)string_encryption.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)winapi_obfuscation.cpp" />
   </ItemGroup>
   <ItemGroup>

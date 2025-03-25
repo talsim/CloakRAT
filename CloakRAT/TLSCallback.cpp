@@ -4,26 +4,35 @@
 #include "utils.h"
 #include "winapi_obfuscation.h"
 #include "junk_codes.h"
+#include "string_encryption.h"
 
+/*
+* TODO: There is a problem with the dynamicKey of the tls callback translation unit. it is just zeros (not initiazlied or populated with random bytes yet).
+* My initial thought is because the tls callback runs VERY early in program startup, it runs before the CRT functions (specifically C++ static initializers).
+* Simple solution - call generate_runtime_key() explicitly in the callback to get a dynamic key and runtime-reencrypt with it instead.
+*/
 
-// This callback will be called by the Windows Loader as soon as the DLL is fully loaded to the target process (before DllMain() will be called by LoadLibrary()).
+// This callback will be called by the Windows Loader as soon as the DLL is loaded to the target process (Even before the CRT init funcs).
 void NTAPI TLSCallback(PVOID dllHandle, DWORD reason, PVOID reserved)
 {
 	if (reason == DLL_PROCESS_ATTACH)
 	{
-		if (resolve_dynamically<IsDebuggerPresent_t>("IsDebuggerPresent")() || isDebuggerAttached())
+#ifndef _DEBUG
+		if (resolve_dynamically<IsDebuggerPresent_t>(str_IsDebuggerPresent)() || isDebuggerAttached())
 		{
-			// Segfault
+			
+			// Segfault 
 			rsp_corrupt_destruction();
-		}
 
+		}
+#endif
 	}
 }
 
 #ifdef _WIN64 
 /* 
 * Include the _tls_used symbol (defined in tlssup.c file in MSVC), and is part of the CRT.
-* This symbol is represents the TLS Directory in the PE.
+* This symbol represents the TLS Directory in the PE.
 */
 #pragma comment (linker, "/INCLUDE:_tls_used")
 #pragma comment (linker, "/INCLUDE:tls_callback_func") // Make sure the linker doesn't ignore the TLS callback pointer we provide (i.e because of unreferenced code)
