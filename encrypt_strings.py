@@ -86,12 +86,11 @@ def gen_key() -> list[int]:
 def get_random_op() -> str:
     return secrets.choice(['+', '-', '*'])
 
-def xor_encrypt(string_plaintext: str, key: list[int], cipher: str) -> list[int]:
+def xor_encrypt(plain_bytes: bytes, key: list[int], cipher: str) -> list[int]:
     # The highest bit in the first byte is preserved to indicate if runtime re-encryption has happened (see runtime_reencryption() in string_encryption.cpp)
     encrypted_bytes = [secrets.randbelow(128)] # highest possible random value is 2^7
-    data = string_plaintext.encode('utf-8') + b'\x00' # add the null terminator because this we treat the string as a C-style string 
 
-    for i, byte in enumerate(data, 1):
+    for i, byte in enumerate(plain_bytes, 1):
         encrypted_bytes.append((byte ^ eval(cipher)) & 0xFF)
     
     return encrypted_bytes
@@ -114,7 +113,7 @@ def main():
     rand_op3 = get_random_op()
     rand_xor_value = secrets.randbelow(256)
     
-    # BE CAREFUL TO EDIT VARIABLE NAMES HERE, THIS IS GOING TO BE PROCESSED BY eval()
+    # BE CAREFUL TO EDIT VARIABLE NAMES HERE, THIS IS GOING TO BE PROCESSED BY eval() - I WILL PROBABLY CHANGE IT SOMETIME CUZ IT'S BAD
     byte_chiper = f"((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + key[i % len(key)] & ((i//2)>>3) * i {rand_op3} key[i % len(key)]) << (i % 5)) & 0x7F ^ {rand_xor_value})" # randomize the cipher each run
     
     # Generate the Header file
@@ -128,7 +127,7 @@ def main():
         header_file.write(f'typedef struct EncryptedString {{\n    unsigned char* data;\n    size_t length;\n}} EncryptedString;\n\n')
         
         for var_name, string in strings_to_encrypt.items():
-            encrypted_string_lst = xor_encrypt(string, key, byte_chiper)
+            encrypted_string_lst = xor_encrypt(string.encode(), key, byte_chiper)
             encrypted_c_arr = to_c_array(f'{var_name}_data', encrypted_string_lst)
             c_struct = to_c_struct(var_name)
             

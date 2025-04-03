@@ -9,7 +9,7 @@
 #define RUNTIME_CIPHER_BYTE (unsigned char)((((i * 13 + i * i) >> (i % 8)) - dynamicKey[i % DYNAMIC_KEY_LENGTH]) ^ 0xD3) // random ops to avoid XORing with just the key
 #define CHUNK_SIZE 6 // Lower chunk size means more iterations and random cycles
 
-inline std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key()
+std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key()
 {
 	std::array<uint8_t, DYNAMIC_KEY_LENGTH> runtime_key = {}; // dynamic key
 	std::random_device rd; // Used as the seed
@@ -68,6 +68,7 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 		for (size_t i = startIdx; i < endIdx; i++) // Iterate on the data itself
 		{
 			if (i == 0) continue; // Skip the first byte which is the flag byte
+
 			// Lots of dummy code
 			int dummy = (int)data[i] + (int)(dynamicKey[i % DYNAMIC_KEY_LENGTH]) * (int)i;
 			dummy = dummy * dummy;
@@ -92,7 +93,7 @@ std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uin
 {
 	junk_var_2 = 5;
 	std::string result = "";
-	result.resize(dataLength - 2); // Allocate space in the string without the flag byte (first byte) and the null terminator (the null terminator is encrypted too)
+	result.resize(dataLength - 1); // Allocate space in the string without the flag byte (first byte)
 
 	// Decrypt the data in random chunks of CHUNK_SIZE, not linearly
 	// Important note - the decryption order will be randomized differently from the encryption order of the bytes, but it doesn't matter because each byte transformation is independent of other elements, but only its current iteration.
@@ -114,9 +115,7 @@ std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uin
 			size_t startIdx = chunkIndex * CHUNK_SIZE;
 			size_t endIdx = startIdx + CHUNK_SIZE < dataLength ? startIdx + CHUNK_SIZE : dataLength;
 
-			// loop until dataLength - 1 to exclude
-			// the null terminator from data (no need to add it to an std::string)
-			for (size_t i = startIdx; i < endIdx && i < dataLength - 1; i++)
+			for (size_t i = startIdx; i < endIdx && i < dataLength; i++)
 			{
 				if (i == 0) continue; // Skip the first byte
 
