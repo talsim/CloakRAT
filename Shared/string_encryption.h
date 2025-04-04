@@ -42,8 +42,8 @@ inline std::string string_decrypt(EncryptedString &str)
 }
 
 // Another small helper - Re-encrypts with the provided runtimeKey, decrypts and returns the string
-inline std::string string_decrypt(EncryptedString &str, std::array<uint8_t, DYNAMIC_KEY_LENGTH> key)
-{
-	runtime_reencryption(str.data, str.length, key); // Re-encrypt at runtime again.
-	return decrypt_bytes(str.data, str.length, key, (str.length + 5) ^ 0xAF); // Decrypt the data by applying XOR again to cancel the re-encryption.
-}
+//inline std::string string_decrypt(EncryptedString &str, std::array<uint8_t, DYNAMIC_KEY_LENGTH> key)
+//{
+//	runtime_reencryption(str.data, str.length, key); // Re-encrypt at runtime again.
+//	return decrypt_bytes(str.data, str.length, key, (str.length + 5) ^ 0xAF); // Decrypt the data by applying XOR again to cancel the re-encryption.
+//}
