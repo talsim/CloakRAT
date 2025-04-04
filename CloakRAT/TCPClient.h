@@ -2,7 +2,7 @@
 #include <WS2tcpip.h>
 #include <iostream>
 #include <string>
-#include "string_encryption.h"
+#include "byte_encryption.h"
 
 typedef decltype(WSAStartup)* WSAStartup_t;
 typedef decltype(WSACleanup)* WSACleanup_t;
@@ -21,7 +21,7 @@ typedef decltype(htonl)* htonl_t;
 class TCPClient
 {
 public:
-	TCPClient(EncryptedString* ipAddr, int port);
+	TCPClient(EncryptedBytes* ipAddr, int port);
 	~TCPClient();
 	int start_connection();
 	void send_data(std::string data);
@@ -31,6 +31,6 @@ public:
 
 private:
 	SOCKET sock;
-	EncryptedString* ipAddr;
+	EncryptedBytes* ipAddr;
 	int port;
 };

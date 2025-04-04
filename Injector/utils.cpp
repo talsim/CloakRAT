@@ -3,7 +3,7 @@
 #include "utils.h"
 #include "winapi_obfuscation.h"
 #include "winapi_function_signatures.h"
-#include "string_encryption.h"
+#include "byte_encryption.h"
 
 bool SetPrivilege(
 	HANDLE hToken,          // Access token handle
@@ -87,7 +87,7 @@ int EscalatePrivilege()
 }
 
 
-DWORD GetProcessIdByName(EncryptedString &procName)
+DWORD GetProcessIdByName(EncryptedBytes &procName)
 {
 	typedef decltype(CreateToolhelp32Snapshot)* CreateToolhelp32Snapshot_t;
 	typedef decltype(Process32First)* Process32First_t;

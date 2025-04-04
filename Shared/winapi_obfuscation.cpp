@@ -2,14 +2,14 @@
 #include <iostream>
 #include "windows_peb_structures.h"
 #include "junk_codes.h"
-#include "string_encryption.h"
+#include "byte_encryption.h"
 
 
 static std::wstring to_wstring(const char* narrowStr);
 static PPEB GetPEB();
 
 // Walking through the PEB here to find the base addr
-void* get_loaded_module_base_addr(EncryptedString &moduleName)
+void* get_loaded_module_base_addr(EncryptedBytes &moduleName)
 {
 	PPEB peb = GetPEB();
 	PLIST_ENTRY head_list_entry = &peb->Ldr->InLoadOrderModuleList; // When the InLoadOrderModuleList doubly linked list reaches the last entry, it circles to the head of the list (the first entry)
@@ -40,7 +40,7 @@ void* get_loaded_module_base_addr(EncryptedString &moduleName)
 	return NULL;
 }
 
-FARPROC get_proc_address(HMODULE hModule, EncryptedString &procedureName)
+FARPROC get_proc_address(HMODULE hModule, EncryptedBytes &procedureName)
 {
 	// How to find the Image Export Directory:
 	// Image NT Headers (a offset to the NT headers can be found at offset 0x3C in the DOS header, which is at the start of the PE after the signature)

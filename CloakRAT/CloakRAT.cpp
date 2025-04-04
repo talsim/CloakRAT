@@ -5,7 +5,7 @@
 #include "winapi_function_signatures.h"
 #include "winapi_obfuscation.h"
 #include "junk_codes.h"
-#include "string_encryption.h"
+#include "byte_encryption.h"
 
 #define HideThreadFromDebugger 0x11
 
