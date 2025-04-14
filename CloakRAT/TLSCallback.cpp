@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "winapi_obfuscation.h"
 #include "junk_codes.h"
-#include "string_encryption.h"
+#include "byte_encryption.h"
 
 /*
 * TODO: There is a problem with the dynamicKey of the tls callback translation unit. it is just zeros (not initiazlied or populated with random bytes yet).

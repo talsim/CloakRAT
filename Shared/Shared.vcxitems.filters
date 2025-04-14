@@ -21,7 +21,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)junk_codes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)string_encryption.h">
+    <ClInclude Include="$(MSBuildThisFileDirectory)byte_encryption.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)encrypted_strings_autogen.h">
@@ -32,7 +32,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)winapi_obfuscation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)string_encryption.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)byte_encryption.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

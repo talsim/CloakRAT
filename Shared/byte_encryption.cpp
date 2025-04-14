@@ -1,5 +1,7 @@
 #include <random>
-#include "string_encryption.h"
+#include <vector>
+#include <string>
+#include "byte_encryption.h"
 #include "junk_codes.h"
 
 // We encrypt with a XOR key at build-time (in the python script)
@@ -31,17 +33,17 @@ std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key()
 	return runtime_key;
 }
 
-void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey) 
+void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
 {
 	/*
 	* Our build-time encryption: E = string XOR BUILD_TIME_CIPHER_BYTE
 	* We want final data:          E' = string XOR RUNTIME_CIPHER_BYTE
 	* Thus, the runtime re-encryption is as follows: data[i] ^ (BUILD_TIME_CIPHER_BYTE[i] ^ RUNTIME_CIPHER_BYTE[i])
 	* where data = E.
-	* 
+	*
 	* It also sets the the highest bit in the preserved first byte to indicate that the string was already reencrypted.
 	*/
-	
+
 	if (data[0] & 0x80) // If the reencryption has already happenend
 		return;
 
@@ -76,8 +78,8 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 			if (dummy % 7 == 0)
 				junk_var_5 = ((int)junk >> 8) & 0xFF;
 
-			if ((((unsigned int)dummy >> 4) ^ 0xAF) == 0xFF19C4CC) 
-				data[i] = ((data[i] ^ 0xAF) + dummy) / 3; 
+			if ((((unsigned int)dummy >> 4) ^ 0xAF) == 0xFF19C4CC)
+				data[i] = ((data[i] ^ 0xAF) + dummy) / 3;
 			else // Always true
 				data[i] = data[i] ^ (unsigned char)(BUILD_TIME_CIPHER_BYTE ^ RUNTIME_CIPHER_BYTE); // The compiler will optimize all the operations here, obfuscating the compile time cipher further.
 
@@ -89,15 +91,53 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 	data[0] |= 0x80; // Set the highest bit in the first byte to indicate that runtime re-encryption has already happened on subsequent calls.
 }
 
-std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey, size_t dummy)
+// Decrypts and returns the data as a std::vector
+std::vector<unsigned char> decrypt_raw_bytes(unsigned char* encBytes, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
+{
+	junk_var_5 = not_inlined_junk_func_2((float)(dataLength ^ 0xD3)) + 5;
+
+	std::vector<unsigned char> decryptedBytes(dataLength - 1); // Allocate space without the first byte
+
+	// Decrypt the data in random chunks of CHUNK_SIZE
+	size_t chunksNum = (dataLength + CHUNK_SIZE - 1) / CHUNK_SIZE; // Round up for the remainder
+	std::vector<size_t> chunkIndexes(chunksNum);
+
+	for (int i = 0; i < chunksNum; i++)
+		chunkIndexes[i] = i;
+
+	std::random_device rd;
+	std::mt19937 rng(rd());
+	std::shuffle(chunkIndexes.begin(), chunkIndexes.end(), rng); // Shuffle the chunk indexes
+	
+	junk();
+
+	for (size_t chunkIndex : chunkIndexes) // Random cycles on the data
+	{
+		size_t startIdx = chunkIndex * CHUNK_SIZE;
+		size_t endIdx = startIdx + CHUNK_SIZE < dataLength ? startIdx + CHUNK_SIZE : dataLength;
+		
+		for (size_t i = startIdx; i < endIdx && i < dataLength; i++)
+		{
+			if (i == 0) continue; // Skip the first byte
+			small_junk();
+
+			decryptedBytes[i - 1] = (encBytes[i] ^ RUNTIME_CIPHER_BYTE);
+		}
+	}
+
+	return decryptedBytes;
+}
+
+// Decrypts and returns the data as a std::string
+std::string decrypt_string(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey, size_t dummy)
 {
 	junk_var_2 = 5;
 	std::string result = "";
-	result.resize(dataLength - 1); // Allocate space in the string without the flag byte (first byte)
+	result.resize(dataLength - 1); // Allocate space without the flag byte (first byte)
 
 	// Decrypt the data in random chunks of CHUNK_SIZE, not linearly
-	// Important note - the decryption order will be randomized differently from the encryption order of the bytes, but it doesn't matter because each byte transformation is independent of other elements, but only its current iteration.
-	size_t chunksNum = (dataLength + CHUNK_SIZE - 1) / CHUNK_SIZE; // round up for the remainder
+	// Note - Although the decryption iterations will be randomized differently from the encryption order of the bytes, it does not matter because each byte transformation is independent of other elements, but only its current iteration.
+	size_t chunksNum = (dataLength + CHUNK_SIZE - 1) / CHUNK_SIZE; // Round up for the remainder
 	std::vector<size_t> chunkIndexes(chunksNum);
 
 	for (int i = 0; i < chunksNum; i++)
@@ -121,7 +161,7 @@ std::string decrypt_bytes(unsigned char* data, size_t dataLength, std::array<uin
 
 				junk();
 
-				result[i-1] = (char)(data[i] ^ RUNTIME_CIPHER_BYTE);
+				result[i - 1] = (char)(data[i] ^ RUNTIME_CIPHER_BYTE);
 
 				small_junk();
 			}

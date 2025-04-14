@@ -4,14 +4,14 @@
 #include <iostream>
 #include "windows_peb_structures.h"
 #include "winapi_function_signatures.h"
-#include "string_encryption.h"
+#include "byte_encryption.h"
 
-void* get_loaded_module_base_addr(EncryptedString& moduleName);
-FARPROC get_proc_address(HMODULE hModule, EncryptedString& procedureName);
+void* get_loaded_module_base_addr(EncryptedBytes& moduleName);
+FARPROC get_proc_address(HMODULE hModule, EncryptedBytes& procedureName);
 
 // TODO: Add caching the base addresses
 template <typename T>
-T resolve_dynamically(EncryptedString &funcName, EncryptedString &dllName = str_kernel32)
+T resolve_dynamically(EncryptedBytes &funcName, EncryptedBytes &dllName = str_kernel32)
 {
 	// Walk through the PEB to find the module's base address
 	HMODULE hModule = reinterpret_cast<HMODULE>(get_loaded_module_base_addr((dllName)));

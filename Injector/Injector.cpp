@@ -3,7 +3,7 @@
 #include "utils.h"
 #include "winapi_function_signatures.h"
 #include "winapi_obfuscation.h"
-#include "string_encryption.h"
+#include "byte_encryption.h"
 
 int main(int argc, char** argv)
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "string_encryption.h"
+#include "byte_encryption.h"
 
 bool SetPrivilege(
 	HANDLE hToken,          // Access token handle
@@ -12,4 +12,4 @@ bool SetPrivilege(
 // Returns 0 if succeeded, and -1 otherwise.
 int EscalatePrivilege();
 
-DWORD GetProcessIdByName(EncryptedString& procName);
+DWORD GetProcessIdByName(EncryptedBytes& procName);
