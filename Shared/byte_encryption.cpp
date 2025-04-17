@@ -82,8 +82,6 @@ void runtime_reencryption(uint8_t* data, size_t dataLength, std::array<uint8_t, 
 				data[i] = ((data[i] ^ 0xAF) + dummy) / 3;
 			else // Always true
 				data[i] = data[i] ^ (uint8_t)(BUILD_TIME_CIPHER_BYTE ^ RUNTIME_CIPHER_BYTE); // The compiler will optimize all the operations here, obfuscating the compile time cipher further.
-
-
 		}
 	}
 	// Now data is encrypted as: data XOR dynamic_key.
