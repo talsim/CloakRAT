@@ -9,7 +9,7 @@
 
 #define HideThreadFromDebugger 0x11
 
-typedef NTSTATUS(NTAPI* NtSetInformationThread_t)(
+typedef NTSTATUS (NTAPI* NtSetInformationThread_t)(
 	HANDLE					 ThreadHandle,
 	DWORD					 ThreadInformationClass,
 	PVOID					 ThreadInformation,

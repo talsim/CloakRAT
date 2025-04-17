@@ -7,7 +7,7 @@
 #include "byte_encryption.h"
 
 /*
-* TODO: There is a problem with the dynamicKey of the tls callback translation unit. it is just zeros (not initiazlied or populated with random bytes yet).
+* TODO: There is a problem with the dynamicKey of the tls callback. it is just zeros (not initiazlied or populated with random bytes yet).
 * My initial thought is because the tls callback runs VERY early in program startup, it runs before the CRT functions (specifically C++ static initializers).
 * Simple solution - call generate_runtime_key() explicitly in the callback to get a dynamic key and runtime-reencrypt with it instead.
 */

@@ -103,7 +103,7 @@ def to_c_struct(variable_name: str):
 def to_c_array(variable_name: str, buffer: list[int]) -> str:
     # return in the format: "static unsigned char variable_name_DATA[] = { ...buffer };"
     elems = ', '.join(str(b) for b in buffer)
-    return f"static unsigned char {variable_name}_data[] = {{ {elems} }};"
+    return f"static uint8_t {variable_name}_data[] = {{ {elems} }};"
     
 
 def main():    
@@ -119,13 +119,13 @@ def main():
     
     # Generate the Header file
     with open(f'{HEADER_DIR}\\{HEADER_NAME}', 'w') as header_file:
-        c_style_byte_cipher = f"(unsigned char)((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()] & ((i/2)>>3) * i {rand_op3} {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()]) << (i % 5)) & 0x7F ^ {rand_xor_value})"
+        c_style_byte_cipher = f"(uint8_t)((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()] & ((i/2)>>3) * i {rand_op3} {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()]) << (i % 5)) & 0x7F ^ {rand_xor_value})"
         
         header_file.write('#pragma once\n\n')
         header_file.write('#include <array>\n\n')
         header_file.write(f'#define {HEADER_XOR_CIPHER_VARIABLE_NAME} {c_style_byte_cipher}\n')
         header_file.write(f'static std::array<uint8_t, {KEY_ENTROPY}> {HEADER_XOR_KEY_VARIABLE_NAME} = {{ {', '.join(str(b) for b in key)} }};\n\n')
-        header_file.write(f'typedef struct EncryptedBytes {{\n    unsigned char* data;\n    size_t length;\n}} EncryptedBytes;\n\n')
+        header_file.write(f'typedef struct EncryptedBytes {{\n    uint8_t* data;\n    size_t length;\n}} EncryptedBytes;\n\n')
         
         # Encrypt strings
         for var_name, string in strings_to_encrypt.items():

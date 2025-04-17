@@ -86,13 +86,12 @@ int EscalatePrivilege()
 	return 0;
 }
 
+typedef decltype(CreateToolhelp32Snapshot)* CreateToolhelp32Snapshot_t;
+typedef decltype(Process32First)* Process32First_t;
+typedef decltype(Process32Next)* Process32Next_t;
 
 DWORD GetProcessIdByName(EncryptedBytes &procName)
 {
-	typedef decltype(CreateToolhelp32Snapshot)* CreateToolhelp32Snapshot_t;
-	typedef decltype(Process32First)* Process32First_t;
-	typedef decltype(Process32Next)* Process32Next_t;
-
 	PROCESSENTRY32 entry;
 	entry.dwSize = sizeof(PROCESSENTRY32);
 	

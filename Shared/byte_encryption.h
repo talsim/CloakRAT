@@ -10,9 +10,9 @@
 #define DYNAMIC_KEY_LENGTH 16
 
 std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key();
-void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey);
-std::string decrypt_string(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey, size_t dummy);
-std::vector<unsigned char> decrypt_raw_bytes(unsigned char* encBytes, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey);
+void runtime_reencryption(uint8_t* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey);
+std::string decrypt_string(uint8_t* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey, size_t dummy);
+std::vector<uint8_t> decrypt_raw_bytes(uint8_t* encBytes, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey);
 
 // 16 byte runtime XOR key
 static std::array<uint8_t, DYNAMIC_KEY_LENGTH> GLOBAL_RUNTIME_KEY = generate_runtime_key(); // static runtime key per translation unit (encrypted strings from the script are also static)
@@ -25,7 +25,7 @@ inline void wipeStr(std::string& str)
 	str.clear();
 }
 
-inline std::vector<unsigned char> decrypt_bytes(EncryptedBytes &encBytes)
+inline std::vector<uint8_t> decrypt_bytes(EncryptedBytes &encBytes)
 {
 	runtime_reencryption(encBytes.data, encBytes.length, GLOBAL_RUNTIME_KEY);
 	return decrypt_raw_bytes(encBytes.data, encBytes.length, GLOBAL_RUNTIME_KEY);

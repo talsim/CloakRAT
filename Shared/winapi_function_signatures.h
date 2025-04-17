@@ -2,8 +2,6 @@
 #include <windows.h>
 #include <TlHelp32.h>
 
-// Note: Due to header conflicts between windows.h and WS2tcpip.h, ws2_32.dll related function signatures are directly declared in the TCPClient.h header.
-
 typedef decltype(IsDebuggerPresent)* IsDebuggerPresent_t;
 typedef decltype(ExitThread)* ExitThread_t;
 typedef decltype(OpenProcess)* OpenProcess_t;
