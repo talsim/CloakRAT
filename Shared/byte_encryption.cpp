@@ -90,7 +90,7 @@ void runtime_reencryption(uint8_t* data, size_t dataLength, std::array<uint8_t, 
 }
 
 // Decrypts and returns the data as a std::vector
-std::vector<uint8_t> decrypt_raw_bytes(uint8_t* encBytes, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
+std::vector<uint8_t> decrypt_raw_bytes_with_key(uint8_t* encBytes, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
 {
 	junk_var_5 = not_inlined_junk_func_2((float)(dataLength ^ 0xD3)) + 5;
 
@@ -127,7 +127,7 @@ std::vector<uint8_t> decrypt_raw_bytes(uint8_t* encBytes, size_t dataLength, std
 }
 
 // Decrypts and returns the data as a std::string
-std::string decrypt_string(uint8_t* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey, size_t dummy)
+std::string decrypt_data_with_key(uint8_t* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey, size_t dummy)
 {
 	junk_var_2 = 5;
 	std::string result = "";

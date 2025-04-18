@@ -99,7 +99,7 @@ DWORD GetProcessIdByName(EncryptedBytes &procName)
 
 	if (resolve_dynamically<Process32First_t>(str_Process32First)(snapshot, &entry) == TRUE)
 	{
-		std::string procNameDecrypted = string_decrypt(procName);
+		std::string procNameDecrypted = decrypt_string(procName);
 		while (resolve_dynamically<Process32Next_t>(str_Process32Next)(snapshot, &entry) == TRUE)
 		{
 			if (_stricmp(entry.szExeFile, procNameDecrypted.c_str()) == 0)

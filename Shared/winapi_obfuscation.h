@@ -19,7 +19,7 @@ T resolve_dynamically(EncryptedBytes &funcName, EncryptedBytes &dllName = str_ke
 	{
 		// Explicitly load the module with LoadLibraryA()
 		LoadLibraryA_t LoadLibraryPtr = resolve_dynamically<LoadLibraryA_t>(str_LoadLibraryA);
-		std::string dllNameDecrypted = string_decrypt(dllName);
+		std::string dllNameDecrypted = decrypt_string(dllName);
 		hModule = LoadLibraryPtr(dllNameDecrypted.c_str());
 		wipeStr(dllNameDecrypted);
 	}
@@ -27,7 +27,7 @@ T resolve_dynamically(EncryptedBytes &funcName, EncryptedBytes &dllName = str_ke
 	FARPROC procAddr = get_proc_address(hModule, funcName);
 #ifdef _DEBUG
 	if (procAddr == NULL)
-		std::cerr << "Failed to resolve function: " + string_decrypt(funcName) << std::endl;
+		std::cerr << "Failed to resolve function: " + decrypt_string(funcName) << std::endl;
 #endif
 
 	return reinterpret_cast<T>(procAddr);

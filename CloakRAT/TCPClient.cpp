@@ -48,7 +48,7 @@ int TCPClient::start_connection()
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = resolve_dynamically<htons_t>(str_htons, str_ws2_32)(port); // convert to big endian (the network byte order)
 
-	std::string ipDecrypted = string_decrypt(*ipAddr);
+	std::string ipDecrypted = decrypt_string(*ipAddr);
 	resolve_dynamically<inet_pton_t>(str_inet_pton, str_ws2_32)(AF_INET, ipDecrypted.c_str(), &serverAddr.sin_addr);
 	wipeStr(ipDecrypted);
 

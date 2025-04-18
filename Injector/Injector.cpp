@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 
 	if (hProc && hProc != INVALID_HANDLE_VALUE) // if we got a handle successfully
 	{
-		std::string dllPathString = string_decrypt(str_dllPath);
+		std::string dllPathString = decrypt_string(str_dllPath);
 		LPVOID dllAddrInRemoteProcess = resolve_dynamically<VirtualAllocEx_t>(str_VirtualAllocEx)(hProc, NULL, strlen(dllPathString.c_str()) + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
 		if (dllAddrInRemoteProcess) {
