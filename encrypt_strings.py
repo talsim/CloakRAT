@@ -23,6 +23,7 @@ strings_to_encrypt = {
     'str_kphDriverPathOnDisk': KPH_DRIVER_PATH_ON_DISK,
     'str_kphDriverNtPath': '\\??\\' + KPH_DRIVER_PATH_ON_DISK,
     'str_servicesPath': f'SYSTEM\\CurrentControlSet\\Services\\{KPH_DRIVER_NAME}',
+    'str_serviceRegStr': f'\\Registry\\Machine\\System\\CurrentControlSet\\Services\\{KPH_DRIVER_NAME}',
     'str_ImagePath': 'ImagePath',
     'str_Type': 'Type',
     
@@ -34,7 +35,11 @@ strings_to_encrypt = {
     'str_VirtualAllocEx': 'VirtualAllocEx',
     'str_WriteProcessMemory': 'WriteProcessMemory',
     'str_LoadLibraryA': 'LoadLibraryA',
-    'str_CreateRemoteThread': 'CreateRemoteThread',
+    'str_RtlAdjustPrivilige': 'RtlAdjustPrivilige',
+    'str_RegSetKeyValueA': 'RegSetKeyValueA',
+    'str_RegCreateKeyA': 'RegCreateKeyA',
+    'str_RegCloseKey': 'RegCloseKey',
+    'str_CreateRemoteThread': 'CreateRemoteThread',  # USED BY OLD INJECTOR
     'str_CloseHandle': 'CloseHandle',
     'str_LookupPrivilegeValueA': 'LookupPrivilegeValueA',
     'str_GetLastError': 'GetLastError',

