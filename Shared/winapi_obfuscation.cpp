@@ -23,7 +23,7 @@ void* get_loaded_module_base_addr(EncryptedBytes &moduleName)
 		// Check if BaseDllName is the moduleName paramater
 		PWSTR dllName = ldr_entry->BaseDllName.Buffer;
 
-		std::string moduleNameDecrypted = string_decrypt(moduleName);
+		std::string moduleNameDecrypted = decrypt_string(moduleName);
 		std::wstring wideModuleName = to_wstring(moduleNameDecrypted.c_str());
 		if (_wcsicmp(dllName, wideModuleName.c_str()) == 0) // Perfrom a case-insensitive string compare
 			return ldr_entry->DllBase;
@@ -66,7 +66,7 @@ FARPROC get_proc_address(HMODULE hModule, EncryptedBytes &procedureName)
 	DWORD* address_table = (DWORD*)(base_address + export_directory->AddressOfFunctions); // Export Address Table (points to function addresses)
 	WORD* ordinal_table = (WORD*)(base_address + export_directory->AddressOfNameOrdinals); // Export Ordinal Table
 
-	std::string procedureNameDecrypted = string_decrypt(procedureName);
+	std::string procedureNameDecrypted = decrypt_string(procedureName);
 	for (DWORD i = 0; i < export_directory->NumberOfNames; i++)
 	{
 		char* name = (char*)(base_address + name_table[i]); // Dereference to a string 

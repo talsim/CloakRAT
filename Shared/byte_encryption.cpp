@@ -8,7 +8,7 @@
 // At runtime, we introduce a dynamic key that will replace the build-time encryption and be random - the effective XOR key.
 // Then we will re-encrypt the strings on the first use (A dedicated bit is set in each runtime-reencrypted string after re-encryption) using a static per translation unit key.
 
-#define RUNTIME_CIPHER_BYTE (unsigned char)((((i * 13 + i * i) >> (i % 8)) - dynamicKey[i % DYNAMIC_KEY_LENGTH]) ^ 0xD3) // random ops to avoid XORing with just the key
+#define RUNTIME_CIPHER_BYTE (uint8_t)((((i * 13 + i * i) >> (i % 8)) - dynamicKey[i % DYNAMIC_KEY_LENGTH]) ^ 0xD3) // random ops to avoid XORing with just the key
 #define CHUNK_SIZE 6 // Lower chunk size means more iterations and random cycles
 
 std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key()
@@ -33,7 +33,7 @@ std::array<uint8_t, DYNAMIC_KEY_LENGTH> generate_runtime_key()
 	return runtime_key;
 }
 
-void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
+void runtime_reencryption(uint8_t* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
 {
 	/*
 	* Our build-time encryption: E = string XOR BUILD_TIME_CIPHER_BYTE
@@ -81,9 +81,7 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 			if ((((unsigned int)dummy >> 4) ^ 0xAF) == 0xFF19C4CC)
 				data[i] = ((data[i] ^ 0xAF) + dummy) / 3;
 			else // Always true
-				data[i] = data[i] ^ (unsigned char)(BUILD_TIME_CIPHER_BYTE ^ RUNTIME_CIPHER_BYTE); // The compiler will optimize all the operations here, obfuscating the compile time cipher further.
-
-
+				data[i] = data[i] ^ (uint8_t)(BUILD_TIME_CIPHER_BYTE ^ RUNTIME_CIPHER_BYTE); // The compiler will optimize all the operations here, obfuscating the compile time cipher further.
 		}
 	}
 	// Now data is encrypted as: data XOR dynamic_key.
@@ -92,11 +90,11 @@ void runtime_reencryption(unsigned char* data, size_t dataLength, std::array<uin
 }
 
 // Decrypts and returns the data as a std::vector
-std::vector<unsigned char> decrypt_raw_bytes(unsigned char* encBytes, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
+std::vector<uint8_t> decrypt_raw_bytes_with_key(uint8_t* encBytes, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey)
 {
 	junk_var_5 = not_inlined_junk_func_2((float)(dataLength ^ 0xD3)) + 5;
 
-	std::vector<unsigned char> decryptedBytes(dataLength - 1); // Allocate space without the first byte
+	std::vector<uint8_t> decryptedBytes(dataLength - 1); // Allocate space without the first byte
 
 	// Decrypt the data in random chunks of CHUNK_SIZE
 	size_t chunksNum = (dataLength + CHUNK_SIZE - 1) / CHUNK_SIZE; // Round up for the remainder
@@ -129,7 +127,7 @@ std::vector<unsigned char> decrypt_raw_bytes(unsigned char* encBytes, size_t dat
 }
 
 // Decrypts and returns the data as a std::string
-std::string decrypt_string(unsigned char* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey, size_t dummy)
+std::string decrypt_data_with_key(uint8_t* data, size_t dataLength, std::array<uint8_t, DYNAMIC_KEY_LENGTH> dynamicKey, size_t dummy)
 {
 	junk_var_2 = 5;
 	std::string result = "";

