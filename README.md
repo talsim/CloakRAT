@@ -16,7 +16,7 @@ Injector (notepad.exe by default)
    └─▶ Injects CloakRAT.dll
           ├─ TLS Callback ──▶ early anti‑debug
           └─ DLL (entry) ──▶ StartRAT thread
-                 ├─ Anti‑Debug (NtSetInformationThread, TLS callback)
+                 ├─ Anti‑Debug (NtSetInformationThread)
                  ├─ TCPClient  ──▶ C2 server
                  └─ Command Exec (utils::exec)
 ```
